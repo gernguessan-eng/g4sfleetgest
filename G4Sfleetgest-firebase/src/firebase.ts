@@ -6,12 +6,12 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 // (Console Firebase → ⚙️ Paramètres du projet → Vos applications → Config SDK).
 // Ces informations ne sont pas secrètes : elles identifient votre projet, pas vos données.
 const firebaseConfig = {
-  apiKey: "AIzaSyA52cG0kBY5GP_uqlzMxWWJy_i89qBfzLo",
-  authDomain: "fleetgest-prod.firebaseapp.com",
-  projectId: "fleetgest-prod",
-  storageBucket: "fleetgest-prod.firebasestorage.app",
-  messagingSenderId: "615338695184",
-  appId: "1:615338695184:web:3426b733adf1bf41564895",
+  apiKey: "AIzaSyA4Zvh53bU16RgzR2gFjLFK1-Yq2GesWGo",
+  authDomain: "g4sfleetgest.firebaseapp.com",
+  projectId: "g4sfleetgest",
+  storageBucket: "g4sfleetgest.firebasestorage.app",
+  messagingSenderId: "654300641308",
+  appId: "1:654300641308:web:ae177a6083788628b347d9",
 };
 
 export const firebaseApp = initializeApp(firebaseConfig);
