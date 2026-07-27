@@ -5,6 +5,7 @@ import {
   TrendingUp, TrendingDown, Minus, History, AlertTriangle,
 } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, LabelList } from 'recharts';
+import SortToggleButton, { type SortDirection } from './SortToggleButton';
 import {
   type CataloguePiece, type PriceHistoryEntry,
   CATALOGUE_STORAGE_KEY as STORAGE_KEY, SAMPLE_CATALOGUE as SAMPLE,
@@ -397,8 +398,28 @@ function FicheModal({ piece, knownSuppliers, onUpdateHistorique, onEditInfo, onC
   const [rows, setRows] = useState<PriceHistoryEntry[]>(
     [...piece.historique].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   );
+  const [sortDir, setSortDir] = useState<SortDirection>('desc');
   const [showAddRow, setShowAddRow] = useState(false);
   const [newEntry, setNewEntry] = useState({ date: new Date().toISOString().slice(0, 10), valeur: '', fournisseur: '' });
+
+  // L'écart de prix se calcule toujours par rapport à l'entrée chronologiquement
+  // précédente, indépendamment du sens d'affichage choisi par l'utilisateur.
+  const chronoDesc = useMemo(
+    () => [...rows].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
+    [rows]
+  );
+  const diffById = useMemo(() => {
+    const map = new Map<string, number | null>();
+    chronoDesc.forEach((h, i) => {
+      const prev = chronoDesc[i + 1];
+      map.set(h.id, prev ? h.valeur - prev.valeur : null);
+    });
+    return map;
+  }, [chronoDesc]);
+  const displayRows = useMemo(
+    () => (sortDir === 'desc' ? chronoDesc : [...chronoDesc].reverse()),
+    [chronoDesc, sortDir]
+  );
 
   const updateRow = (id: string, patch: Partial<PriceHistoryEntry>) => {
     const next = rows.map(r => r.id === id ? { ...r, ...patch } : r);
@@ -450,7 +471,7 @@ function FicheModal({ piece, knownSuppliers, onUpdateHistorique, onEditInfo, onC
 
         <div className="p-6">
           <div className="mb-3 flex items-center justify-between">
-            <h4 className="text-sm font-bold text-slate-800">Historique des prix ({rows.length})</h4>
+            <h4 className="flex items-center gap-2 text-sm font-bold text-slate-800">Historique des prix ({rows.length})<SortToggleButton direction={sortDir} onToggle={() => setSortDir(d => d === 'desc' ? 'asc' : 'desc')} /></h4>
             <button onClick={() => setShowAddRow(v => !v)} className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700"><Plus className="h-3.5 w-3.5" /> Ajouter un prix</button>
           </div>
 
@@ -471,9 +492,8 @@ function FicheModal({ piece, knownSuppliers, onUpdateHistorique, onEditInfo, onC
           )}
 
           <div className="space-y-2">
-            {rows.map((h, i) => {
-              const prev = rows[i + 1];
-              const diff = prev ? h.valeur - prev.valeur : null;
+            {displayRows.map((h) => {
+              const diff = diffById.get(h.id) ?? null;
               return (
                 <div key={h.id} className="grid grid-cols-[1fr_1fr_1.4fr_auto_auto] items-center gap-2 rounded-lg border border-slate-100 bg-slate-50 p-2.5">
                   <input type="date" value={h.date} onChange={e => updateRow(h.id, { date: e.target.value })} className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs" />

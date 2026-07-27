@@ -1,4 +1,5 @@
 import { useMemo, useState, useRef } from 'react';
+import SortToggleButton, { type SortDirection } from './SortToggleButton';
 import { Link } from 'react-router-dom';
 import { Download, Paperclip, Plus, Search, Upload, Pencil, Printer, TrendingUp, X, Camera, ImageOff } from 'lucide-react';
 import Papa from 'papaparse';
@@ -41,6 +42,7 @@ export default function Expenses() {
   const [filterVehicle, setFilterVehicle] = usePersistedState('fleetgest_filter_expenses_vehicle', '');
   const [periodFrom, setPeriodFrom] = usePersistedState('fleetgest_filter_expenses_from', '');
   const [periodTo, setPeriodTo] = usePersistedState('fleetgest_filter_expenses_to', '');
+  const [sortDir, setSortDir] = useState<SortDirection>('desc');
   const [importMessage, setImportMessage] = useState('');
   const [preview, setPreview] = useState<ExpenseRecord[]>([]);
   const vehicleById = useMemo(() => new Map(vehicles.map((v) => [v.id, v])), [vehicles]);
@@ -54,7 +56,7 @@ export default function Expenses() {
     const matchFrom = !periodFrom || expense.date >= periodFrom;
     const matchTo = !periodTo || expense.date <= periodTo;
     return matchSearch && matchCat && matchVeh && matchFrom && matchTo;
-  }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()), [expenseRecords, filterCategory, filterVehicle, search, vehicleById, periodFrom, periodTo]);
+  }).sort((a, b) => (sortDir === 'desc' ? 1 : -1) * (new Date(b.date).getTime() - new Date(a.date).getTime())), [expenseRecords, filterCategory, filterVehicle, search, vehicleById, periodFrom, periodTo, sortDir]);
 
   // Historique des fournisseurs déjà saisis, pour une saisie intuitive (autocomplétion)
   const knownSuppliers = useMemo(() => Array.from(new Set(expenseRecords.map(e => e.fournisseur).filter(Boolean))).sort(), [expenseRecords]);
@@ -159,7 +161,13 @@ export default function Expenses() {
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-slate-50"><tr>{['Date', 'Véhicule', 'Dépense', 'Fournisseur', 'Paiement', 'Montant', 'Action'].map(h => <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">{h}</th>)}</tr></thead>
+            <thead className="bg-slate-50"><tr>
+              {['Date', 'Véhicule', 'Dépense', 'Fournisseur', 'Paiement', 'Montant', 'Action'].map(h => (
+                <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  {h === 'Date' ? <span className="inline-flex items-center gap-2">{h}<SortToggleButton direction={sortDir} onToggle={() => setSortDir(d => d === 'desc' ? 'asc' : 'desc')} /></span> : h}
+                </th>
+              ))}
+            </tr></thead>
             <tbody className="divide-y divide-slate-100">
               {filteredExpenses.length === 0 ? <tr><td colSpan={7} className="px-4 py-10 text-center text-sm text-slate-400">Aucune dépense trouvée</td></tr> :
                 filteredExpenses.map((expense) => {

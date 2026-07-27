@@ -4,6 +4,7 @@ import { useVehicles } from '../store/VehicleStore';
 import { usePersistedState } from '../hooks/usePersistedState';
 import type { Driver, Mission, PlanningEvent } from '../types';
 import SelectWithOther from './SelectWithOther';
+import SortToggleButton, { type SortDirection } from './SortToggleButton';
 import {
   Users, ClipboardList, CalendarDays, Plus, Pencil, Trash2, Search,
   Phone, Mail, Car, MapPin, Printer, ChevronRight,
@@ -301,6 +302,7 @@ export default function DriverManagement() {
   const [showDriverForm, setShowDriverForm] = useState(false);
   const [editDriver, setEditDriver] = useState<Driver | undefined>();
   const [showMissionForm, setShowMissionForm] = useState(false);
+  const [missionSortDir, setMissionSortDir] = useState<SortDirection>('desc');
   const [editMission, setEditMission] = useState<Mission | undefined>();
   const [showPlanningForm, setShowPlanningForm] = useState(false);
   const [editEvent, setEditEvent] = useState<PlanningEvent | undefined>();
@@ -456,13 +458,17 @@ export default function DriverManagement() {
               <table className="min-w-full divide-y divide-slate-200 text-sm">
                 <thead className="bg-slate-50">
                   <tr>
-                    {['Mission', 'Chauffeur', 'Véhicule', 'Trajet', 'Dates', 'Km', 'Coût', 'Statut', ''].map(h => <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">{h}</th>)}
+                    {['Mission', 'Chauffeur', 'Véhicule', 'Trajet', 'Dates', 'Km', 'Coût', 'Statut', ''].map(h => (
+                      <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">
+                        {h === 'Dates' ? <span className="inline-flex items-center gap-2">{h}<SortToggleButton direction={missionSortDir} onToggle={() => setMissionSortDir(d => d === 'desc' ? 'asc' : 'desc')} /></span> : h}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {missions.length === 0 ? (
                     <tr><td colSpan={9} className="py-10 text-center text-slate-400">Aucune mission</td></tr>
-                  ) : missions.sort((a, b) => new Date(b.date_debut).getTime() - new Date(a.date_debut).getTime()).map(m => {
+                  ) : missions.sort((a, b) => (missionSortDir === 'desc' ? 1 : -1) * (new Date(b.date_debut).getTime() - new Date(a.date_debut).getTime())).map(m => {
                     const dr = driverById.get(m.driverId);
                     const ve = vehicleById.get(m.vehicleId);
                     return (

@@ -3,6 +3,7 @@ import { useVehicles } from '../store/VehicleStore';
 import { usePersistedState } from '../hooks/usePersistedState';
 import { Plus, Printer, Search, Trash2, Pencil, X, AlertTriangle, Upload, Info } from 'lucide-react';
 import type { ImmobilisationRecord } from '../types/immobilisations';
+import SortToggleButton, { type SortDirection } from './SortToggleButton';
 
 export type { ImmobilisationRecord };
 
@@ -30,6 +31,7 @@ export default function Immobilisations() {
   const [search, setSearch] = usePersistedState('fleetgest_filter_immob_search', '');
   const [periodFrom, setPeriodFrom] = usePersistedState('fleetgest_filter_immob_from', '');
   const [periodTo, setPeriodTo] = usePersistedState('fleetgest_filter_immob_to', '');
+  const [sortDir, setSortDir] = useState<SortDirection>('desc');
 
   const vehicleById = useMemo(() => new Map(vehicles.map(v => [v.id, v])), [vehicles]);
 
@@ -41,8 +43,8 @@ export default function Immobilisations() {
       const matchFrom = !periodFrom || r.date_entree >= periodFrom;
       const matchTo = !periodTo || r.date_entree <= periodTo;
       return matchSearch && matchFrom && matchTo;
-    }).sort((a, b) => new Date(b.date_entree).getTime() - new Date(a.date_entree).getTime());
-  }, [records, search, vehicleById, periodFrom, periodTo]);
+    }).sort((a, b) => (sortDir === 'desc' ? 1 : -1) * (new Date(b.date_entree).getTime() - new Date(a.date_entree).getTime()));
+  }, [records, search, vehicleById, periodFrom, periodTo, sortDir]);
 
   const stats = useMemo(() => {
     const enCours = records.filter(r => r.statut !== 'Terminé').length;
@@ -104,7 +106,11 @@ export default function Immobilisations() {
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-slate-200 text-sm">
-            <thead className="bg-slate-50"><tr>{['Véhicule', 'Garage', 'Travaux', 'Entrée', 'Sortie prévue', 'Sortie réelle', 'Durée', 'Coût', 'Statut', ''].map(h => <th key={h} className="px-3 py-3 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500">{h}</th>)}</tr></thead>
+            <thead className="bg-slate-50"><tr>{['Véhicule', 'Garage', 'Travaux', 'Entrée', 'Sortie prévue', 'Sortie réelle', 'Durée', 'Coût', 'Statut', ''].map(h => (
+              <th key={h} className="px-3 py-3 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+                {h === 'Entrée' ? <span className="inline-flex items-center gap-2">{h}<SortToggleButton direction={sortDir} onToggle={() => setSortDir(d => d === 'desc' ? 'asc' : 'desc')} /></span> : h}
+              </th>
+            ))}</tr></thead>
             <tbody className="divide-y divide-slate-100">
               {filtered.length === 0 ? <tr><td colSpan={10} className="py-10 text-center text-slate-400">Aucune immobilisation</td></tr> :
                 filtered.map(r => {

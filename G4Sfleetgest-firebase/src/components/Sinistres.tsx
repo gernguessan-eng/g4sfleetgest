@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import SortToggleButton, { type SortDirection } from './SortToggleButton';
 import { useVehicles } from '../store/VehicleStore';
 import { usePersistedState } from '../hooks/usePersistedState';
 import type { SinistreRecord } from '../types/sinistres';
@@ -33,6 +34,7 @@ export default function Sinistres() {
   const { vehicles, sinistres, addSinistre, updateSinistre, deleteSinistre } = useVehicles();
   const [showForm, setShowForm] = useState(false);
   const [editSinistre, setEditSinistre] = useState<SinistreRecord | undefined>();
+  const [sortDir, setSortDir] = useState<SortDirection>('desc');
   const [search, setSearch] = usePersistedState('fleetgest_filter_sinistres_search', '');
   const [detailId, setDetailId] = useState<string | null>(null);
   const [periodFrom, setPeriodFrom] = usePersistedState('fleetgest_filter_sinistres_from', '');
@@ -207,13 +209,15 @@ export default function Sinistres() {
             <thead className="bg-slate-50">
               <tr>
                 {['Date', 'Véhicule', 'Type', 'Lieu', 'Commune', 'Assureur', 'Coût', 'Statut', 'Responsabilité', 'Action'].map(h => (
-                  <th key={h} className="px-3 py-3 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500">{h}</th>
+                  <th key={h} className="px-3 py-3 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+                    {h === 'Date' ? <span className="inline-flex items-center gap-2">{h}<SortToggleButton direction={sortDir} onToggle={() => setSortDir(d => d === 'desc' ? 'asc' : 'desc')} /></span> : h}
+                  </th>
                 ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {filtered.length === 0 ? <tr><td colSpan={10} className="py-10 text-center text-slate-400">Aucun sinistre trouvé</td></tr> :
-                filtered.sort((a, b) => new Date(b.date_sinistre).getTime() - new Date(a.date_sinistre).getTime()).map(s => {
+                filtered.sort((a, b) => (sortDir === 'desc' ? 1 : -1) * (new Date(b.date_sinistre).getTime() - new Date(a.date_sinistre).getTime())).map(s => {
                   const v = vehicleById.get(s.vehicleId);
                   return (
                     <tr key={s.id} className="hover:bg-slate-50">
