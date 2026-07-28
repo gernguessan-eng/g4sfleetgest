@@ -8,7 +8,7 @@ import {
   Car, MapPin, User, Gauge, Calendar, Shield, FileText,
   Wrench, AlertCircle, DollarSign, Info, Hash, Fuel, Receipt, Camera, Upload, X,
 } from 'lucide-react';
-import { getVehicleMaintenanceForecast } from '../utils/maintenance';
+import { getVehicleMaintenanceForecast, mergeExpensesWithMaintenance } from '../utils/maintenance';
 
 interface Props { vehicle: Vehicle; printMode?: boolean; }
 
@@ -90,7 +90,7 @@ export default function VehicleDetailPanel({ vehicle, printMode = false }: Props
   const totalMaintenance = vehicleMaintenance.reduce((s, m) => s + m.cout, 0);
   const daysToAssurance  = daysUntil(vehicle.date_assurance);
   const daysToVignette   = daysUntil(vehicle.date_vignette);
-  const maintenanceForecast = getVehicleMaintenanceForecast(vehicle, expenseRecords);
+  const maintenanceForecast = getVehicleMaintenanceForecast(vehicle, mergeExpensesWithMaintenance(expenseRecords, maintenanceRecords));
 
   const handleAddMaintenance = (ev: React.FormEvent) => {
     ev.preventDefault();

@@ -1,4 +1,52 @@
-import type { ExpenseRecord, Vehicle } from '../types';
+import type { ExpenseRecord, MaintenanceRecord, Vehicle } from '../types';
+
+/**
+ * Convertit une intervention de "Historique Maintenance" en une entrée de type Dépense
+ * (catégorie "Entretien"), pour affichage uniquement — aucune nouvelle donnée n'est
+ * créée en base : la fiche de maintenance reste la seule source de vérité, cette
+ * fonction ne fait que la représenter sous forme de dépense là où c'est pertinent
+ * (menu Dépenses, prévision d'entretien, répartition par catégorie).
+ */
+export function maintenanceRecordToExpense(m: MaintenanceRecord): ExpenseRecord {
+  return {
+    id: `maint:${m.id}`,
+    vehicleId: m.vehicleId,
+    date: m.date,
+    categorie: 'Entretien',
+    libelle: m.description ? `${m.type} — ${m.description}` : m.type,
+    montant: m.cout,
+    fournisseur: '',
+    mode_paiement: '',
+    numero_piece: '',
+    justificatif_nom: '',
+    notes: '',
+    date_entretien: m.date,
+    kilometrage_entretien: m.kilometrage,
+    photo_carburant_url: '',
+  };
+}
+
+/** Identifiant de dépense synthétique généré à partir d'une intervention de maintenance. */
+export function isMaintenanceDerivedExpense(expense: Pick<ExpenseRecord, 'id'>): boolean {
+  return expense.id.startsWith('maint:');
+}
+
+/** Récupère l'identifiant réel de l'intervention de maintenance derrière une dépense fusionnée. */
+export function maintenanceIdFromExpenseId(expenseId: string): string {
+  return expenseId.slice('maint:'.length);
+}
+
+/**
+ * Fusionne les dépenses "classiques" avec les interventions de Historique Maintenance,
+ * pour obtenir une vue unifiée des coûts du véhicule (utilisée par le menu Dépenses,
+ * le tableau de bord et la prévision de prochain entretien).
+ */
+export function mergeExpensesWithMaintenance(
+  expenseRecords: ExpenseRecord[],
+  maintenanceRecords: MaintenanceRecord[]
+): ExpenseRecord[] {
+  return [...expenseRecords, ...maintenanceRecords.map(maintenanceRecordToExpense)];
+}
 
 export type MaintenanceForecast = {
   hasHistory: boolean;

@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useVehicles } from '../store/VehicleStore';
-import { getVehicleMaintenanceForecast } from '../utils/maintenance';
+import { getVehicleMaintenanceForecast, mergeExpensesWithMaintenance } from '../utils/maintenance';
 import IvoryCoastZoneMap from './IvoryCoastZoneMap';
 import {
   Car, CheckCircle2, Wrench, AlertTriangle, TrendingUp, Calendar,
@@ -72,6 +72,9 @@ export default function Dashboard() {
   }, [vehicles]);
 
   const fv = useMemo(() => filterDept ? vehicles.filter(v => v.affectation === filterDept) : vehicles, [vehicles, filterDept]);
+  // fe = dépenses "classiques" filtrées (utilisée pour le calcul du coût opérationnel,
+  // qui additionne déjà séparément totalMaint — ne pas fusionner ici pour éviter un double
+  // comptage de la maintenance).
   const fe = useMemo(() => {
     let l = expenseRecords;
     if (filterDept) { const ids = new Set(fv.map(v => v.id)); l = l.filter(e => ids.has(e.vehicleId)); }
@@ -79,6 +82,20 @@ export default function Dashboard() {
     if (filterPeriodTo) l = l.filter(e => e.date <= filterPeriodTo);
     return l;
   }, [expenseRecords, filterDept, filterPeriodFrom, filterPeriodTo, fv]);
+
+  // feAll = dépenses + interventions de Historique Maintenance, filtrées — utilisée
+  // uniquement pour les vues de répartition/tendance (jamais additionnée à totalMaint).
+  const mergedRecords = useMemo(
+    () => mergeExpensesWithMaintenance(expenseRecords, maintenanceRecords),
+    [expenseRecords, maintenanceRecords]
+  );
+  const feAll = useMemo(() => {
+    let l = mergedRecords;
+    if (filterDept) { const ids = new Set(fv.map(v => v.id)); l = l.filter(e => ids.has(e.vehicleId)); }
+    if (filterPeriodFrom) l = l.filter(e => e.date >= filterPeriodFrom);
+    if (filterPeriodTo) l = l.filter(e => e.date <= filterPeriodTo);
+    return l;
+  }, [mergedRecords, filterDept, filterPeriodFrom, filterPeriodTo, fv]);
 
   // sinistres — lus directement depuis le store central (toujours à jour)
   const filteredSinistres = useMemo(() => {
@@ -167,15 +184,15 @@ export default function Dashboard() {
     const soon = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
     return fv.filter(v => (v.date_assurance && new Date(v.date_assurance) <= soon) || (v.date_vignette && new Date(v.date_vignette) <= soon) || (v.validite_carte_transport && new Date(v.validite_carte_transport) <= soon) || (v.validite_patente && new Date(v.validite_patente) <= soon) || (v.validite_carte_stationnement && new Date(v.validite_carte_stationnement) <= soon)).slice(0, 8);
   }, [fv]);
-  const maintenanceAlerts = fv.map(vehicle => ({ vehicle, forecast: getVehicleMaintenanceForecast(vehicle, expenseRecords) })).filter(({ forecast }) => ['critical', 'warning', 'missing'].includes(forecast.alertLevel)).sort((a, b) => { const p = { critical: 0, warning: 1, missing: 2, none: 3 }; return p[a.forecast.alertLevel] - p[b.forecast.alertLevel]; }).slice(0, 8);
+  const maintenanceAlerts = fv.map(vehicle => ({ vehicle, forecast: getVehicleMaintenanceForecast(vehicle, mergedRecords) })).filter(({ forecast }) => ['critical', 'warning', 'missing'].includes(forecast.alertLevel)).sort((a, b) => { const p = { critical: 0, warning: 1, missing: 2, none: 3 }; return p[a.forecast.alertLevel] - p[b.forecast.alertLevel]; }).slice(0, 8);
   const zoneDistribution = useMemo(() => { const zones = ['Nord', 'Sud', 'Est', 'Centre', 'Ouest'] as const; const c: Record<string, number> = { Nord: 0, Sud: 0, Est: 0, Centre: 0, Ouest: 0 }; fv.forEach(v => { if (v.zone_affectation && c[v.zone_affectation] !== undefined) c[v.zone_affectation]++; }); return zones.map(z => ({ name: z, value: c[z] })); }, [fv]);
   const brandDistribution = useMemo(() => { const m = new Map<string, number>(); fv.forEach(v => m.set(v.marque, (m.get(v.marque) || 0) + 1)); return Array.from(m.entries()).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value); }, [fv]);
-  const expenseCategoryDistribution = useMemo(() => { const m = new Map<string, number>(); fe.forEach(e => m.set(e.categorie, (m.get(e.categorie) || 0) + e.montant)); return Array.from(m.entries()).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value); }, [fe]);
+  const expenseCategoryDistribution = useMemo(() => { const m = new Map<string, number>(); feAll.forEach(e => m.set(e.categorie, (m.get(e.categorie) || 0) + e.montant)); return Array.from(m.entries()).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value); }, [feAll]);
 
   // Évolution mensuelle des dépenses (12 derniers mois pertinents dans les données filtrées)
   const monthlyExpenseEvolution = useMemo(() => {
     const m = new Map<string, number>();
-    fe.forEach(e => { const key = (e.date || '').slice(0, 7); if (!key) return; m.set(key, (m.get(key) || 0) + e.montant); });
+    feAll.forEach(e => { const key = (e.date || '').slice(0, 7); if (!key) return; m.set(key, (m.get(key) || 0) + e.montant); });
     return Array.from(m.entries())
       .sort((a, b) => a[0].localeCompare(b[0]))
       .slice(-12)
@@ -184,7 +201,7 @@ export default function Dashboard() {
         const label = new Date(Number(y), Number(mo) - 1, 1).toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' });
         return { name: label, value };
       });
-  }, [fe]);
+  }, [feAll]);
 
   const isFiltered = !!filterDept || !!filterPeriodFrom || !!filterPeriodTo;
 

@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import VehicleForm from './VehicleForm';
 import VehicleDetailPanel from './VehicleDetailPanel';
-import { getVehicleMaintenanceForecast } from '../utils/maintenance';
+import { getVehicleMaintenanceForecast, mergeExpensesWithMaintenance } from '../utils/maintenance';
 
 function fmtMoney(v: number) {
   if (v >= 1_000_000) return (v / 1_000_000).toFixed(1) + ' M FCFA';
@@ -17,7 +17,7 @@ function fmtMoney(v: number) {
 }
 
 export default function VehicleList() {
-  const { vehicles, expenseRecords, deleteVehicle, deleteMultipleVehicles } = useVehicles();
+  const { vehicles, expenseRecords, maintenanceRecords, deleteVehicle, deleteMultipleVehicles } = useVehicles();
   const [search, setSearch]           = usePersistedState('fleetgest_filter_vehicles_search', '');
   const [filterStatus, setFilterStatus] = usePersistedState('fleetgest_filter_vehicles_status', '');
   const [showForm, setShowForm]       = useState(false);
@@ -60,11 +60,18 @@ export default function VehicleList() {
   const totalPages = Math.ceil(filtered.length / perPage);
   const paginated  = filtered.slice((currentPage - 1) * perPage, currentPage * perPage);
 
+  // Dépenses affichées dans la liste = dépenses classiques + interventions de
+  // Historique Maintenance, pour rester cohérent avec le total du panneau détaillé.
+  const mergedRecords = useMemo(
+    () => mergeExpensesWithMaintenance(expenseRecords, maintenanceRecords),
+    [expenseRecords, maintenanceRecords]
+  );
+
   const expensesByVehicle = useMemo(() => {
     const map = new Map<string, number>();
-    expenseRecords.forEach((e) => map.set(e.vehicleId, (map.get(e.vehicleId) ?? 0) + e.montant));
+    mergedRecords.forEach((e) => map.set(e.vehicleId, (map.get(e.vehicleId) ?? 0) + e.montant));
     return map;
-  }, [expenseRecords]);
+  }, [mergedRecords]);
 
   const toggleExpand = (id: string) => {
     setExpandedIds((prev) => {
@@ -227,7 +234,7 @@ export default function VehicleList() {
         ) : paginated.map((v) => {
           const isExpanded = expandedIds.has(v.id);
           const isSelected = selectedIds.has(v.id);
-          const maintenanceForecast = getVehicleMaintenanceForecast(v, expenseRecords);
+          const maintenanceForecast = getVehicleMaintenanceForecast(v, mergedRecords);
           const nextMaintenanceDateLabel = maintenanceForecast.estimatedNextDate
             ? new Date(maintenanceForecast.estimatedNextDate).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })
             : maintenanceForecast.hasHistory

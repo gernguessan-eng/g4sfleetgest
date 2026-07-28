@@ -1,7 +1,7 @@
 import { useMemo, useState, useRef } from 'react';
 import SortToggleButton, { type SortDirection } from './SortToggleButton';
 import { Link } from 'react-router-dom';
-import { Download, Paperclip, Plus, Search, Upload, Pencil, Printer, TrendingUp, X, Camera, ImageOff } from 'lucide-react';
+import { Download, Paperclip, Plus, Search, Upload, Pencil, Printer, TrendingUp, X, Camera, ImageOff, Wrench, Trash2, Info } from 'lucide-react';
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, LabelList } from 'recharts';
@@ -9,6 +9,7 @@ import { useVehicles } from '../store/VehicleStore';
 import { usePersistedState } from '../hooks/usePersistedState';
 import type { ExpenseCategory, ExpenseRecord } from '../types';
 import SelectWithOther from './SelectWithOther';
+import { mergeExpensesWithMaintenance, isMaintenanceDerivedExpense, maintenanceIdFromExpenseId } from '../utils/maintenance';
 
 const categoryOptions: ExpenseCategory[] = [
   'Carburant', 'Entretien', 'Réparation', 'Assurance', 'Vignette',
@@ -16,12 +17,6 @@ const categoryOptions: ExpenseCategory[] = [
 ];
 
 const PAYMENT_OPTIONS = ['Espèces', 'Chèque', 'BC', 'Virement', 'Carte', 'Carte carburant', 'Mobile Money'];
-
-const emptyExpense = {
-  vehicleId: '', date: new Date().toISOString().slice(0, 10), categorie: 'Carburant' as ExpenseCategory,
-  libelle: '', montant: '', fournisseur: '', mode_paiement: 'Espèces', numero_piece: '',
-  justificatif_nom: '', notes: '', date_entretien: new Date().toISOString().slice(0, 10), kilometrage_entretien: '',
-};
 
 function formatMoney(value: number) { return value.toLocaleString('fr-FR') + ' FCFA'; }
 function formatDate(value: string) { if (!value) return '-'; return new Date(value).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }); }
@@ -33,8 +28,7 @@ function getCell(row: Record<string, unknown>, keys: string[]) {
 function parseAmount(value: string) { const c = value.replace(/\s/g, '').replace(',', '.').replace(/[A-Za-z]/g, ''); return Number(c) || 0; }
 
 export default function Expenses() {
-  const { vehicles, expenseRecords, addExpenseRecord, updateExpenseRecord, deleteExpenseRecord, importExpenseRecords, getDashboardStats } = useVehicles();
-  const stats = getDashboardStats();
+  const { vehicles, expenseRecords, maintenanceRecords, addExpenseRecord, updateExpenseRecord, deleteExpenseRecord, deleteMaintenanceRecord, importExpenseRecords } = useVehicles();
   const [showForm, setShowForm] = useState(false);
   const [editingExpense, setEditingExpense] = useState<ExpenseRecord | undefined>();
   const [search, setSearch] = usePersistedState('fleetgest_filter_expenses_search', '');
@@ -47,7 +41,15 @@ export default function Expenses() {
   const [preview, setPreview] = useState<ExpenseRecord[]>([]);
   const vehicleById = useMemo(() => new Map(vehicles.map((v) => [v.id, v])), [vehicles]);
 
-  const filteredExpenses = useMemo(() => expenseRecords.filter((expense) => {
+  // Vue unifiée : dépenses classiques + interventions de Historique Maintenance
+  // (catégorie "Entretien"), pour que le menu Dépenses soit la source de vérité unique
+  // des coûts du véhicule — sans dupliquer les données (rien n'est réécrit en base).
+  const mergedRecords = useMemo(
+    () => mergeExpensesWithMaintenance(expenseRecords, maintenanceRecords),
+    [expenseRecords, maintenanceRecords]
+  );
+
+  const filteredExpenses = useMemo(() => mergedRecords.filter((expense) => {
     const vehicle = vehicleById.get(expense.vehicleId);
     const text = `${expense.libelle} ${expense.categorie} ${expense.fournisseur} ${expense.numero_piece} ${vehicle?.numero_immatriculation ?? ''}`.toLowerCase();
     const matchSearch = !search || text.includes(search.toLowerCase());
@@ -56,22 +58,32 @@ export default function Expenses() {
     const matchFrom = !periodFrom || expense.date >= periodFrom;
     const matchTo = !periodTo || expense.date <= periodTo;
     return matchSearch && matchCat && matchVeh && matchFrom && matchTo;
-  }).sort((a, b) => (sortDir === 'desc' ? 1 : -1) * (new Date(b.date).getTime() - new Date(a.date).getTime())), [expenseRecords, filterCategory, filterVehicle, search, vehicleById, periodFrom, periodTo, sortDir]);
+  }).sort((a, b) => (sortDir === 'desc' ? 1 : -1) * (new Date(b.date).getTime() - new Date(a.date).getTime())), [mergedRecords, filterCategory, filterVehicle, search, vehicleById, periodFrom, periodTo, sortDir]);
 
   // Historique des fournisseurs déjà saisis, pour une saisie intuitive (autocomplétion)
   const knownSuppliers = useMemo(() => Array.from(new Set(expenseRecords.map(e => e.fournisseur).filter(Boolean))).sort(), [expenseRecords]);
 
   const totalFiltered = filteredExpenses.reduce((sum, e) => sum + e.montant, 0);
-  const monthlyAverage = expenseRecords.length > 0 ? Math.round(stats.totalExpenseCost / Math.max(stats.monthlyExpenses.length, 1)) : 0;
+  const totalAll = useMemo(() => mergedRecords.reduce((sum, e) => sum + e.montant, 0), [mergedRecords]);
+  const avgPerVehicle = vehicles.length > 0 ? Math.round(totalAll / vehicles.length) : 0;
   const monthlyExpenseEvolution = useMemo(() => {
     const map = new Map<string, number>();
-    expenseRecords.forEach((e) => { if (!e.date) return; const d = new Date(e.date); const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; map.set(key, (map.get(key) || 0) + e.montant); });
+    mergedRecords.forEach((e) => { if (!e.date) return; const d = new Date(e.date); const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; map.set(key, (map.get(key) || 0) + e.montant); });
     const labels = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
     return Array.from(map.entries()).sort((a, b) => a[0].localeCompare(b[0])).slice(-12).map(([key, montant]) => { const [year, month] = key.split('-'); return { mois: `${labels[Number(month) - 1]} ${year.slice(-2)}`, montant }; });
-  }, [expenseRecords]);
+  }, [mergedRecords]);
+  const monthlyAverage = mergedRecords.length > 0 ? Math.round(totalAll / Math.max(monthlyExpenseEvolution.length, 1)) : 0;
 
   const handleEdit = (expense: ExpenseRecord) => { setEditingExpense(expense); setShowForm(true); };
   const handleAddNew = () => { setEditingExpense(undefined); setShowForm(true); };
+  const handleDelete = (id: string) => {
+    if (!confirm('Supprimer cette dépense ? Cette action est irréversible.')) return;
+    deleteExpenseRecord(id);
+  };
+  const handleDeleteMaintenance = (expenseId: string) => {
+    if (!confirm('Supprimer cette intervention de Historique Maintenance ? Cette action est irréversible.')) return;
+    deleteMaintenanceRecord(maintenanceIdFromExpenseId(expenseId));
+  };
 
   const handleSaveExpense = (data: Omit<ExpenseRecord, 'id'>, id?: string) => {
     if (id) updateExpenseRecord(id, data);
@@ -129,12 +141,13 @@ export default function Expenses() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
         {[
-          { label: 'Dépenses totales', value: formatMoney(stats.totalExpenseCost) },
-          { label: 'Moyenne par véhicule', value: formatMoney(stats.avgExpensePerVehicle) },
+          { label: 'Dépenses totales', value: formatMoney(totalAll) },
+          { label: 'Moyenne par véhicule', value: formatMoney(avgPerVehicle) },
           { label: 'Moyenne mensuelle', value: formatMoney(monthlyAverage) },
           { label: 'Filtre affiché', value: formatMoney(totalFiltered) },
         ].map(k => <div key={k.label} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"><p className="text-xs font-medium uppercase tracking-wide text-slate-500">{k.label}</p><p className="mt-2 text-xl font-bold text-slate-900">{k.value}</p></div>)}
       </div>
+      <p className="-mt-2 text-xs text-slate-400 print:hidden">Inclut les interventions de "Historique Maintenance" (catégorie Entretien).</p>
 
       {importMessage && <p className="rounded-lg bg-slate-50 px-4 py-3 text-sm text-slate-600 print:hidden">{importMessage}</p>}
       {preview.length > 0 && <div className="rounded-lg bg-emerald-50 px-4 py-3 flex items-center justify-between print:hidden"><span className="text-sm text-emerald-800">{preview.length} dépense(s) prête(s)</span><button onClick={importPreview} className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">Importer</button></div>}
@@ -172,13 +185,15 @@ export default function Expenses() {
               {filteredExpenses.length === 0 ? <tr><td colSpan={7} className="px-4 py-10 text-center text-sm text-slate-400">Aucune dépense trouvée</td></tr> :
                 filteredExpenses.map((expense) => {
                   const vehicle = vehicleById.get(expense.vehicleId);
+                  const fromMaintenance = isMaintenanceDerivedExpense(expense);
                   return (
-                    <tr key={expense.id} className="hover:bg-slate-50">
+                    <tr key={expense.id} className={`hover:bg-slate-50 ${fromMaintenance ? 'bg-sky-50/40' : ''}`}>
                       <td className="px-4 py-3 text-sm text-slate-600">{formatDate(expense.date)}</td>
                       <td className="px-4 py-3">{vehicle ? <Link to={`/vehicule/${vehicle.id}`} className="text-sm font-semibold text-emerald-600 hover:text-emerald-700">{vehicle.numero_immatriculation}</Link> : <span className="text-sm text-slate-400">Supprimé</span>}</td>
                       <td className="px-4 py-3"><p className="text-sm font-semibold text-slate-800">{expense.libelle}</p>
                         <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
                           <span className="rounded-full bg-slate-100 px-2 py-0.5">{expense.categorie}</span>
+                          {fromMaintenance && <span className="inline-flex items-center gap-1 rounded-full bg-sky-100 px-2 py-0.5 text-sky-700" title="Provient de la fiche véhicule → Historique Maintenance"><Wrench className="h-3 w-3" />Historique Maintenance</span>}
                           {expense.montant < 0 && <span className="rounded-full bg-red-100 px-2 py-0.5 font-medium text-red-700">Annulation</span>}
                           {expense.categorie === 'Entretien' && expense.kilometrage_entretien ? <span className="rounded-full bg-amber-100 px-2 py-0.5 text-amber-700">{expense.kilometrage_entretien.toLocaleString('fr-FR')} km</span> : null}
                           {expense.justificatif_nom && <span className="inline-flex items-center gap-1"><Paperclip className="h-3 w-3" />{expense.justificatif_nom}</span>}
@@ -189,7 +204,17 @@ export default function Expenses() {
                       <td className="px-4 py-3 text-sm text-slate-600">{expense.mode_paiement || '-'}</td>
                       <td className={`px-4 py-3 text-right text-sm font-bold ${expense.montant < 0 ? 'text-red-600' : 'text-slate-800'}`}>{formatMoney(expense.montant)}</td>
                       <td className="px-4 py-3 text-center print:hidden"><div className="flex items-center justify-center gap-1">
-                        <button onClick={() => handleEdit(expense)} className="rounded-lg p-1.5 text-slate-400 hover:bg-blue-50 hover:text-blue-600" title="Modifier"><Pencil className="h-4 w-4" /></button>
+                        {fromMaintenance ? (
+                          <>
+                            <span title="Modifiable uniquement depuis la fiche véhicule → Historique Maintenance" className="rounded-lg p-1.5 text-slate-300"><Info className="h-4 w-4" /></span>
+                            <button onClick={() => handleDeleteMaintenance(expense.id)} className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600" title="Supprimer cette intervention"><Trash2 className="h-4 w-4" /></button>
+                          </>
+                        ) : (
+                          <>
+                            <button onClick={() => handleEdit(expense)} className="rounded-lg p-1.5 text-slate-400 hover:bg-blue-50 hover:text-blue-600" title="Modifier"><Pencil className="h-4 w-4" /></button>
+                            <button onClick={() => handleDelete(expense.id)} className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600" title="Supprimer"><Trash2 className="h-4 w-4" /></button>
+                          </>
+                        )}
                       </div></td>
                     </tr>
                   );
