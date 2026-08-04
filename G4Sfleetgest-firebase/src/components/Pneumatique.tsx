@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useVehicles } from '../store/VehicleStore';
 import { usePersistedState } from '../hooks/usePersistedState';
 import type { PneumatiqueRecord, SeuilAlertePneu } from '../types/pneumatique';
@@ -59,8 +59,9 @@ function useLatestKmByVehicle() {
 
 export default function Pneumatique() {
   const { vehicles, pneus, setPneus } = useVehicles();
-  const [showForm, setShowForm] = useState(false);
-  const [editPneu, setEditPneu] = useState<PneumatiqueRecord | undefined>();
+  const [showForm, setShowForm] = usePersistedState('fleetgest_open_pneu_form', false);
+  const [editPneuId, setEditPneuId] = usePersistedState('fleetgest_editing_pneu_id', '');
+  const editPneu = useMemo(() => pneus.find(p => p.id === editPneuId), [pneus, editPneuId]);
   const [search, setSearch] = usePersistedState('fleetgest_filter_pneus_search', '');
   const [seuil, setSeuil] = usePersistedState<SeuilAlertePneu>('fleetgest_filter_pneus_seuil', SEUIL_DEFAUT);
   const [periodFrom, setPeriodFrom] = usePersistedState('fleetgest_filter_pneus_from', '');
@@ -155,7 +156,7 @@ export default function Pneumatique() {
       setPneus([...pneus, { ...data, id: 'pn' + Date.now() }]);
     }
     setShowForm(false);
-    setEditPneu(undefined);
+    setEditPneuId('');
   };
 
   return (
@@ -166,7 +167,7 @@ export default function Pneumatique() {
           <p className="mt-1 text-sm text-slate-500">Suivi de l'usure, des coûts et des remplacements de pneus</p>
         </div>
         <div className="flex gap-2">
-          <button onClick={() => { setEditPneu(undefined); setShowForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"><Plus className="h-4 w-4" /> Ajouter</button>
+          <button onClick={() => { setEditPneuId(''); setShowForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"><Plus className="h-4 w-4" /> Ajouter</button>
           <label className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white p-2 text-slate-600 hover:bg-slate-50 cursor-pointer" title="Importer"><Upload className="h-4 w-4" /><input type="file" accept=".csv,.xls,.xlsx" className="hidden" onChange={() => {}} /></label>
           <button onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"><Printer className="h-4 w-4" /> Imprimer</button>
         </div>
@@ -336,7 +337,7 @@ export default function Pneumatique() {
                   const usureCritique = (p.usure_mm || 99) <= seuil.usureMinimale_mm;
                   const kmCritique = kmParcourus >= seuil.kmMaxParJeu;
                   return (
-                    <tr key={p.id} onClick={() => { setEditPneu(p); setShowForm(true); }} className="cursor-pointer hover:bg-slate-50">
+                    <tr key={p.id} onClick={() => { setEditPneuId(p.id); setShowForm(true); }} className="cursor-pointer hover:bg-slate-50">
                       <td className="px-3 py-2 font-semibold text-emerald-600">{v?.numero_immatriculation || '—'}</td>
                       <td className="px-3 py-2 text-xs">{POSITION_LABEL[p.position] || p.position}</td>
                       <td className="px-3 py-2"><span className="font-medium">{p.marque}</span> <span className="text-slate-500">{p.modele}</span></td>
@@ -351,7 +352,7 @@ export default function Pneumatique() {
                       <td className="px-3 py-2"><span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium ${ETAT_COLORS[p.etat]}`}>{p.etat}</span></td>
                       <td className="px-3 py-2 print:hidden">
                         <div className="flex gap-1" onClick={e => e.stopPropagation()}>
-                          <button onClick={() => { setEditPneu(p); setShowForm(true); }} className="p-1 text-slate-400 hover:text-blue-600" title="Ouvrir la fiche"><Pencil className="h-3.5 w-3.5" /></button>
+                          <button onClick={() => { setEditPneuId(p.id); setShowForm(true); }} className="p-1 text-slate-400 hover:text-blue-600" title="Ouvrir la fiche"><Pencil className="h-3.5 w-3.5" /></button>
                           <button onClick={() => handleDelete(p.id)} className="p-1 text-slate-400 hover:text-red-600" title="Supprimer"><Trash2 className="h-3.5 w-3.5" /></button>
                         </div>
                       </td>
@@ -363,7 +364,7 @@ export default function Pneumatique() {
         </div>
       </div>
 
-      {showForm && <PneuFormModal pneu={editPneu} vehicles={vehicles} latestKmByVehicle={latestKmByVehicle} onSave={handleSave} onClose={() => { setShowForm(false); setEditPneu(undefined); }} />}
+      {showForm && <PneuFormModal pneu={editPneu} vehicles={vehicles} latestKmByVehicle={latestKmByVehicle} onSave={handleSave} onClose={() => { setShowForm(false); setEditPneuId(''); }} />}
     </div>
   );
 }
@@ -386,7 +387,7 @@ interface PneuFormProps {
 }
 
 function PneuFormModal({ pneu, vehicles, latestKmByVehicle, onSave, onClose }: PneuFormProps) {
-  const [f, setF] = useState({
+  const [f, setF, clearDraft] = usePersistedState(`fleetgest_draft_pneu_${pneu?.id ?? 'new'}`, {
     vehicleId: pneu?.vehicleId || vehicles[0]?.id || '',
     position: (pneu?.position || 'AVG') as PneumatiqueRecord['position'],
     marque: pneu?.marque || PNEU_MARQUES[0],
@@ -403,6 +404,7 @@ function PneuFormModal({ pneu, vehicles, latestKmByVehicle, onSave, onClose }: P
     observations: pneu?.observations || '',
   });
   const up = (k: string, v: string | number) => setF(p => ({ ...p, [k]: v }));
+  const handleCancel = () => { clearDraft(); onClose(); };
 
   // "Km actuel" se remplit automatiquement avec le dernier kilométrage connu du véhicule
   // sélectionné (toutes saisies confondues : fiche véhicule, entretiens, dépenses) — que ce
@@ -417,9 +419,9 @@ function PneuFormModal({ pneu, vehicles, latestKmByVehicle, onSave, onClose }: P
       <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl">
         <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-6 py-4">
           <h3 className="text-lg font-bold">{pneu ? 'Modifier pneu' : 'Ajouter un pneu'}</h3>
-          <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-slate-700"><X className="h-5 w-5" /></button>
+          <button onClick={handleCancel} className="p-1.5 text-slate-400 hover:text-slate-700"><X className="h-5 w-5" /></button>
         </div>
-        <form onSubmit={e => { e.preventDefault(); onSave(f, pneu?.id); }} className="grid grid-cols-2 gap-4 p-6">
+        <form onSubmit={e => { e.preventDefault(); clearDraft(); onSave(f, pneu?.id); }} className="grid grid-cols-2 gap-4 p-6">
           <label className="block text-xs font-medium text-slate-600">Véhicule
             <select value={f.vehicleId} onChange={e => handleVehicleChange(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
               {vehicles.map(v => <option key={v.id} value={v.id}>{v.numero_immatriculation}</option>)}

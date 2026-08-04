@@ -26,8 +26,9 @@ export default function Immobilisations() {
   // Source unique de vérité : le store central (plus de localStorage local à
   // ce composant), pour que Véhicules et Tableau de bord soient toujours à jour.
   const { vehicles, immobilisations: records, addImmobilisation, updateImmobilisation, deleteImmobilisation } = useVehicles();
-  const [showForm, setShowForm] = useState(false);
-  const [editRecord, setEditRecord] = useState<ImmobilisationRecord | undefined>();
+  const [showForm, setShowForm] = usePersistedState('fleetgest_open_immob_form', false);
+  const [editRecordId, setEditRecordId] = usePersistedState('fleetgest_editing_immob_id', '');
+  const editRecord = useMemo(() => records.find(r => r.id === editRecordId), [records, editRecordId]);
   const [search, setSearch] = usePersistedState('fleetgest_filter_immob_search', '');
   const [periodFrom, setPeriodFrom] = usePersistedState('fleetgest_filter_immob_from', '');
   const [periodTo, setPeriodTo] = usePersistedState('fleetgest_filter_immob_to', '');
@@ -59,7 +60,7 @@ export default function Immobilisations() {
   const handleSave = (data: Omit<ImmobilisationRecord, 'id'>, id?: string) => {
     if (id) updateImmobilisation(id, data);
     else addImmobilisation({ ...data, id: 'imm' + Date.now() });
-    setShowForm(false); setEditRecord(undefined);
+    setShowForm(false); setEditRecordId('');
     // Le véhicule concerné passe automatiquement en "En maintenance" si le
     // dossier n'est pas "Terminé", ou repasse "Actif" s'il n'a plus aucun
     // dossier actif — cf. menu Véhicules et Tableau de bord (mise à jour
@@ -76,7 +77,7 @@ export default function Immobilisations() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-xl bg-white p-6 shadow-sm print:hidden">
         <div><h2 className="text-2xl font-bold text-slate-900">Suivi des Immobilisations</h2><p className="mt-1 text-sm text-slate-500">Suivi des véhicules en garage : durée, travaux, coûts</p></div>
         <div className="flex gap-2">
-          <button onClick={() => { setEditRecord(undefined); setShowForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"><Plus className="h-4 w-4" /> Nouvelle entrée</button>
+          <button onClick={() => { setEditRecordId(''); setShowForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"><Plus className="h-4 w-4" /> Nouvelle entrée</button>
           <label className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white p-2 text-slate-600 hover:bg-slate-50 cursor-pointer" title="Importer"><Upload className="h-4 w-4" /><input type="file" accept=".csv,.xls,.xlsx" className="hidden" onChange={() => {}} /></label>
           <button onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"><Printer className="h-4 w-4" /> Imprimer</button>
         </div>
@@ -133,7 +134,7 @@ export default function Immobilisations() {
                       <td className="px-3 py-2"><span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium ${STATUT_COLORS[r.statut]}`}>{r.statut}</span></td>
                       <td className="px-3 py-2 print:hidden">
                         <div className="flex gap-1">
-                          <button onClick={() => { setEditRecord(r); setShowForm(true); }} className="p-1 text-slate-400 hover:text-blue-600"><Pencil className="h-3.5 w-3.5" /></button>
+                          <button onClick={() => { setEditRecordId(r.id); setShowForm(true); }} className="p-1 text-slate-400 hover:text-blue-600"><Pencil className="h-3.5 w-3.5" /></button>
                           <button onClick={() => handleDelete(r.id)} className="p-1 text-slate-400 hover:text-red-600"><Trash2 className="h-3.5 w-3.5" /></button>
                         </div>
                       </td>
@@ -145,13 +146,13 @@ export default function Immobilisations() {
         </div>
       </div>
 
-      {showForm && <ImmobilisationFormModal record={editRecord} vehicles={vehicles} onSave={handleSave} onClose={() => { setShowForm(false); setEditRecord(undefined); }} />}
+      {showForm && <ImmobilisationFormModal record={editRecord} vehicles={vehicles} onSave={handleSave} onClose={() => { setShowForm(false); setEditRecordId(''); }} />}
     </div>
   );
 }
 
 function ImmobilisationFormModal({ record, vehicles, onSave, onClose }: { record?: ImmobilisationRecord; vehicles: { id: string; numero_immatriculation: string }[]; onSave: (data: Omit<ImmobilisationRecord, 'id'>, id?: string) => void; onClose: () => void }) {
-  const [f, setF] = useState({
+  const [f, setF, clearDraft] = usePersistedState(`fleetgest_draft_immob_${record?.id ?? 'new'}`, {
     vehicleId: record?.vehicleId || vehicles[0]?.id || '', garage: record?.garage || '', date_entree: record?.date_entree || new Date().toISOString().slice(0, 10),
     date_sortie_prevue: record?.date_sortie_prevue || '', date_sortie_reelle: record?.date_sortie_reelle || '', travaux: record?.travaux || '',
     statut: (record?.statut || 'En cours') as ImmobilisationRecord['statut'], cout_estime: record?.cout_estime || 0, cout_final: record?.cout_final || 0, observations: record?.observations || '',
@@ -162,13 +163,16 @@ function ImmobilisationFormModal({ record, vehicles, onSave, onClose }: { record
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!f.observations.trim()) { setObsError(true); return; }
+    clearDraft();
     onSave(f, record?.id);
   };
+
+  const handleCancel = () => { clearDraft(); onClose(); };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl">
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-6 py-4"><h3 className="text-lg font-bold">{record ? 'Modifier' : 'Nouvelle immobilisation'}</h3><button onClick={onClose} className="p-1.5 text-slate-400 hover:text-slate-700"><X className="h-5 w-5" /></button></div>
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-6 py-4"><h3 className="text-lg font-bold">{record ? 'Modifier' : 'Nouvelle immobilisation'}</h3><button onClick={handleCancel} className="p-1.5 text-slate-400 hover:text-slate-700"><X className="h-5 w-5" /></button></div>
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 p-6">
           <label className="block text-xs font-medium text-slate-600">Véhicule<select value={f.vehicleId} onChange={e => up('vehicleId', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">{vehicles.map(v => <option key={v.id} value={v.id}>{v.numero_immatriculation}</option>)}</select></label>
           <label className="block text-xs font-medium text-slate-600">Garage<input value={f.garage} onChange={e => up('garage', e.target.value)} placeholder="Nom du garage…" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
@@ -192,7 +196,7 @@ function ImmobilisationFormModal({ record, vehicles, onSave, onClose }: { record
             {obsError && <span className="mt-1 block text-[11px] font-normal text-red-600">Ce champ est obligatoire.</span>}
           </label>
           <div className="col-span-2 flex justify-end gap-3 border-t pt-4">
-            <button type="button" onClick={onClose} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
+            <button type="button" onClick={handleCancel} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
             <button type="submit" className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700">{record ? 'Mettre à jour' : 'Enregistrer'}</button>
           </div>
         </form>

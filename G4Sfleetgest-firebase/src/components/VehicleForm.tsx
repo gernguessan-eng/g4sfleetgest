@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { usePersistedState } from '../hooks/usePersistedState';
 import { useVehicles } from '../store/VehicleStore';
 import type { Vehicle } from '../types';
 import { X } from 'lucide-react';
@@ -67,7 +68,12 @@ const emptyVehicle: Omit<Vehicle, 'id'> = {
 
 export default function VehicleForm({ vehicle, onSave, onClose }: VehicleFormProps) {
   const { addVehicle, updateVehicle } = useVehicles();
-  const [formData, setFormData] = useState<Omit<Vehicle, 'id'>>(vehicle ? { ...vehicle } : { ...emptyVehicle });
+  // Le brouillon est mémorisé (localStorage) tant que le formulaire n'a pas été validé,
+  // pour ne rien perdre si on change de menu puis qu'on revient sans avoir enregistré.
+  const [formData, setFormData, clearFormDraft] = usePersistedState<Omit<Vehicle, 'id'>>(
+    `fleetgest_draft_vehicle_${vehicle?.id ?? 'new'}`,
+    vehicle ? { ...vehicle } : { ...emptyVehicle }
+  );
   const [activeTab, setActiveTab] = useState<'carte' | 'technique' | 'gestion'>('carte');
 
   useEffect(() => {
@@ -83,7 +89,13 @@ export default function VehicleForm({ vehicle, onSave, onClose }: VehicleFormPro
       const id = 'v' + Date.now();
       addVehicle({ ...formData, id });
     }
+    clearFormDraft();
     onSave();
+  };
+
+  const handleCancel = () => {
+    clearFormDraft();
+    onClose();
   };
 
   const handleChange = (field: string, value: string | number) => {
@@ -169,7 +181,7 @@ export default function VehicleForm({ vehicle, onSave, onClose }: VehicleFormPro
           <h3 className="text-lg font-bold text-slate-900">
             {vehicle ? 'Modifier le véhicule' : 'Ajouter un véhicule'}
           </h3>
-          <button onClick={onClose} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
+          <button onClick={handleCancel} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -314,7 +326,7 @@ export default function VehicleForm({ vehicle, onSave, onClose }: VehicleFormPro
           <div className="mt-6 flex justify-end gap-3 border-t border-slate-200 pt-4">
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleCancel}
               className="rounded-lg border border-slate-300 px-5 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
             >
               Annuler

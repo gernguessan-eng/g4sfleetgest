@@ -20,9 +20,10 @@ export default function VehicleList() {
   const { vehicles, expenseRecords, maintenanceRecords, deleteVehicle, deleteMultipleVehicles } = useVehicles();
   const [search, setSearch]           = usePersistedState('fleetgest_filter_vehicles_search', '');
   const [filterStatus, setFilterStatus] = usePersistedState('fleetgest_filter_vehicles_status', '');
-  const [showForm, setShowForm]       = useState(false);
-  const [editVehicle, setEditVehicle] = useState<Vehicle | undefined>();
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  const [showForm, setShowForm]       = usePersistedState('fleetgest_open_vehicle_form', false);
+  const [editVehicleId, setEditVehicleId] = usePersistedState('fleetgest_editing_vehicle_id', '');
+  const editVehicle = useMemo(() => vehicles.find(v => v.id === editVehicleId), [vehicles, editVehicleId]);
+  const [expandedIds, setExpandedIds] = usePersistedState<string[]>('fleetgest_expanded_vehicles', []);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [printOnlyId, setPrintOnlyId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -32,11 +33,7 @@ export default function VehicleList() {
   // 1. on déplie la ligne et on isole l'impression à ce véhicule
   // 2. on déclenche window.print() une fois le DOM mis à jour
   const handlePrintVehicle = (id: string) => {
-    setExpandedIds((prev) => {
-      const next = new Set(prev);
-      next.add(id);
-      return next;
-    });
+    setExpandedIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
     setPrintOnlyId(id);
     setTimeout(() => {
       window.print();
@@ -74,16 +71,11 @@ export default function VehicleList() {
   }, [mergedRecords]);
 
   const toggleExpand = (id: string) => {
-    setExpandedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
+    setExpandedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   };
 
-  const expandAll = () => setExpandedIds(new Set(paginated.map((v) => v.id)));
-  const collapseAll = () => setExpandedIds(new Set());
+  const expandAll = () => setExpandedIds(paginated.map((v) => v.id));
+  const collapseAll = () => setExpandedIds([]);
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
@@ -108,12 +100,12 @@ export default function VehicleList() {
     if (confirm(`Supprimer ${ids.length} véhicule(s) sélectionné(s) ? Cette action est irréversible.`)) {
       deleteMultipleVehicles(ids);
       setSelectedIds(new Set());
-      setExpandedIds(new Set());
+      setExpandedIds([]);
     }
   };
 
-  const handleEdit = (v: Vehicle) => { setEditVehicle(v); setShowForm(true); };
-  const handleAdd  = () => { setEditVehicle(undefined); setShowForm(true); };
+  const handleEdit = (v: Vehicle) => { setEditVehicleId(v.id); setShowForm(true); };
+  const handleAdd  = () => { setEditVehicleId(''); setShowForm(true); };
 
   const statusOptions = [
     { value: '', label: 'Tous' },
@@ -232,7 +224,7 @@ export default function VehicleList() {
             Aucun véhicule trouvé
           </div>
         ) : paginated.map((v) => {
-          const isExpanded = expandedIds.has(v.id);
+          const isExpanded = expandedIds.includes(v.id);
           const isSelected = selectedIds.has(v.id);
           const maintenanceForecast = getVehicleMaintenanceForecast(v, mergedRecords);
           const nextMaintenanceDateLabel = maintenanceForecast.estimatedNextDate
@@ -374,8 +366,8 @@ export default function VehicleList() {
       {showForm && (
         <VehicleForm
           vehicle={editVehicle}
-          onSave={() => { setShowForm(false); setEditVehicle(undefined); setCurrentPage(1); }}
-          onClose={() => { setShowForm(false); setEditVehicle(undefined); }}
+          onSave={() => { setShowForm(false); setEditVehicleId(''); setCurrentPage(1); }}
+          onClose={() => { setShowForm(false); setEditVehicleId(''); }}
         />
       )}
     </div>

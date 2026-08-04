@@ -64,14 +64,23 @@ export type MaintenanceType = 'Préventive' | 'Curative' | 'Accidentelle' | 'Aut
 
 export const MAINTENANCE_TYPES: MaintenanceType[] = ['Préventive', 'Curative', 'Accidentelle', 'Autre'];
 
+export type MaintenanceStatut = 'En cours' | 'Terminé';
+
+export const MAINTENANCE_STATUTS: MaintenanceStatut[] = ['En cours', 'Terminé'];
+
 export interface MaintenanceRecord {
   id: string;
   vehicleId: string;
+  /** Date d'entrée en atelier (début de l'intervention). */
   date: string;
   type: MaintenanceType;
   description: string;
   cout: number;
   kilometrage: number;
+  /** Absent = "Terminé" par défaut, pour la rétrocompatibilité des interventions déjà enregistrées. */
+  statut?: MaintenanceStatut;
+  date_sortie_prevue?: string;
+  date_sortie_reelle?: string;
 }
 
 export type ExpenseCategory =

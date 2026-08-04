@@ -41,8 +41,9 @@ const emptyDriver: Omit<Driver, 'id'> = { nom: '', prenom: '', telephone: '', em
 function DriverFormModal({ driver, vehicles, onSave, onClose }: {
   driver?: Driver; vehicles: { id: string; label: string }[]; onSave: (data: Omit<Driver, 'id'>) => void; onClose: () => void;
 }) {
-  const [f, setF] = useState<Omit<Driver, 'id'>>(driver ? { ...driver } : { ...emptyDriver });
+  const [f, setF, clearDraft] = usePersistedState<Omit<Driver, 'id'>>(`fleetgest_draft_driver_${driver?.id ?? 'new'}`, driver ? { ...driver } : { ...emptyDriver });
   const up = (k: string, v: string) => setF(p => ({ ...p, [k]: v }));
+  const handleCancel = () => { clearDraft(); onClose(); };
   const inp = (label: string, key: string, type = 'text', placeholder?: string) => (
     <label className="block text-xs font-medium text-slate-600">{label}
       <input
@@ -59,9 +60,9 @@ function DriverFormModal({ driver, vehicles, onSave, onClose }: {
       <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl">
         <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-6 py-4">
           <h3 className="text-lg font-bold text-slate-900">{driver ? 'Modifier le chauffeur' : 'Ajouter un chauffeur'}</h3>
-          <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-slate-700"><X className="h-5 w-5" /></button>
+          <button onClick={handleCancel} className="p-1.5 text-slate-400 hover:text-slate-700"><X className="h-5 w-5" /></button>
         </div>
-        <form onSubmit={e => { e.preventDefault(); onSave(f); }} className="grid grid-cols-2 gap-4 p-6">
+        <form onSubmit={e => { e.preventDefault(); clearDraft(); onSave(f); }} className="grid grid-cols-2 gap-4 p-6">
           {inp('Nom', 'nom')}{inp('Prénom', 'prenom')}{inp('Téléphone', 'telephone', 'tel')}{inp('Email', 'email', 'email')}
           {inp('N° Permis', 'numero_permis')}
           <label className="block text-xs font-medium text-slate-600">Catégorie permis
@@ -88,7 +89,7 @@ function DriverFormModal({ driver, vehicles, onSave, onClose }: {
           </label>
           <div className="col-span-2">{inp('Notes', 'notes', 'text', 'Ajouter une remarque sur le chauffeur, ses disponibilités ou contraintes...')}</div>
           <div className="col-span-2 flex justify-end gap-3 border-t pt-4">
-            <button type="button" onClick={onClose} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
+            <button type="button" onClick={handleCancel} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
             <button type="submit" className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700">{driver ? 'Mettre à jour' : 'Enregistrer'}</button>
           </div>
         </form>
@@ -105,7 +106,7 @@ const emptyMission: Omit<Mission, 'id'> = { driverId: '', vehicleId: '', titre: 
 function MissionFormModal({ mission, drivers, vehicles, existingMissions, onSave, onClose }: {
   mission?: Mission; drivers: Driver[]; vehicles: { id: string; label: string }[]; existingMissions: Mission[]; onSave: (data: Omit<Mission, 'id'>) => void; onClose: () => void;
 }) {
-  const [f, setF] = useState<Omit<Mission, 'id'>>(mission ? { ...mission } : { ...emptyMission });
+  const [f, setF, clearDraft] = usePersistedState<Omit<Mission, 'id'>>(`fleetgest_draft_mission_${mission?.id ?? 'new'}`, mission ? { ...mission } : { ...emptyMission });
   const [error, setError] = useState('');
   const up = (k: string, v: string | number) => { setF(p => ({ ...p, [k]: v })); setError(''); };
   const inp = (label: string, key: string, type = 'text', placeholder?: string) => (
@@ -146,15 +147,18 @@ function MissionFormModal({ mission, drivers, vehicles, existingMissions, onSave
     e.preventDefault();
     const overlap = checkOverlap();
     if (overlap) { setError(overlap); return; }
+    clearDraft();
     onSave(f);
   };
+
+  const handleCancel = () => { clearDraft(); onClose(); };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl">
         <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-6 py-4">
           <h3 className="text-lg font-bold text-slate-900">{mission ? 'Modifier la mission' : 'Nouvelle mission'}</h3>
-          <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-slate-700"><X className="h-5 w-5" /></button>
+          <button onClick={handleCancel} className="p-1.5 text-slate-400 hover:text-slate-700"><X className="h-5 w-5" /></button>
         </div>
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 p-6">
           {error && <div className="col-span-2 rounded-lg bg-red-50 border border-red-200 p-3 text-xs text-red-700"><AlertTriangle className="inline h-4 w-4 mr-1" />{error}</div>}
@@ -188,7 +192,7 @@ function MissionFormModal({ mission, drivers, vehicles, existingMissions, onSave
           </label>
           <div className="col-span-2">{inp('Observations', 'observations', 'text', 'Ajouter des consignes, contraintes ou remarques sur la mission...')}</div>
           <div className="col-span-2 flex justify-end gap-3 border-t pt-4">
-            <button type="button" onClick={onClose} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
+            <button type="button" onClick={handleCancel} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
             <button type="submit" className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700">{mission ? 'Mettre à jour' : 'Créer la mission'}</button>
           </div>
         </form>
@@ -205,7 +209,7 @@ const emptyEvent: Omit<PlanningEvent, 'id'> = { driverId: '', vehicleId: '', tit
 function PlanningFormModal({ event, drivers, vehicles, existingPlanning, onSave, onClose }: {
   event?: PlanningEvent; drivers: Driver[]; vehicles: { id: string; label: string }[]; existingPlanning: PlanningEvent[]; onSave: (data: Omit<PlanningEvent, 'id'>) => void; onClose: () => void;
 }) {
-  const [f, setF] = useState<Omit<PlanningEvent, 'id'>>(event ? { ...event } : { ...emptyEvent });
+  const [f, setF, clearDraft] = usePersistedState<Omit<PlanningEvent, 'id'>>(`fleetgest_draft_event_${event?.id ?? 'new'}`, event ? { ...event } : { ...emptyEvent });
   const [error, setError] = useState('');
   const up = (k: string, v: string) => { setF(p => ({ ...p, [k]: v })); setError(''); };
 
@@ -233,15 +237,18 @@ function PlanningFormModal({ event, drivers, vehicles, existingPlanning, onSave,
     e.preventDefault();
     const overlap = checkOverlap();
     if (overlap) { setError(overlap); return; }
+    clearDraft();
     onSave(f);
   };
+
+  const handleCancel = () => { clearDraft(); onClose(); };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl">
         <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-6 py-4">
           <h3 className="text-lg font-bold text-slate-900">{event ? 'Modifier' : 'Nouvel événement'}</h3>
-          <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-slate-700"><X className="h-5 w-5" /></button>
+          <button onClick={handleCancel} className="p-1.5 text-slate-400 hover:text-slate-700"><X className="h-5 w-5" /></button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-3 p-6">
           {error && <div className="rounded-lg bg-red-50 border border-red-200 p-3 text-xs text-red-700"><AlertTriangle className="inline h-4 w-4 mr-1" />{error}</div>}
@@ -280,7 +287,7 @@ function PlanningFormModal({ event, drivers, vehicles, existingPlanning, onSave,
           </div>
           <label className="block text-xs font-medium text-slate-600">Notes <input value={f.notes} onChange={e => up('notes', e.target.value)} placeholder="Ajouter un commentaire ou une précision sur la planification..." className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" /></label>
           <div className="flex justify-end gap-3 border-t pt-4">
-            <button type="button" onClick={onClose} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
+            <button type="button" onClick={handleCancel} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
             <button type="submit" className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700">{event ? 'Mettre à jour' : 'Créer'}</button>
           </div>
         </form>
@@ -298,14 +305,17 @@ export default function DriverManagement() {
   const [tab, setTab] = usePersistedState<'chauffeurs' | 'missions' | 'planning'>('fleetgest_filter_drivers_tab', 'chauffeurs');
   const [search, setSearch] = usePersistedState('fleetgest_filter_drivers_search', '');
 
-  // Modals
-  const [showDriverForm, setShowDriverForm] = useState(false);
-  const [editDriver, setEditDriver] = useState<Driver | undefined>();
-  const [showMissionForm, setShowMissionForm] = useState(false);
+  // Modals — état persisté pour ne pas perdre une saisie en cours si on change de menu.
+  const [showDriverForm, setShowDriverForm] = usePersistedState('fleetgest_open_driver_form', false);
+  const [editDriverId, setEditDriverId] = usePersistedState('fleetgest_editing_driver_id', '');
+  const editDriver = useMemo(() => drivers.find(d => d.id === editDriverId), [drivers, editDriverId]);
+  const [showMissionForm, setShowMissionForm] = usePersistedState('fleetgest_open_mission_form', false);
   const [missionSortDir, setMissionSortDir] = useState<SortDirection>('desc');
-  const [editMission, setEditMission] = useState<Mission | undefined>();
-  const [showPlanningForm, setShowPlanningForm] = useState(false);
-  const [editEvent, setEditEvent] = useState<PlanningEvent | undefined>();
+  const [editMissionId, setEditMissionId] = usePersistedState('fleetgest_editing_mission_id', '');
+  const editMission = useMemo(() => missions.find(m => m.id === editMissionId), [missions, editMissionId]);
+  const [showPlanningForm, setShowPlanningForm] = usePersistedState('fleetgest_open_planning_form', false);
+  const [editEventId, setEditEventId] = usePersistedState('fleetgest_editing_event_id', '');
+  const editEvent = useMemo(() => planning.find(e => e.id === editEventId), [planning, editEventId]);
 
   const vehicleOptions = useMemo(() => vehicles.map(v => ({ id: v.id, label: `${v.numero_immatriculation} — ${v.marque} ${v.type_commercial}` })), [vehicles]);
   const driverById = useMemo(() => new Map(drivers.map(d => [d.id, d])), [drivers]);
@@ -395,7 +405,7 @@ export default function DriverManagement() {
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher un chauffeur…" className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
             </div>
-            <button onClick={() => { setEditDriver(undefined); setShowDriverForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"><Plus className="h-4 w-4" /> Ajouter</button>
+            <button onClick={() => { setEditDriverId(''); setShowDriverForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"><Plus className="h-4 w-4" /> Ajouter</button>
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -415,7 +425,7 @@ export default function DriverManagement() {
                       </div>
                     </div>
                     <div className="flex gap-1 print:hidden">
-                      <button onClick={() => { setEditDriver(d); setShowDriverForm(true); }} className="p-1 text-slate-400 hover:text-blue-600"><Pencil className="h-3.5 w-3.5" /></button>
+                      <button onClick={() => { setEditDriverId(d.id); setShowDriverForm(true); }} className="p-1 text-slate-400 hover:text-blue-600"><Pencil className="h-3.5 w-3.5" /></button>
                       <button onClick={() => deleteDriver(d.id)} className="p-1 text-slate-400 hover:text-red-600"><Trash2 className="h-3.5 w-3.5" /></button>
                     </div>
                   </div>
@@ -436,11 +446,11 @@ export default function DriverManagement() {
             <DriverFormModal
               driver={editDriver}
               vehicles={vehicleOptions}
-              onClose={() => { setShowDriverForm(false); setEditDriver(undefined); }}
+              onClose={() => { setShowDriverForm(false); setEditDriverId(''); }}
               onSave={data => {
                 if (editDriver) updateDriver(editDriver.id, data);
                 else addDriver({ ...data, id: 'dr' + Date.now() });
-                setShowDriverForm(false); setEditDriver(undefined);
+                setShowDriverForm(false); setEditDriverId('');
               }}
             />
           )}
@@ -451,7 +461,7 @@ export default function DriverManagement() {
       {tab === 'missions' && (
         <div className="space-y-4">
           <div className="flex justify-end print:hidden">
-            <button onClick={() => { setEditMission(undefined); setShowMissionForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"><Plus className="h-4 w-4" /> Nouvelle mission</button>
+            <button onClick={() => { setEditMissionId(''); setShowMissionForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"><Plus className="h-4 w-4" /> Nouvelle mission</button>
           </div>
           <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
             <div className="overflow-x-auto">
@@ -483,7 +493,7 @@ export default function DriverManagement() {
                         <td className="px-4 py-3"><span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${STATUT_MISSION_COLORS[m.statut]}`}>{m.statut}</span></td>
                         <td className="px-4 py-3 print:hidden">
                           <div className="flex gap-1">
-                            <button onClick={() => { setEditMission(m); setShowMissionForm(true); }} className="p-1 text-slate-400 hover:text-blue-600"><Pencil className="h-3.5 w-3.5" /></button>
+                            <button onClick={() => { setEditMissionId(m.id); setShowMissionForm(true); }} className="p-1 text-slate-400 hover:text-blue-600"><Pencil className="h-3.5 w-3.5" /></button>
                             <button onClick={() => {
                               if (confirm('Supprimer cette mission ? L\'événement de planification associé sera également supprimé.')) {
                                 deleteMission(m.id);
@@ -506,7 +516,7 @@ export default function DriverManagement() {
               drivers={drivers}
               vehicles={vehicleOptions}
               existingMissions={missions}
-              onClose={() => { setShowMissionForm(false); setEditMission(undefined); }}
+              onClose={() => { setShowMissionForm(false); setEditMissionId(''); }}
               onSave={data => {
                 if (editMission) {
                   updateMission(editMission.id, data);
@@ -516,7 +526,7 @@ export default function DriverManagement() {
                   addMission(newMission);
                 }
                 setShowMissionForm(false);
-                setEditMission(undefined);
+                setEditMissionId('');
                 setTab('planning');
               }}
             />
@@ -528,7 +538,7 @@ export default function DriverManagement() {
       {tab === 'planning' && (
         <div className="space-y-4">
           <div className="flex justify-end print:hidden">
-            <button onClick={() => { setEditEvent(undefined); setShowPlanningForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"><Plus className="h-4 w-4" /> Nouvelle planification</button>
+            <button onClick={() => { setEditEventId(''); setShowPlanningForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"><Plus className="h-4 w-4" /> Nouvelle planification</button>
           </div>
 
           {/* Calendar Grid — 4 weeks */}
@@ -553,7 +563,7 @@ export default function DriverManagement() {
                         return (
                           <button
                             key={ev.id}
-                            onClick={() => { setEditEvent(ev); setShowPlanningForm(true); }}
+                            onClick={() => { setEditEventId(ev.id); setShowPlanningForm(true); }}
                             className="w-full truncate rounded px-1 py-0.5 text-left text-[10px] font-medium text-white"
                             style={{ backgroundColor: ev.couleur || '#10b981' }}
                             title={`${ev.titre} — ${dr ? dr.prenom + ' ' + dr.nom : ''}`}
@@ -586,7 +596,7 @@ export default function DriverManagement() {
                     </div>
                     <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-medium text-slate-600">{ev.type}</span>
                     <div className="flex gap-1 print:hidden">
-                      <button onClick={() => { setEditEvent(ev); setShowPlanningForm(true); }} className="p-1 text-slate-400 hover:text-blue-600"><Pencil className="h-3.5 w-3.5" /></button>
+                      <button onClick={() => { setEditEventId(ev.id); setShowPlanningForm(true); }} className="p-1 text-slate-400 hover:text-blue-600"><Pencil className="h-3.5 w-3.5" /></button>
                       <button onClick={() => deletePlanningEvent(ev.id)} className="p-1 text-slate-400 hover:text-red-600"><Trash2 className="h-3.5 w-3.5" /></button>
                     </div>
                   </div>
@@ -601,7 +611,7 @@ export default function DriverManagement() {
               drivers={drivers}
               vehicles={vehicleOptions}
               existingPlanning={planning}
-              onClose={() => { setShowPlanningForm(false); setEditEvent(undefined); }}
+              onClose={() => { setShowPlanningForm(false); setEditEventId(''); }}
               onSave={(data) => {
                 const eventId = editEvent?.id || 'pl' + Date.now();
                 if (editEvent) updatePlanningEvent(eventId, data);
@@ -633,7 +643,7 @@ export default function DriverManagement() {
                   setTab('missions');
                 }
                 setShowPlanningForm(false);
-                setEditEvent(undefined);
+                setEditEventId('');
               }}
             />
           )}

@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import {
   LayoutDashboard, Car, BarChart3, Receipt,
   GripVertical, MapPin, Fuel, Users, Eye, EyeOff, PackageX,
-  AlertTriangle, Wrench, ParkingCircle, BookUser, Package,
+  AlertTriangle, Wrench, ParkingCircle, BookUser, Package, Hammer,
 } from 'lucide-react';
 
 export type NavItemDef = {
@@ -15,6 +15,7 @@ export type NavItemDef = {
 const defaultNavItems: NavItemDef[] = [
   { path: '/',               label: 'Tableau de bord',           icon: LayoutDashboard },
   { path: '/vehicules',      label: 'Véhicules',                 icon: Car },
+  { path: '/maintenance',    label: 'Maintenance',               icon: Hammer },
   { path: '/chauffeurs',     label: 'Gestion des chauffeurs',    icon: Users },
   { path: '/depenses',       label: 'Dépenses',                  icon: Receipt },
   { path: '/carburant',      label: 'Gestion des carburants',    icon: Fuel },

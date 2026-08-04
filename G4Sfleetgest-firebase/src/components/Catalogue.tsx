@@ -53,11 +53,12 @@ const VariationIcon = ({ icon }: { icon: 'up' | 'down' | 'flat' | 'new' }) => {
 
 export default function Catalogue() {
   const [pieces, setPieces] = useState<CataloguePiece[]>(load);
-  const [showForm, setShowForm] = useState(false);
-  const [editPiece, setEditPiece] = useState<CataloguePiece | undefined>();
-  const [prefillNom, setPrefillNom] = useState('');
+  const [showForm, setShowForm] = usePersistedState('fleetgest_open_price_form', false);
+  const [editPieceId, setEditPieceId] = usePersistedState('fleetgest_editing_piece_id', '');
+  const editPiece = useMemo(() => pieces.find(p => p.id === editPieceId), [pieces, editPieceId]);
+  const [prefillNom, setPrefillNom] = usePersistedState('fleetgest_draft_price_prefill_nom', '');
   const [search, setSearch] = usePersistedState('fleetgest_filter_catalogue_search', '');
-  const [fichePieceId, setFichePieceId] = useState<string | null>(null);
+  const [fichePieceId, setFichePieceId] = usePersistedState<string | null>('fleetgest_open_fiche_piece_id', null);
   const [selectedChartPieceId, setSelectedChartPieceId] = useState<string>('');
 
   const save = (next: CataloguePiece[]) => { setPieces(next); localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); };
@@ -128,12 +129,12 @@ export default function Catalogue() {
       };
       save([...pieces, newPiece]);
     }
-    setShowForm(false); setEditPiece(undefined); setPrefillNom('');
+    setShowForm(false); setEditPieceId(''); setPrefillNom('');
   };
 
   const handleEditInfo = (data: { nom_piece: string; reference: string; observations: string }, id: string) => {
     save(pieces.map(p => p.id === id ? { ...p, nom_piece: data.nom_piece.trim() || p.nom_piece, reference: data.reference, observations: data.observations } : p));
-    setEditPiece(undefined); setShowForm(false);
+    setEditPieceId(''); setShowForm(false);
   };
 
   const handleDelete = (id: string) => { if (confirm('Supprimer cette pièce et tout son historique de prix ?')) save(pieces.filter(p => p.id !== id)); };
@@ -154,7 +155,7 @@ export default function Catalogue() {
           <p className="mt-1 text-sm text-slate-500">Suivi des prix d'achat et de leur fluctuation dans le temps</p>
         </div>
         <div className="flex gap-2">
-          <button onClick={() => { setEditPiece(undefined); setPrefillNom(''); setShowForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"><Plus className="h-4 w-4" /> Ajouter un prix</button>
+          <button onClick={() => { setEditPieceId(''); setPrefillNom(''); setShowForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"><Plus className="h-4 w-4" /> Ajouter un prix</button>
           <button onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"><Printer className="h-4 w-4" /> Imprimer</button>
         </div>
       </div>
@@ -209,7 +210,7 @@ export default function Catalogue() {
                     <td className="px-3 py-2"><span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${variation.badgeClass}`}><VariationIcon icon={variation.icon} />{variation.label}</span></td>
                     <td className="px-3 py-2 print:hidden">
                       <div className="flex gap-1" onClick={e => e.stopPropagation()}>
-                        <button onClick={() => { setPrefillNom(piece.nom_piece); setEditPiece(undefined); setShowForm(true); }} className="p-1 text-slate-400 hover:text-emerald-600" title="Ajouter un nouveau prix"><Plus className="h-3.5 w-3.5" /></button>
+                        <button onClick={() => { setPrefillNom(piece.nom_piece); setEditPieceId(''); setShowForm(true); }} className="p-1 text-slate-400 hover:text-emerald-600" title="Ajouter un nouveau prix"><Plus className="h-3.5 w-3.5" /></button>
                         <button onClick={() => setFichePieceId(piece.id)} className="p-1 text-slate-400 hover:text-blue-600" title="Ouvrir la fiche"><Pencil className="h-3.5 w-3.5" /></button>
                         <button onClick={() => handleDelete(piece.id)} className="p-1 text-slate-400 hover:text-red-600" title="Supprimer"><Trash2 className="h-3.5 w-3.5" /></button>
                       </div>
@@ -274,7 +275,7 @@ export default function Catalogue() {
           pieces={pieces}
           onSavePrice={handleSavePrice}
           onEditInfo={handleEditInfo}
-          onClose={() => { setShowForm(false); setEditPiece(undefined); setPrefillNom(''); }}
+          onClose={() => { setShowForm(false); setEditPieceId(''); setPrefillNom(''); }}
         />
       )}
 
@@ -302,12 +303,22 @@ function PriceFormModal({ editPiece, prefillNom, knownPieceNames, knownSuppliers
   onClose: () => void;
 }) {
   const isEditMode = !!editPiece;
-  const [nomPiece, setNomPiece] = useState(editPiece?.nom_piece || prefillNom || '');
-  const [reference, setReference] = useState(editPiece?.reference || '');
-  const [observations, setObservations] = useState(editPiece?.observations || '');
-  const [fournisseur, setFournisseur] = useState('');
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
-  const [valeur, setValeur] = useState('');
+  const draftKey = `fleetgest_draft_price_${editPiece?.id ?? 'new'}`;
+  const [draft, setDraft, clearDraft] = usePersistedState(draftKey, {
+    nomPiece: editPiece?.nom_piece || prefillNom || '',
+    reference: editPiece?.reference || '',
+    observations: editPiece?.observations || '',
+    fournisseur: '',
+    date: new Date().toISOString().slice(0, 10),
+    valeur: '',
+  });
+  const { nomPiece, reference, observations, fournisseur, date, valeur } = draft;
+  const setNomPiece = (v: string) => setDraft(p => ({ ...p, nomPiece: v }));
+  const setReference = (v: string) => setDraft(p => ({ ...p, reference: v }));
+  const setObservations = (v: string) => setDraft(p => ({ ...p, observations: v }));
+  const setFournisseur = (v: string) => setDraft(p => ({ ...p, fournisseur: v }));
+  const setDate = (v: string) => setDraft(p => ({ ...p, date: v }));
+  const setValeur = (v: string) => setDraft(p => ({ ...p, valeur: v }));
 
   const matched = useMemo(() => pieces.find(p => p.nom_piece.trim().toLowerCase() === nomPiece.trim().toLowerCase()), [pieces, nomPiece]);
 
@@ -323,18 +334,22 @@ function PriceFormModal({ editPiece, prefillNom, knownPieceNames, knownSuppliers
     e.preventDefault();
     if (isEditMode && editPiece) {
       onEditInfo({ nom_piece: nomPiece, reference, observations }, editPiece.id);
+      clearDraft();
       return;
     }
     if (!nomPiece.trim() || !fournisseur.trim() || !valeur) return;
     onSavePrice({ nom_piece: nomPiece, reference, fournisseur, date, valeur: Number(valeur), observations }, matched?.id);
+    clearDraft();
   };
+
+  const handleCancel = () => { clearDraft(); onClose(); };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl">
         <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-6 py-4">
           <h3 className="text-lg font-bold">{isEditMode ? 'Modifier la pièce' : 'Ajouter un prix'}</h3>
-          <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-slate-700"><X className="h-5 w-5" /></button>
+          <button onClick={handleCancel} className="p-1.5 text-slate-400 hover:text-slate-700"><X className="h-5 w-5" /></button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4 p-6">
           <label className="block text-xs font-medium text-slate-600">
@@ -376,7 +391,7 @@ function PriceFormModal({ editPiece, prefillNom, knownPieceNames, knownSuppliers
           </label>
 
           <div className="flex justify-end gap-3 border-t pt-4">
-            <button type="button" onClick={onClose} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
+            <button type="button" onClick={handleCancel} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
             <button type="submit" className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700">{isEditMode ? 'Mettre à jour' : 'Enregistrer'}</button>
           </div>
         </form>
@@ -399,8 +414,11 @@ function FicheModal({ piece, knownSuppliers, onUpdateHistorique, onEditInfo, onC
     [...piece.historique].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   );
   const [sortDir, setSortDir] = useState<SortDirection>('desc');
-  const [showAddRow, setShowAddRow] = useState(false);
-  const [newEntry, setNewEntry] = useState({ date: new Date().toISOString().slice(0, 10), valeur: '', fournisseur: '' });
+  const [showAddRow, setShowAddRow] = usePersistedState(`fleetgest_open_newprice_${piece.id}`, false);
+  const [newEntry, setNewEntry, clearNewEntryDraft] = usePersistedState(
+    `fleetgest_draft_newprice_${piece.id}`,
+    { date: new Date().toISOString().slice(0, 10), valeur: '', fournisseur: '' }
+  );
 
   // L'écart de prix se calcule toujours par rapport à l'entrée chronologiquement
   // précédente, indépendamment du sens d'affichage choisi par l'utilisateur.
@@ -441,7 +459,7 @@ function FicheModal({ piece, knownSuppliers, onUpdateHistorique, onEditInfo, onC
     const next = [entry, ...rows];
     setRows(next);
     onUpdateHistorique(piece.id, next);
-    setNewEntry({ date: new Date().toISOString().slice(0, 10), valeur: '', fournisseur: '' });
+    clearNewEntryDraft();
     setShowAddRow(false);
   };
 

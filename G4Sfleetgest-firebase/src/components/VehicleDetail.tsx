@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useVehicles } from '../store/VehicleStore';
 import { ArrowLeft, Car, MapPin, User, Gauge, Calendar, Shield, FileText, Wrench, AlertCircle, DollarSign, Info, Hash, Fuel, Receipt } from 'lucide-react';
 import type { MaintenanceRecord } from '../types';
-import { useState } from 'react';
+import { usePersistedState } from '../hooks/usePersistedState';
 
 function formatDate(d: string) {
   if (!d) return '—';
@@ -25,8 +25,11 @@ export default function VehicleDetail() {
   const navigate = useNavigate();
   const { vehicles, deleteVehicle, maintenanceRecords, addMaintenanceRecord, deleteMaintenanceRecord, expenseRecords, deleteExpenseRecord } = useVehicles();
   const vehicle = vehicles.find((v) => v.id === id);
-  const [showMaintForm, setShowMaintForm] = useState(false);
-  const [maintForm, setMaintForm] = useState({ date: '', type: '', description: '', cout: '', kilometrage: '' });
+  const [showMaintForm, setShowMaintForm] = usePersistedState(`fleetgest_open_maint_form_legacy_${id ?? 'unknown'}`, false);
+  const [maintForm, setMaintForm, clearMaintDraft] = usePersistedState(
+    `fleetgest_draft_maint_legacy_${id ?? 'unknown'}`,
+    { date: '', type: '', description: '', cout: '', kilometrage: '' }
+  );
 
   if (!vehicle) {
     return (
@@ -68,7 +71,7 @@ export default function VehicleDetail() {
     };
     addMaintenanceRecord(record);
     setShowMaintForm(false);
-    setMaintForm({ date: '', type: '', description: '', cout: '', kilometrage: '' });
+    clearMaintDraft();
   };
 
   const infoCard = (title: React.ReactNode, children: React.ReactNode) => (
@@ -243,7 +246,7 @@ export default function VehicleDetail() {
                   </div>
                   <div className="flex gap-2">
                     <button type="submit" className="flex-1 rounded bg-emerald-600 py-1.5 text-xs font-semibold text-white">Enregistrer</button>
-                    <button type="button" onClick={() => setShowMaintForm(false)} className="flex-1 rounded border border-slate-300 py-1.5 text-xs text-slate-500">Annuler</button>
+                    <button type="button" onClick={() => { setShowMaintForm(false); clearMaintDraft(); }} className="flex-1 rounded border border-slate-300 py-1.5 text-xs text-slate-500">Annuler</button>
                   </div>
                 </form>
               )}

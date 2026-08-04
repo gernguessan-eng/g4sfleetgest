@@ -17,7 +17,8 @@ const STORAGE_KEY_CONTACTS = 'parc_auto_contacts';
  * ── Cohérence inter-modules ──
  * Un véhicule doit apparaître comme "En maintenance" (immobilisé) dès qu'il a :
  *  - une immobilisation (Suivi des immobilisations) dont le statut n'est PAS "Terminé", OU
- *  - un sinistre (Gestion des sinistres) actuellement "En réparation"
+ *  - un sinistre (Gestion des sinistres) actuellement "En réparation", OU
+ *  - une intervention (menu Maintenance / atelier interne) actuellement "En cours"
  *    (les autres statuts de sinistre — Déclaré, Expertise, Indemnisé — n'immobilisent
  *    pas nécessairement le véhicule sur le terrain).
  * On ne rétrograde JAMAIS automatiquement un statut "Hors service" ou "Réformé" : ce sont
@@ -28,9 +29,10 @@ const STORAGE_KEY_CONTACTS = 'parc_auto_contacts';
 function computeSyncedStatut(
   current: Vehicle['statut'],
   hasActiveImmobilisation: boolean,
-  hasActiveSinistre: boolean
+  hasActiveSinistre: boolean,
+  hasActiveMaintenance: boolean
 ): Vehicle['statut'] {
-  const shouldBeImmobilized = hasActiveImmobilisation || hasActiveSinistre;
+  const shouldBeImmobilized = hasActiveImmobilisation || hasActiveSinistre || hasActiveMaintenance;
   if (shouldBeImmobilized && current === 'Actif') return 'En maintenance';
   if (!shouldBeImmobilized && current === 'En maintenance') return 'Actif';
   return current;
@@ -39,12 +41,14 @@ function computeSyncedStatut(
 function syncVehiclesWithImmobilisationsAndSinistres(
   vehicleList: Vehicle[],
   immobilisations: ImmobilisationRecord[],
-  sinistres: SinistreRecord[]
+  sinistres: SinistreRecord[],
+  maintenanceRecords: MaintenanceRecord[]
 ): Vehicle[] {
   return vehicleList.map((v) => {
     const hasActiveImmobilisation = immobilisations.some((r) => r.vehicleId === v.id && r.statut !== 'Terminé');
     const hasActiveSinistre = sinistres.some((s) => s.vehicleId === v.id && s.statut === 'En réparation');
-    const nextStatut = computeSyncedStatut(v.statut, hasActiveImmobilisation, hasActiveSinistre);
+    const hasActiveMaintenance = maintenanceRecords.some((m) => m.vehicleId === v.id && m.statut === 'En cours');
+    const nextStatut = computeSyncedStatut(v.statut, hasActiveImmobilisation, hasActiveSinistre, hasActiveMaintenance);
     return nextStatut === v.statut ? v : { ...v, statut: nextStatut };
   });
 }
@@ -2042,6 +2046,7 @@ interface VehicleContextType {
   deleteVehicle: (id: string) => void;
   deleteMultipleVehicles: (ids: string[]) => void;
   addMaintenanceRecord: (record: MaintenanceRecord) => void;
+  updateMaintenanceRecord: (id: string, updates: Partial<MaintenanceRecord>) => void;
   deleteMaintenanceRecord: (id: string) => void;
   addExpenseRecord: (record: ExpenseRecord) => void;
   updateExpenseRecord: (id: string, record: Partial<ExpenseRecord>) => void;
@@ -2087,14 +2092,14 @@ export function VehicleProvider({ children }: { children: React.ReactNode }) {
   );
 
   // ── Cohérence en temps réel ──
-  // Dès qu'une immobilisation ou un sinistre change (ajout, modification,
-  // suppression — depuis n'importe quel écran), on recalcule automatiquement
-  // le statut des véhicules concernés. Plus besoin d'appel manuel : le menu
-  // Véhicules et le Tableau de bord se mettent à jour tout seuls.
+  // Dès qu'une immobilisation, un sinistre ou une intervention de maintenance change
+  // (ajout, modification, suppression — depuis n'importe quel écran), on recalcule
+  // automatiquement le statut des véhicules concernés. Plus besoin d'appel manuel : le
+  // menu Véhicules et le Tableau de bord se mettent à jour tout seuls.
   useEffect(() => {
-    setVehicles((prev) => syncVehiclesWithImmobilisationsAndSinistres(prev, immobilisations, sinistres));
+    setVehicles((prev) => syncVehiclesWithImmobilisationsAndSinistres(prev, immobilisations, sinistres, maintenanceRecords));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [immobilisations, sinistres]);
+  }, [immobilisations, sinistres, maintenanceRecords]);
 
   const addVehicle = useCallback((vehicle: Vehicle) => {
     setVehicles((prev) => [...prev, vehicle]);
@@ -2119,6 +2124,10 @@ export function VehicleProvider({ children }: { children: React.ReactNode }) {
 
   const addMaintenanceRecord = useCallback((record: MaintenanceRecord) => {
     setMaintenanceRecords((prev) => [...prev, record]);
+  }, []);
+
+  const updateMaintenanceRecord = useCallback((id: string, updates: Partial<MaintenanceRecord>) => {
+    setMaintenanceRecords((prev) => prev.map((m) => (m.id === id ? { ...m, ...updates } : m)));
   }, []);
 
   const deleteMaintenanceRecord = useCallback((id: string) => {
@@ -2355,6 +2364,7 @@ export function VehicleProvider({ children }: { children: React.ReactNode }) {
       deleteVehicle,
       deleteMultipleVehicles,
       addMaintenanceRecord,
+      updateMaintenanceRecord,
       deleteMaintenanceRecord,
       addExpenseRecord,
       updateExpenseRecord,

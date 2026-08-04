@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { useVehicles } from '../store/VehicleStore';
+import { usePersistedState } from '../hooks/usePersistedState';
 import type { Vehicle, MaintenanceRecord } from '../types';
 import { MAINTENANCE_TYPES } from '../types';
 import SelectWithOther from './SelectWithOther';
@@ -72,8 +73,11 @@ export default function VehicleDetailPanel({ vehicle, printMode = false }: Props
     expenseRecords, deleteExpenseRecord, updateVehicle,
   } = useVehicles();
 
-  const [showMaintForm, setShowMaintForm] = useState(false);
-  const [maintForm, setMaintForm]         = useState({ date: '', type: '', description: '', cout: '', kilometrage: '' });
+  const [showMaintForm, setShowMaintForm] = usePersistedState(`fleetgest_open_maint_form_${vehicle.id}`, false);
+  const [maintForm, setMaintForm, clearMaintDraft] = usePersistedState(
+    `fleetgest_draft_maint_${vehicle.id}`,
+    { date: '', type: '', description: '', cout: '', kilometrage: '' }
+  );
   const [maintSortDir, setMaintSortDir] = useState<SortDirection>('desc');
   const [expSortDir, setExpSortDir] = useState<SortDirection>('desc');
   const photoInputRef = useRef<HTMLInputElement>(null);
@@ -102,7 +106,7 @@ export default function VehicleDetailPanel({ vehicle, printMode = false }: Props
     };
     addMaintenanceRecord(record);
     setShowMaintForm(false);
-    setMaintForm({ date: '', type: '', description: '', cout: '', kilometrage: '' });
+    clearMaintDraft();
   };
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {

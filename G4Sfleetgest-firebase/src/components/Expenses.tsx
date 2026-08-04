@@ -1,7 +1,7 @@
 import { useMemo, useState, useRef } from 'react';
 import SortToggleButton, { type SortDirection } from './SortToggleButton';
 import { Link } from 'react-router-dom';
-import { Download, Paperclip, Plus, Search, Upload, Pencil, Printer, TrendingUp, X, Camera, ImageOff, Wrench, Trash2, Info } from 'lucide-react';
+import { Download, Paperclip, Plus, Search, Upload, Pencil, Printer, TrendingUp, X, Camera, ImageOff, Wrench, Info } from 'lucide-react';
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, LabelList } from 'recharts';
@@ -9,7 +9,7 @@ import { useVehicles } from '../store/VehicleStore';
 import { usePersistedState } from '../hooks/usePersistedState';
 import type { ExpenseCategory, ExpenseRecord } from '../types';
 import SelectWithOther from './SelectWithOther';
-import { mergeExpensesWithMaintenance, isMaintenanceDerivedExpense, maintenanceIdFromExpenseId } from '../utils/maintenance';
+import { mergeExpensesWithMaintenance, isMaintenanceDerivedExpense } from '../utils/maintenance';
 
 const categoryOptions: ExpenseCategory[] = [
   'Carburant', 'Entretien', 'Réparation', 'Assurance', 'Vignette',
@@ -28,9 +28,10 @@ function getCell(row: Record<string, unknown>, keys: string[]) {
 function parseAmount(value: string) { const c = value.replace(/\s/g, '').replace(',', '.').replace(/[A-Za-z]/g, ''); return Number(c) || 0; }
 
 export default function Expenses() {
-  const { vehicles, expenseRecords, maintenanceRecords, addExpenseRecord, updateExpenseRecord, deleteExpenseRecord, deleteMaintenanceRecord, importExpenseRecords } = useVehicles();
-  const [showForm, setShowForm] = useState(false);
-  const [editingExpense, setEditingExpense] = useState<ExpenseRecord | undefined>();
+  const { vehicles, expenseRecords, maintenanceRecords, addExpenseRecord, updateExpenseRecord, importExpenseRecords } = useVehicles();
+  const [showForm, setShowForm] = usePersistedState('fleetgest_open_expense_form', false);
+  const [editingExpenseId, setEditingExpenseId] = usePersistedState('fleetgest_editing_expense_id', '');
+  const editingExpense = useMemo(() => expenseRecords.find(e => e.id === editingExpenseId), [expenseRecords, editingExpenseId]);
   const [search, setSearch] = usePersistedState('fleetgest_filter_expenses_search', '');
   const [filterCategory, setFilterCategory] = usePersistedState('fleetgest_filter_expenses_category', '');
   const [filterVehicle, setFilterVehicle] = usePersistedState('fleetgest_filter_expenses_vehicle', '');
@@ -74,22 +75,14 @@ export default function Expenses() {
   }, [mergedRecords]);
   const monthlyAverage = mergedRecords.length > 0 ? Math.round(totalAll / Math.max(monthlyExpenseEvolution.length, 1)) : 0;
 
-  const handleEdit = (expense: ExpenseRecord) => { setEditingExpense(expense); setShowForm(true); };
-  const handleAddNew = () => { setEditingExpense(undefined); setShowForm(true); };
-  const handleDelete = (id: string) => {
-    if (!confirm('Supprimer cette dépense ? Cette action est irréversible.')) return;
-    deleteExpenseRecord(id);
-  };
-  const handleDeleteMaintenance = (expenseId: string) => {
-    if (!confirm('Supprimer cette intervention de Historique Maintenance ? Cette action est irréversible.')) return;
-    deleteMaintenanceRecord(maintenanceIdFromExpenseId(expenseId));
-  };
+  const handleEdit = (expense: ExpenseRecord) => { setEditingExpenseId(expense.id); setShowForm(true); };
+  const handleAddNew = () => { setEditingExpenseId(''); setShowForm(true); };
 
   const handleSaveExpense = (data: Omit<ExpenseRecord, 'id'>, id?: string) => {
     if (id) updateExpenseRecord(id, data);
     else addExpenseRecord({ ...data, id: 'e' + Date.now() });
     setShowForm(false);
-    setEditingExpense(undefined);
+    setEditingExpenseId('');
   };
 
   const handlePrint = () => window.print();
@@ -205,15 +198,9 @@ export default function Expenses() {
                       <td className={`px-4 py-3 text-right text-sm font-bold ${expense.montant < 0 ? 'text-red-600' : 'text-slate-800'}`}>{formatMoney(expense.montant)}</td>
                       <td className="px-4 py-3 text-center print:hidden"><div className="flex items-center justify-center gap-1">
                         {fromMaintenance ? (
-                          <>
-                            <span title="Modifiable uniquement depuis la fiche véhicule → Historique Maintenance" className="rounded-lg p-1.5 text-slate-300"><Info className="h-4 w-4" /></span>
-                            <button onClick={() => handleDeleteMaintenance(expense.id)} className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600" title="Supprimer cette intervention"><Trash2 className="h-4 w-4" /></button>
-                          </>
+                          <span title="Modifiable uniquement depuis la fiche véhicule → Historique Maintenance" className="rounded-lg p-1.5 text-slate-300"><Info className="h-4 w-4" /></span>
                         ) : (
-                          <>
-                            <button onClick={() => handleEdit(expense)} className="rounded-lg p-1.5 text-slate-400 hover:bg-blue-50 hover:text-blue-600" title="Modifier"><Pencil className="h-4 w-4" /></button>
-                            <button onClick={() => handleDelete(expense.id)} className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600" title="Supprimer"><Trash2 className="h-4 w-4" /></button>
-                          </>
+                          <button onClick={() => handleEdit(expense)} className="rounded-lg p-1.5 text-slate-400 hover:bg-blue-50 hover:text-blue-600" title="Modifier"><Pencil className="h-4 w-4" /></button>
                         )}
                       </div></td>
                     </tr>
@@ -245,7 +232,7 @@ export default function Expenses() {
           vehicles={vehicles}
           knownSuppliers={knownSuppliers}
           onSave={handleSaveExpense}
-          onClose={() => { setShowForm(false); setEditingExpense(undefined); }}
+          onClose={() => { setShowForm(false); setEditingExpenseId(''); }}
         />
       )}
     </div>
@@ -259,7 +246,8 @@ function ExpenseFormModal({ expense, vehicles, knownSuppliers, onSave, onClose }
   onSave: (data: Omit<ExpenseRecord, 'id'>, id?: string) => void;
   onClose: () => void;
 }) {
-  const [f, setF] = useState({
+  const draftKey = `fleetgest_draft_expense_${expense?.id ?? 'new'}`;
+  const [f, setF, clearDraft] = usePersistedState(draftKey, {
     vehicleId: expense?.vehicleId || '',
     date: expense?.date || new Date().toISOString().slice(0, 10),
     categorie: (expense?.categorie || 'Carburant') as ExpenseCategory,
@@ -272,8 +260,11 @@ function ExpenseFormModal({ expense, vehicles, knownSuppliers, onSave, onClose }
     notes: expense?.notes || '',
     date_entretien: expense?.date_entretien || expense?.date || new Date().toISOString().slice(0, 10),
     kilometrage_entretien: expense?.kilometrage_entretien ? String(expense.kilometrage_entretien) : '',
-    photo_carburant_url: expense?.photo_carburant_url || '',
   });
+  // La photo (base64) est volontairement tenue hors du brouillon persisté : elle peut peser
+  // plusieurs Mo et ferait échouer l'enregistrement de tout le brouillon dans le quota
+  // localStorage. Si on quitte la page avant d'enregistrer, seule la photo est à reprendre.
+  const [photoUrl, setPhotoUrl] = useState(expense?.photo_carburant_url || '');
   const photoInputRef = useRef<HTMLInputElement>(null);
   const up = (k: string, v: string) => setF(p => ({ ...p, [k]: v }));
 
@@ -283,7 +274,7 @@ function ExpenseFormModal({ expense, vehicles, knownSuppliers, onSave, onClose }
     if (!file.type.startsWith('image/')) { alert('Veuillez sélectionner une image (JPG, PNG, WEBP…)'); return; }
     if (file.size > 5 * 1024 * 1024) { alert("L'image ne doit pas dépasser 5 Mo"); return; }
     const reader = new FileReader();
-    reader.onload = (ev) => up('photo_carburant_url', ev.target?.result as string);
+    reader.onload = (ev) => setPhotoUrl(ev.target?.result as string);
     reader.readAsDataURL(file);
   };
 
@@ -295,17 +286,20 @@ function ExpenseFormModal({ expense, vehicles, knownSuppliers, onSave, onClose }
       fournisseur: f.fournisseur, mode_paiement: f.mode_paiement, numero_piece: f.numero_piece, justificatif_nom: f.justificatif_nom,
       notes: f.notes, date_entretien: f.categorie === 'Entretien' ? f.date_entretien || f.date : '',
       kilometrage_entretien: f.categorie === 'Entretien' ? Number(f.kilometrage_entretien) || 0 : 0,
-      photo_carburant_url: f.categorie === 'Carburant' ? f.photo_carburant_url : '',
+      photo_carburant_url: f.categorie === 'Carburant' ? photoUrl : '',
     };
+    clearDraft();
     onSave(data, expense?.id);
   };
+
+  const handleCancel = () => { clearDraft(); onClose(); };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl">
         <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-6 py-4">
           <h3 className="text-lg font-bold">{expense ? 'Modifier la dépense' : 'Ajouter une dépense'}</h3>
-          <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-slate-700"><X className="h-5 w-5" /></button>
+          <button onClick={handleCancel} className="p-1.5 text-slate-400 hover:text-slate-700"><X className="h-5 w-5" /></button>
         </div>
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 p-6">
           <label className="col-span-2 block text-xs font-medium text-slate-600">Véhicule
@@ -332,12 +326,12 @@ function ExpenseFormModal({ expense, vehicles, knownSuppliers, onSave, onClose }
           {f.categorie === 'Carburant' && (
             <div className="col-span-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3">
               <label className="mb-1 block text-xs font-medium text-slate-600">Photo (reçu, pompe, ticket carburant)</label>
-              {f.photo_carburant_url ? (
+              {photoUrl ? (
                 <div className="flex items-center gap-3">
-                  <img src={f.photo_carburant_url} alt="Photo carburant" className="h-16 w-16 rounded-lg border border-emerald-200 object-cover" />
+                  <img src={photoUrl} alt="Photo carburant" className="h-16 w-16 rounded-lg border border-emerald-200 object-cover" />
                   <div className="flex flex-col gap-1.5">
                     <button type="button" onClick={() => photoInputRef.current?.click()} className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-300 bg-white px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100"><Camera className="h-3.5 w-3.5" /> Remplacer</button>
-                    <button type="button" onClick={() => up('photo_carburant_url', '')} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-500 hover:bg-slate-50"><ImageOff className="h-3.5 w-3.5" /> Retirer</button>
+                    <button type="button" onClick={() => setPhotoUrl('')} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-500 hover:bg-slate-50"><ImageOff className="h-3.5 w-3.5" /> Retirer</button>
                   </div>
                 </div>
               ) : (
@@ -370,7 +364,7 @@ function ExpenseFormModal({ expense, vehicles, knownSuppliers, onSave, onClose }
           <label className="block text-xs font-medium text-slate-600">Justificatif<input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => up('justificatif_nom', e.target.files?.[0]?.name ?? '')} className="mt-1 w-full text-xs text-slate-500 file:mr-2 file:rounded-md file:border-0 file:bg-slate-100 file:px-2 file:py-1.5 file:text-xs file:font-medium file:text-slate-600" /></label>
           <label className="col-span-2 block text-xs font-medium text-slate-600">Notes<textarea rows={2} value={f.notes} onChange={(e) => up('notes', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
           <div className="col-span-2 flex justify-end gap-3 border-t pt-4">
-            <button type="button" onClick={onClose} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
+            <button type="button" onClick={handleCancel} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
             <button type="submit" className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700">{expense ? 'Mettre à jour' : 'Enregistrer la dépense'}</button>
           </div>
         </form>
