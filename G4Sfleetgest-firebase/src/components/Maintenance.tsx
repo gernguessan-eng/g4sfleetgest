@@ -8,9 +8,14 @@ import SelectWithOther from './SelectWithOther';
 import SortToggleButton, { type SortDirection } from './SortToggleButton';
 import {
   Wrench, Plus, Printer, Search, Trash2, Pencil, X, Info,
-  Clock, Hammer, AlertTriangle,
+  Clock, Hammer, AlertTriangle, LayoutGrid, ClipboardList, CalendarDays, Users, Boxes, UserCheck,
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LabelList } from 'recharts';
+import AtelierOrdres from './AtelierOrdres';
+import AtelierPlanning from './AtelierPlanning';
+import AtelierMecaniciens from './AtelierMecaniciens';
+import AtelierStocks from './AtelierStocks';
+import AtelierPresences from './AtelierPresences';
 
 function fmtDate(d?: string) { if (!d) return '—'; return new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }); }
 function fmtMoney(n: number) { return n.toLocaleString('fr-FR') + ' FCFA'; }
@@ -28,7 +33,46 @@ const STATUT_COLORS: Record<string, string> = {
   'Terminé': 'bg-green-100 text-green-700',
 };
 
+const ATELIER_TABS = [
+  { key: 'vue', label: "Vue d'ensemble", icon: LayoutGrid },
+  { key: 'ordres', label: 'Ordres de réparation', icon: ClipboardList },
+  { key: 'planning', label: 'Planning atelier', icon: CalendarDays },
+  { key: 'mecaniciens', label: 'Mécaniciens', icon: Users },
+  { key: 'stocks', label: 'Stocks', icon: Boxes },
+  { key: 'presences', label: 'Présences', icon: UserCheck },
+] as const;
+
+type AtelierTabKey = typeof ATELIER_TABS[number]['key'];
+
 export default function Maintenance() {
+  const [tab, setTab] = usePersistedState<AtelierTabKey>('fleetgest_maintenance_tab', 'vue');
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap gap-1.5 rounded-xl bg-white p-1.5 shadow-sm print:hidden">
+        {ATELIER_TABS.map(({ key, label, icon: TabIcon }) => (
+          <button
+            key={key}
+            onClick={() => setTab(key)}
+            className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
+              tab === key ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'
+            }`}
+          >
+            <TabIcon className="h-4 w-4" /> {label}
+          </button>
+        ))}
+      </div>
+      {tab === 'vue' && <VueEnsembleAtelier />}
+      {tab === 'ordres' && <AtelierOrdres />}
+      {tab === 'planning' && <AtelierPlanning />}
+      {tab === 'mecaniciens' && <AtelierMecaniciens />}
+      {tab === 'stocks' && <AtelierStocks />}
+      {tab === 'presences' && <AtelierPresences />}
+    </div>
+  );
+}
+
+function VueEnsembleAtelier() {
   // Source unique de vérité : le store central. La liste des véhicules n'est
   // jamais dupliquée ici — on réutilise directement celle du menu Véhicules.
   const { vehicles, maintenanceRecords, addMaintenanceRecord, updateMaintenanceRecord, deleteMaintenanceRecord } = useVehicles();

@@ -3,12 +3,21 @@ import type { Vehicle, MaintenanceRecord, ExpenseRecord, DashboardStats, Contact
 import { IMMOBILISATIONS_STORAGE_KEY, SAMPLE_IMMOBILISATIONS, type ImmobilisationRecord } from '../types/immobilisations';
 import { SINISTRES_STORAGE_KEY, SAMPLE_SINISTRES, type SinistreRecord } from '../types/sinistres';
 import { SAMPLE_PNEUS, type PneumatiqueRecord } from '../types/pneumatique';
+import {
+  SAMPLE_MECHANICS, SAMPLE_STOCK,
+  type RepairOrder, type Mechanic, type StockItem, type StockExit, type PresenceEntry,
+} from '../types/atelier';
 import { useFirestoreCollection } from '../firestoreSync';
 
 const STORAGE_KEY_VEHICLES = 'parc_auto_vehicles';
 const STORAGE_KEY_MAINTENANCE = 'parc_auto_maintenance';
 const STORAGE_KEY_EXPENSES = 'parc_auto_expenses';
 const STORAGE_KEY_CONTACTS = 'parc_auto_contacts';
+const STORAGE_KEY_ORDERS = 'atelier_orders';
+const STORAGE_KEY_MECHANICS = 'atelier_mechanics';
+const STORAGE_KEY_STOCK = 'atelier_stock';
+const STORAGE_KEY_STOCK_EXITS = 'atelier_stock_exits';
+const STORAGE_KEY_PRESENCE = 'atelier_presence';
 
 // Note : la lecture directe de localStorage n'est plus utilisée pour les collections
 // (elles sont désormais synchronisées avec Firestore via useFirestoreCollection).
@@ -18,7 +27,10 @@ const STORAGE_KEY_CONTACTS = 'parc_auto_contacts';
  * Un véhicule doit apparaître comme "En maintenance" (immobilisé) dès qu'il a :
  *  - une immobilisation (Suivi des immobilisations) dont le statut n'est PAS "Terminé", OU
  *  - un sinistre (Gestion des sinistres) actuellement "En réparation", OU
- *  - une intervention (menu Maintenance / atelier interne) actuellement "En cours"
+ *  - une intervention (Historique Maintenance de la fiche véhicule) actuellement "En cours", OU
+ *  - un ordre de réparation (menu Maintenance → Ordres de réparation / atelier interne)
+ *    déjà arrivé à l'atelier et pas encore "Terminé" (un ordre "Planifié" ne compte pas :
+ *    le véhicule n'est pas encore physiquement sur place)
  *    (les autres statuts de sinistre — Déclaré, Expertise, Indemnisé — n'immobilisent
  *    pas nécessairement le véhicule sur le terrain).
  * On ne rétrograde JAMAIS automatiquement un statut "Hors service" ou "Réformé" : ce sont
@@ -30,9 +42,10 @@ function computeSyncedStatut(
   current: Vehicle['statut'],
   hasActiveImmobilisation: boolean,
   hasActiveSinistre: boolean,
-  hasActiveMaintenance: boolean
+  hasActiveMaintenance: boolean,
+  hasActiveOrder: boolean
 ): Vehicle['statut'] {
-  const shouldBeImmobilized = hasActiveImmobilisation || hasActiveSinistre || hasActiveMaintenance;
+  const shouldBeImmobilized = hasActiveImmobilisation || hasActiveSinistre || hasActiveMaintenance || hasActiveOrder;
   if (shouldBeImmobilized && current === 'Actif') return 'En maintenance';
   if (!shouldBeImmobilized && current === 'En maintenance') return 'Actif';
   return current;
@@ -42,13 +55,15 @@ function syncVehiclesWithImmobilisationsAndSinistres(
   vehicleList: Vehicle[],
   immobilisations: ImmobilisationRecord[],
   sinistres: SinistreRecord[],
-  maintenanceRecords: MaintenanceRecord[]
+  maintenanceRecords: MaintenanceRecord[],
+  orders: RepairOrder[]
 ): Vehicle[] {
   return vehicleList.map((v) => {
     const hasActiveImmobilisation = immobilisations.some((r) => r.vehicleId === v.id && r.statut !== 'Terminé');
     const hasActiveSinistre = sinistres.some((s) => s.vehicleId === v.id && s.statut === 'En réparation');
     const hasActiveMaintenance = maintenanceRecords.some((m) => m.vehicleId === v.id && m.statut === 'En cours');
-    const nextStatut = computeSyncedStatut(v.statut, hasActiveImmobilisation, hasActiveSinistre, hasActiveMaintenance);
+    const hasActiveOrder = orders.some((o) => o.vehicleId === v.id && o.status !== 'Planifié' && o.status !== 'Terminé');
+    const nextStatut = computeSyncedStatut(v.statut, hasActiveImmobilisation, hasActiveSinistre, hasActiveMaintenance, hasActiveOrder);
     return nextStatut === v.statut ? v : { ...v, statut: nextStatut };
   });
 }
@@ -2064,6 +2079,24 @@ interface VehicleContextType {
   addSinistre: (record: SinistreRecord) => void;
   updateSinistre: (id: string, record: Partial<SinistreRecord>) => void;
   deleteSinistre: (id: string) => void;
+  // Module Maintenance (atelier interne)
+  orders: RepairOrder[];
+  addOrder: (order: RepairOrder) => void;
+  updateOrder: (order: RepairOrder) => void;
+  deleteOrder: (id: string) => void;
+  mechanics: Mechanic[];
+  addMechanic: (mechanic: Mechanic) => void;
+  updateMechanic: (id: string, updates: Partial<Mechanic>) => void;
+  deleteMechanic: (id: string) => void;
+  stockItems: StockItem[];
+  addStockItem: (item: StockItem) => void;
+  updateStockItem: (id: string, updates: Partial<StockItem>) => void;
+  deleteStockItem: (id: string) => void;
+  receiveStock: (itemId: string, quantity: number) => void;
+  stockExits: StockExit[];
+  addStockExit: (exit: StockExit) => void;
+  presenceEntries: PresenceEntry[];
+  upsertPresenceEntry: (entry: PresenceEntry) => void;
 }
 
 const VehicleContext = createContext<VehicleContextType | undefined>(undefined);
@@ -2091,15 +2124,22 @@ export function VehicleProvider({ children }: { children: React.ReactNode }) {
     'parc_auto_pneus', SAMPLE_PNEUS
   );
 
+  // ── Module Maintenance (atelier interne) ──
+  const [orders, setOrders] = useFirestoreCollection<RepairOrder>(STORAGE_KEY_ORDERS, []);
+  const [mechanics, setMechanics] = useFirestoreCollection<Mechanic>(STORAGE_KEY_MECHANICS, SAMPLE_MECHANICS);
+  const [stockItems, setStockItems] = useFirestoreCollection<StockItem>(STORAGE_KEY_STOCK, SAMPLE_STOCK);
+  const [stockExits, setStockExits] = useFirestoreCollection<StockExit>(STORAGE_KEY_STOCK_EXITS, []);
+  const [presenceEntries, setPresenceEntries] = useFirestoreCollection<PresenceEntry>(STORAGE_KEY_PRESENCE, []);
+
   // ── Cohérence en temps réel ──
   // Dès qu'une immobilisation, un sinistre ou une intervention de maintenance change
   // (ajout, modification, suppression — depuis n'importe quel écran), on recalcule
   // automatiquement le statut des véhicules concernés. Plus besoin d'appel manuel : le
   // menu Véhicules et le Tableau de bord se mettent à jour tout seuls.
   useEffect(() => {
-    setVehicles((prev) => syncVehiclesWithImmobilisationsAndSinistres(prev, immobilisations, sinistres, maintenanceRecords));
+    setVehicles((prev) => syncVehiclesWithImmobilisationsAndSinistres(prev, immobilisations, sinistres, maintenanceRecords, orders));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [immobilisations, sinistres, maintenanceRecords]);
+  }, [immobilisations, sinistres, maintenanceRecords, orders]);
 
   const addVehicle = useCallback((vehicle: Vehicle) => {
     setVehicles((prev) => [...prev, vehicle]);
@@ -2198,6 +2238,104 @@ export function VehicleProvider({ children }: { children: React.ReactNode }) {
 
   const deleteSinistre = useCallback((id: string) => {
     setSinistres((prev) => prev.filter((s) => s.id !== id));
+  }, []);
+
+  // ── Module Maintenance (atelier interne) ──
+  const addOrder = useCallback((order: RepairOrder) => {
+    setOrders((prev) => [order, ...prev]);
+  }, []);
+
+  // Aligne la quantité en stock et le journal des sorties sur la nouvelle liste de
+  // pièces d'un ordre : une pièce ajoutée/augmentée génère une sortie de stock
+  // "Ordre atelier", une pièce retirée/diminuée est recréditée. Reproduit exactement
+  // la logique de GestAtelier (délta entre l'ancienne et la nouvelle liste de pièces).
+  const applyOrderPartsToStock = useCallback((previous: RepairOrder | undefined, updated: RepairOrder) => {
+    if (!previous) return;
+    const oldMap = new Map<string, number>();
+    previous.parts.forEach((p) => oldMap.set(p.itemId, (oldMap.get(p.itemId) ?? 0) + p.quantity));
+    const newMap = new Map<string, number>();
+    updated.parts.forEach((p) => newMap.set(p.itemId, (newMap.get(p.itemId) ?? 0) + p.quantity));
+    const allItemIds = new Set([...oldMap.keys(), ...newMap.keys()]);
+    const stockAdjust = new Map<string, number>();
+    const newExits: StockExit[] = [];
+    let exitCounter = 0;
+    allItemIds.forEach((itemId) => {
+      const delta = (newMap.get(itemId) ?? 0) - (oldMap.get(itemId) ?? 0);
+      if (delta === 0) return;
+      stockAdjust.set(itemId, -delta);
+      if (delta > 0) {
+        const item = stockItems.find((s) => s.id === itemId);
+        if (item) {
+          exitCounter += 1;
+          newExits.push({
+            id: `SE${Date.now()}${exitCounter}`, itemId, itemName: item.name,
+            date: new Date().toISOString().slice(0, 10), quantity: delta, reason: 'Ordre atelier',
+            targetVehiclePlate: updated.plate, targetOrderId: updated.id,
+            notes: `Sortie atelier pour ${updated.vehicleLabel} (${updated.plate})`,
+          });
+        }
+      }
+    });
+    if (stockAdjust.size) {
+      setStockItems((prev) => prev.map((item) => {
+        const adj = stockAdjust.get(item.id);
+        if (adj === undefined) return item;
+        return { ...item, quantity: Math.max(0, item.quantity + adj) };
+      }));
+    }
+    if (newExits.length) setStockExits((prev) => [...newExits, ...prev]);
+  }, [stockItems]);
+
+  const updateOrder = useCallback((updated: RepairOrder) => {
+    const previous = orders.find((o) => o.id === updated.id);
+    applyOrderPartsToStock(previous, updated);
+    setOrders((prev) => prev.map((o) => (o.id === updated.id ? updated : o)));
+  }, [orders, applyOrderPartsToStock]);
+
+  const deleteOrder = useCallback((id: string) => {
+    setOrders((prev) => prev.filter((o) => o.id !== id));
+  }, []);
+
+  const addMechanic = useCallback((mechanic: Mechanic) => {
+    setMechanics((prev) => [...prev, mechanic]);
+  }, []);
+  const updateMechanic = useCallback((id: string, updates: Partial<Mechanic>) => {
+    setMechanics((prev) => prev.map((m) => (m.id === id ? { ...m, ...updates } : m)));
+  }, []);
+  const deleteMechanic = useCallback((id: string) => {
+    setMechanics((prev) => prev.filter((m) => m.id !== id));
+  }, []);
+
+  const addStockItem = useCallback((item: StockItem) => {
+    setStockItems((prev) => [...prev, item]);
+  }, []);
+  const updateStockItem = useCallback((id: string, updates: Partial<StockItem>) => {
+    setStockItems((prev) => prev.map((s) => (s.id === id ? { ...s, ...updates } : s)));
+  }, []);
+  const deleteStockItem = useCallback((id: string) => {
+    setStockItems((prev) => prev.filter((s) => s.id !== id));
+  }, []);
+  /** Réception de pièces (entrée en stock) — augmente la quantité et date la dernière entrée. */
+  const receiveStock = useCallback((itemId: string, quantity: number) => {
+    setStockItems((prev) => prev.map((item) => (
+      item.id === itemId
+        ? { ...item, quantity: item.quantity + quantity, lastEntry: new Date().toISOString().slice(0, 10) }
+        : item
+    )));
+  }, []);
+  /** Sortie de stock manuelle (hors ordre atelier) — décrémente la quantité et journalise. */
+  const addStockExit = useCallback((exit: StockExit) => {
+    setStockExits((prev) => [exit, ...prev]);
+    setStockItems((prev) => prev.map((item) => (
+      item.id === exit.itemId ? { ...item, quantity: Math.max(0, item.quantity - exit.quantity) } : item
+    )));
+  }, []);
+
+  const upsertPresenceEntry = useCallback((entry: PresenceEntry) => {
+    setPresenceEntries((prev) => {
+      const exists = prev.some((e) => e.id === entry.id);
+      return exists ? prev.map((e) => (e.id === entry.id ? entry : e)) : [...prev, entry];
+    });
   }, []);
 
   const getDashboardStats = useCallback((): DashboardStats => {
@@ -2382,6 +2520,23 @@ export function VehicleProvider({ children }: { children: React.ReactNode }) {
       addSinistre,
       updateSinistre,
       deleteSinistre,
+      orders,
+      addOrder,
+      updateOrder,
+      deleteOrder,
+      mechanics,
+      addMechanic,
+      updateMechanic,
+      deleteMechanic,
+      stockItems,
+      addStockItem,
+      updateStockItem,
+      deleteStockItem,
+      receiveStock,
+      stockExits,
+      addStockExit,
+      presenceEntries,
+      upsertPresenceEntry,
     },
   }, children);
 }
