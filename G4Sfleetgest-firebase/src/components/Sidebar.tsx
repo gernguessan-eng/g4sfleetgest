@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import {
   LayoutDashboard, Car, BarChart3, Receipt,
   GripVertical, MapPin, Fuel, Users, Eye, EyeOff, PackageX,
-  AlertTriangle, Wrench, ParkingCircle, BookUser, Package, Hammer,
+  AlertTriangle, Wrench, ParkingCircle, BookUser, Package, Hammer, ClipboardCheck, Settings,
 } from 'lucide-react';
 
 export type NavItemDef = {
@@ -16,6 +16,7 @@ const defaultNavItems: NavItemDef[] = [
   { path: '/',               label: 'Tableau de bord',           icon: LayoutDashboard },
   { path: '/vehicules',      label: 'Véhicules',                 icon: Car },
   { path: '/maintenance',    label: 'Maintenance',               icon: Hammer },
+  { path: '/pointage',       label: 'Pointage véhicule',          icon: ClipboardCheck },
   { path: '/chauffeurs',     label: 'Gestion des chauffeurs',    icon: Users },
   { path: '/depenses',       label: 'Dépenses',                  icon: Receipt },
   { path: '/carburant',      label: 'Gestion des carburants',    icon: Fuel },
@@ -27,6 +28,7 @@ const defaultNavItems: NavItemDef[] = [
   { path: '/geoloc',         label: 'Géolocalisation et trajectoires', icon: MapPin },
   { path: '/graphiques',     label: 'Graphiques et analyses',    icon: BarChart3 },
   { path: '/reforme',        label: 'Plan de réforme',           icon: PackageX },
+  { path: '/parametres',     label: 'Paramètres',                icon: Settings },
 ];
 
 const STORAGE_ORDER_KEY = 'parc_auto_nav_order';

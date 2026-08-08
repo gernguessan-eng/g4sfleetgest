@@ -7,6 +7,8 @@ import VehicleDetail from './components/VehicleDetail';
 import Analytics from './components/Analytics';
 import Expenses from './components/Expenses';
 import Maintenance from './components/Maintenance';
+import PointageVehicule from './components/PointageVehicule';
+import Settings from './components/Settings';
 import GeolocTrajets from './components/GeolocTrajets';
 import FuelManagement from './components/FuelManagement';
 import DriverManagement from './components/DriverManagement';
@@ -40,6 +42,8 @@ function AppContent({ profile, onLogout }: { profile: UserProfile; onLogout: () 
             <Route path="/vehicules"    element={<VehicleList />} />
             <Route path="/vehicule/:id" element={<VehicleDetail />} />
             <Route path="/maintenance"  element={<Maintenance />} />
+            <Route path="/pointage"     element={<PointageVehicule />} />
+            <Route path="/parametres"   element={<Settings />} />
             <Route path="/chauffeurs"   element={<DriverManagement />} />
             <Route path="/depenses"     element={<Expenses />} />
             <Route path="/carburant"    element={<FuelManagement />} />

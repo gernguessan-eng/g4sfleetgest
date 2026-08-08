@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useVehicles } from '../store/VehicleStore';
-import { getFuelPrice } from '../utils/fuelPrices';
+import { getFuelPrice, fuelPricesFromSettings } from '../utils/fuelPrices';
 import {
   MapPin, Navigation, Fuel, Phone, Clock, Route, Car,
   Gauge, AlertTriangle, CheckCircle2, Search, Printer,
@@ -135,7 +135,8 @@ const MOCK_HISTORY = [
 ];
 
 export default function GeolocTrajets() {
-  const { vehicles } = useVehicles();
+  const { vehicles, appSettings } = useVehicles();
+  const fuelPrices = fuelPricesFromSettings(appSettings);
   const [activeTab, setActiveTab] = useState<'itineraire' | 'suivi'>('itineraire');
 
   // Itinéraire
@@ -193,8 +194,8 @@ export default function GeolocTrajets() {
   const fuelConsumption = useMemo(() => {
     if (!routeResult || !selectedVehicle?.consommation_100km) return null;
     const liters = routeResult.distKm * (selectedVehicle.consommation_100km / 100);
-    return { liters: Math.round(liters * 10) / 10, cost: Math.round(liters * getFuelPrice(selectedVehicle.energie)) };
-  }, [routeResult, selectedVehicle]);
+    return { liters: Math.round(liters * 10) / 10, cost: Math.round(liters * getFuelPrice(selectedVehicle.energie, fuelPrices)) };
+  }, [routeResult, selectedVehicle, fuelPrices]);
 
   const routeMapCenter: [number, number] = useMemo(() =>
     routeResult ? [

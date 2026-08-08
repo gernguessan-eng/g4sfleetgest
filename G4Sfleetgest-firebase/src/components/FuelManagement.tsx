@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { useVehicles } from '../store/VehicleStore';
 import { usePersistedState } from '../hooks/usePersistedState';
-import { getFuelPrice, FUEL_PRICES } from '../utils/fuelPrices';
+import { getFuelPrice, fuelPricesFromSettings } from '../utils/fuelPrices';
 import { 
   Fuel, DollarSign, TrendingUp, Download, Printer, PieChart as PieChartIcon, 
   BarChart as BarChartIcon, CheckCircle2, Calendar, Tag, Layers, Upload,
@@ -19,7 +20,8 @@ function formatFCFA(n: number) {
 }
 
 export default function FuelManagement() {
-  const { vehicles, expenseRecords } = useVehicles();
+  const { vehicles, expenseRecords, appSettings } = useVehicles();
+  const fuelPrices = fuelPricesFromSettings(appSettings);
   const [periodFrom, setPeriodFrom] = usePersistedState('fleetgest_filter_fuel_from', '');
   const [periodTo, setPeriodTo] = usePersistedState('fleetgest_filter_fuel_to', '');
 
@@ -64,7 +66,7 @@ export default function FuelManagement() {
         .filter(e => e.vehicleId === v.id)
         .reduce((sum, e) => sum + e.montant, 0);
       
-      const theoreticalCostPer100 = (v.consommation_100km || 0) * getFuelPrice(v.energie);
+      const theoreticalCostPer100 = (v.consommation_100km || 0) * getFuelPrice(v.energie, fuelPrices);
       
       // Approximate distance driven if we have history... but we don't track start km.
       // Let's just compare the monthly average real vs theoretical if we can.
@@ -144,7 +146,7 @@ export default function FuelManagement() {
       paymentData, vehicleData, comparisonData,
       monthlyData, brandData, typeData
     };
-  }, [fuelExpenses, vehicles]);
+  }, [fuelExpenses, vehicles, fuelPrices]);
 
   const exportToExcel = () => {
     const data = fuelExpenses.map(e => {
@@ -301,7 +303,7 @@ export default function FuelManagement() {
             </ResponsiveContainer>
           </div>
           <p className="mt-4 text-xs text-slate-500 italic text-center">
-            Note: Le coût théorique est calculé à partir du kilométrage total du véhicule et de sa consommation constructeur, avec les prix de référence carburant : Essence {FUEL_PRICES.Essence.toLocaleString('fr-FR')} FCFA/L, Diesel {FUEL_PRICES.Diesel.toLocaleString('fr-FR')} FCFA/L.
+            Note: Le coût théorique est calculé à partir du kilométrage total du véhicule et de sa consommation constructeur, avec les prix de référence carburant : Essence {fuelPrices.Essence.toLocaleString('fr-FR')} FCFA/L, Diesel {fuelPrices.Diesel.toLocaleString('fr-FR')} FCFA/L. <Link to="/parametres" className="font-medium text-emerald-600 hover:underline print:hidden">Modifier ces prix</Link>
           </p>
         </div>
       </div>

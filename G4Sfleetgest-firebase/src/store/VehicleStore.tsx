@@ -7,6 +7,8 @@ import {
   SAMPLE_MECHANICS, SAMPLE_STOCK,
   type RepairOrder, type Mechanic, type StockItem, type StockExit, type PresenceEntry,
 } from '../types/atelier';
+import { nextNumero, type MotoFiche, type VoitureFiche } from '../types/pointage';
+import { DEFAULT_APP_SETTINGS, type AppSettings } from '../types/settings';
 import { useFirestoreCollection } from '../firestoreSync';
 
 const STORAGE_KEY_VEHICLES = 'parc_auto_vehicles';
@@ -18,6 +20,8 @@ const STORAGE_KEY_MECHANICS = 'atelier_mechanics';
 const STORAGE_KEY_STOCK = 'atelier_stock';
 const STORAGE_KEY_STOCK_EXITS = 'atelier_stock_exits';
 const STORAGE_KEY_PRESENCE = 'atelier_presence';
+const STORAGE_KEY_MOTO_FICHES = 'pointage_moto_fiches';
+const STORAGE_KEY_VOITURE_FICHES = 'pointage_voiture_fiches';
 
 // Note : la lecture directe de localStorage n'est plus utilisée pour les collections
 // (elles sont désormais synchronisées avec Firestore via useFirestoreCollection).
@@ -2097,6 +2101,16 @@ interface VehicleContextType {
   addStockExit: (exit: StockExit) => void;
   presenceEntries: PresenceEntry[];
   upsertPresenceEntry: (entry: PresenceEntry) => void;
+  motoFiches: MotoFiche[];
+  addMotoFiche: (fiche: Omit<MotoFiche, 'id' | 'numero' | 'createdAt'>) => void;
+  updateMotoFiche: (id: string, updates: Partial<MotoFiche>) => void;
+  deleteMotoFiche: (id: string) => void;
+  voitureFiches: VoitureFiche[];
+  addVoitureFiche: (fiche: Omit<VoitureFiche, 'id' | 'numero' | 'createdAt'>) => void;
+  updateVoitureFiche: (id: string, updates: Partial<VoitureFiche>) => void;
+  deleteVoitureFiche: (id: string) => void;
+  appSettings: AppSettings;
+  updateAppSettings: (updates: Partial<AppSettings>) => void;
 }
 
 const VehicleContext = createContext<VehicleContextType | undefined>(undefined);
@@ -2130,6 +2144,13 @@ export function VehicleProvider({ children }: { children: React.ReactNode }) {
   const [stockItems, setStockItems] = useFirestoreCollection<StockItem>(STORAGE_KEY_STOCK, SAMPLE_STOCK);
   const [stockExits, setStockExits] = useFirestoreCollection<StockExit>(STORAGE_KEY_STOCK_EXITS, []);
   const [presenceEntries, setPresenceEntries] = useFirestoreCollection<PresenceEntry>(STORAGE_KEY_PRESENCE, []);
+
+  // ── Module Pointage véhicule (fiches de contrôle journalier) ──
+  const [motoFiches, setMotoFiches] = useFirestoreCollection<MotoFiche>(STORAGE_KEY_MOTO_FICHES, []);
+  const [voitureFiches, setVoitureFiches] = useFirestoreCollection<VoitureFiche>(STORAGE_KEY_VOITURE_FICHES, []);
+  // Paramètres généraux : un seul document partagé par toute l'application, stocké via le
+  // même mécanisme de synchronisation Firestore que les autres collections (tableau à 1 élément).
+  const [appSettingsList, setAppSettingsList] = useFirestoreCollection<AppSettings>('appSettings', [DEFAULT_APP_SETTINGS]);
 
   // ── Cohérence en temps réel ──
   // Dès qu'une immobilisation, un sinistre ou une intervention de maintenance change
@@ -2338,6 +2359,38 @@ export function VehicleProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  // ── Pointage véhicule : numérotation séquentielle et chronologique, par type de fiche ──
+  const addMotoFiche = useCallback((fiche: Omit<MotoFiche, 'id' | 'numero' | 'createdAt'>) => {
+    setMotoFiches((prev) => [
+      { ...fiche, id: 'mf' + Date.now(), numero: nextNumero(prev.map((f) => f.numero), 107309), createdAt: new Date().toISOString() },
+      ...prev,
+    ]);
+  }, []);
+  const updateMotoFiche = useCallback((id: string, updates: Partial<MotoFiche>) => {
+    setMotoFiches((prev) => prev.map((f) => (f.id === id ? { ...f, ...updates } : f)));
+  }, []);
+  const deleteMotoFiche = useCallback((id: string) => {
+    setMotoFiches((prev) => prev.filter((f) => f.id !== id));
+  }, []);
+
+  const addVoitureFiche = useCallback((fiche: Omit<VoitureFiche, 'id' | 'numero' | 'createdAt'>) => {
+    setVoitureFiches((prev) => [
+      { ...fiche, id: 'vf' + Date.now(), numero: nextNumero(prev.map((f) => f.numero), 106638), createdAt: new Date().toISOString() },
+      ...prev,
+    ]);
+  }, []);
+  const updateVoitureFiche = useCallback((id: string, updates: Partial<VoitureFiche>) => {
+    setVoitureFiches((prev) => prev.map((f) => (f.id === id ? { ...f, ...updates } : f)));
+  }, []);
+  const deleteVoitureFiche = useCallback((id: string) => {
+    setVoitureFiches((prev) => prev.filter((f) => f.id !== id));
+  }, []);
+
+  const appSettings = appSettingsList[0] ?? DEFAULT_APP_SETTINGS;
+  const updateAppSettings = useCallback((updates: Partial<AppSettings>) => {
+    setAppSettingsList((prev) => [{ ...(prev[0] ?? DEFAULT_APP_SETTINGS), ...updates }]);
+  }, []);
+
   const getDashboardStats = useCallback((): DashboardStats => {
     const now = new Date();
     const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
@@ -2537,6 +2590,16 @@ export function VehicleProvider({ children }: { children: React.ReactNode }) {
       addStockExit,
       presenceEntries,
       upsertPresenceEntry,
+      motoFiches,
+      addMotoFiche,
+      updateMotoFiche,
+      deleteMotoFiche,
+      voitureFiches,
+      addVoitureFiche,
+      updateVoitureFiche,
+      deleteVoitureFiche,
+      appSettings,
+      updateAppSettings,
     },
   }, children);
 }
