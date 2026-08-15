@@ -23,6 +23,7 @@ import Login from './components/Login';
 import { observeAuth, logout, type UserProfile } from './authService';
 import { VehicleProvider } from './store/VehicleStore';
 import { DriverProvider } from './store/DriverStore';
+import g4sLogo from './assets/g4s-logo.png';
 
 function AppContent({ profile, onLogout }: { profile: UserProfile; onLogout: () => void }) {
   return (
@@ -36,7 +37,14 @@ function AppContent({ profile, onLogout }: { profile: UserProfile; onLogout: () 
       </div>
       <div className="flex flex-1">
         <Sidebar />
-        <main className="ml-64 flex-1 p-6 print:ml-0 print:p-0">
+        {/* Filigrane G4S — visible en fond derrière le contenu de tous les menus, sans
+            gêner la lecture ni les clics, et masqué à l'impression. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none fixed inset-0 z-0 bg-center bg-no-repeat opacity-[0.06] print:hidden"
+          style={{ backgroundImage: `url(${g4sLogo})`, backgroundSize: '480px' }}
+        />
+        <main className="relative z-10 ml-64 flex-1 p-6 print:ml-0 print:p-0">
           <Routes>
             <Route path="/"             element={<Dashboard />} />
             <Route path="/vehicules"    element={<VehicleList />} />

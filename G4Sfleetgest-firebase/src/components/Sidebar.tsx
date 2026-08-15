@@ -1,5 +1,6 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { useState, useEffect, useCallback } from 'react';
+import g4sLogo from '../assets/g4s-logo.png';
 import {
   LayoutDashboard, Car, BarChart3, Receipt,
   GripVertical, MapPin, Fuel, Users, Eye, EyeOff, PackageX,
@@ -117,8 +118,8 @@ export default function Sidebar() {
   return (
     <aside className="fixed left-0 top-0 z-30 flex h-full w-64 flex-col bg-gradient-to-b from-slate-900 to-slate-800 text-white shadow-xl">
       <div className="flex items-center gap-3 border-b border-slate-700 px-6 py-5">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500">
-          <Car className="h-5 w-5 text-white" />
+        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-white p-1">
+          <img src={g4sLogo} alt="G4S" className="h-full w-full object-contain" />
         </div>
         <div>
           <h1 className="text-sm font-bold leading-tight">Parc Auto</h1>

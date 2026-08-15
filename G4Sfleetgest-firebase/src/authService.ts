@@ -1,7 +1,6 @@
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
-  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
   type User,
@@ -53,24 +52,15 @@ export async function registerWithEmail(email: string, password: string, display
   const profile = await readOrCreateProfile(cred.user);
   const finalProfile = { ...profile, displayName: displayName || profile.displayName };
   await setDoc(doc(db, USERS_COLLECTION, cred.user.uid), { displayName: finalProfile.displayName }, { merge: true });
-  // uid réel en premier argument (voir risePresenceSync.ts) : évite les doublons
-  // de lignes dans RISE Presence pour un même compte.
-  signalPresenceConnected(cred.user.uid, finalProfile.displayName, finalProfile.email, finalProfile.role);
+  signalPresenceConnected(finalProfile.displayName, finalProfile.email, finalProfile.role);
   return finalProfile;
 }
 
 export async function loginWithEmail(email: string, password: string) {
   const cred = await signInWithEmailAndPassword(auth, email, password);
   const profile = await readOrCreateProfile(cred.user);
-  signalPresenceConnected(cred.user.uid, profile.displayName, profile.email, profile.role);
+  signalPresenceConnected(profile.displayName, profile.email, profile.role);
   return profile;
-}
-
-// Envoie un e-mail (via Firebase) contenant un lien pour réinitialiser le mot de passe.
-// Ne révèle jamais si l'adresse existe ou non côté UI (voir Login.tsx) : c'est Firebase
-// qui gère l'envoi réel, aucune information sensible ne transite par notre code.
-export async function resetPassword(email: string) {
-  await sendPasswordResetEmail(auth, email);
 }
 
 export function observeAuth(callback: (profile: UserProfile | null) => void) {
@@ -85,17 +75,11 @@ export function observeAuth(callback: (profile: UserProfile | null) => void) {
     // session restaurée automatiquement au rechargement de page (pas seulement lors d'un
     // clic explicite sur "Se connecter") : sinon RISE Presence peut rester bloqué sur
     // "Déconnecté" alors que l'utilisateur est bel et bien actif dans FleetGest.
-    signalPresenceConnected(user.uid, profile.displayName, profile.email, profile.role);
+    signalPresenceConnected(profile.displayName, profile.email, profile.role);
   });
 }
 
 export async function logout(profile: UserProfile | null) {
-  if (profile) {
-    try {
-      await signalPresenceDisconnected(profile.uid);
-    } catch (err) {
-      console.error("Présence non mise à jour à la déconnexion :", err);
-    }
-  }
+  if (profile) signalPresenceDisconnected(profile.displayName);
   return signOut(auth);
 }
