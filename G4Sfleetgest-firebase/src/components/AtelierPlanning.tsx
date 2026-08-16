@@ -83,7 +83,7 @@ export default function AtelierPlanning() {
           <input type="date" value={period.to} onChange={e => setPeriod(p => ({ ...p, to: e.target.value }))} className="rounded-lg border border-slate-300 px-2 py-2 text-sm" />
           <button onClick={() => setPeriod(currentWeekRange())} className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50">Semaine en cours</button>
           <button onClick={() => window.print()} className="rounded-lg border border-slate-300 bg-white p-2 text-slate-500 hover:bg-slate-50" title="Imprimer"><Printer className="h-4 w-4" /></button>
-          <button onClick={() => { setEditOrderId(''); setShowForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"><Plus className="h-4 w-4" /> Nouveau</button>
+          <button onClick={() => { setEditOrderId(''); setShowForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700"><Plus className="h-4 w-4" /> Nouveau</button>
         </div>
       </div>
 
@@ -99,11 +99,11 @@ export default function AtelierPlanning() {
                 <p className="text-sm font-semibold capitalize text-slate-800">{label}</p>
                 <p className="mb-3 text-[11px] text-slate-400">{list.length} intervention{list.length > 1 ? 's' : ''}</p>
                 {list.length === 0 ? (
-                  <button onClick={() => { setEditOrderId(''); setShowForm(true); }} className="w-full rounded-lg border border-dashed border-slate-200 py-6 text-xs text-slate-400 hover:border-emerald-300 hover:text-emerald-600">Aucune intervention</button>
+                  <button onClick={() => { setEditOrderId(''); setShowForm(true); }} className="w-full rounded-lg border border-dashed border-slate-200 py-6 text-xs text-slate-400 hover:border-brand-300 hover:text-brand-600">Aucune intervention</button>
                 ) : (
                   <div className="space-y-2">
                     {list.map(order => (
-                      <button key={order.id} onClick={() => { setEditOrderId(order.id); setShowForm(true); }} className="block w-full rounded-lg border border-slate-100 bg-slate-50 p-2.5 text-left transition hover:border-emerald-300 hover:bg-emerald-50">
+                      <button key={order.id} onClick={() => { setEditOrderId(order.id); setShowForm(true); }} className="block w-full rounded-lg border border-slate-100 bg-slate-50 p-2.5 text-left transition hover:border-brand-300 hover:bg-brand-50">
                         <div className="flex items-center justify-between gap-1">
                           <span className="text-xs font-bold text-slate-800">{order.id}</span>
                           <span className={`rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${STATUS_COLORS[order.status]}`}>{order.status}</span>

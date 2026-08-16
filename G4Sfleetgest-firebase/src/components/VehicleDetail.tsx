@@ -36,7 +36,7 @@ export default function VehicleDetail() {
       <div className="flex flex-col items-center justify-center py-20">
         <Car className="h-16 w-16 text-slate-300" />
         <h2 className="mt-4 text-xl font-semibold text-slate-500">Véhicule non trouvé</h2>
-        <button onClick={() => navigate('/vehicules')} className="mt-4 text-sm text-emerald-600 hover:underline">
+        <button onClick={() => navigate('/vehicules')} className="mt-4 text-sm text-brand-600 hover:underline">
           Retour à la liste
         </button>
       </div>
@@ -113,7 +113,7 @@ export default function VehicleDetail() {
       <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 text-white shadow-lg shadow-emerald-200">
+            <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-lg shadow-brand-200">
               <Car className="h-8 w-8" />
             </div>
             <div>
@@ -229,14 +229,14 @@ export default function VehicleDetail() {
                 </span>
                 <button
                   onClick={() => setShowMaintForm(!showMaintForm)}
-                  className="text-xs font-semibold text-emerald-600 hover:text-emerald-700"
+                  className="text-xs font-semibold text-brand-600 hover:text-brand-700"
                 >
                   + Ajouter
                 </button>
               </div>
 
               {showMaintForm && (
-                <form onSubmit={handleAddMaintenance} className="mb-4 space-y-2 rounded-lg border border-emerald-200 bg-emerald-50 p-3">
+                <form onSubmit={handleAddMaintenance} className="mb-4 space-y-2 rounded-lg border border-brand-200 bg-brand-50 p-3">
                   <input type="date" required value={maintForm.date} onChange={(e) => setMaintForm(p => ({ ...p, date: e.target.value }))} className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm" />
                   <input type="text" required placeholder="Type d'intervention" value={maintForm.type} onChange={(e) => setMaintForm(p => ({ ...p, type: e.target.value }))} className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm" />
                   <input type="text" placeholder="Description" value={maintForm.description} onChange={(e) => setMaintForm(p => ({ ...p, description: e.target.value }))} className="w-full rounded border border-slate-300 px-2 py-1.5 text-sm" />
@@ -245,7 +245,7 @@ export default function VehicleDetail() {
                     <input type="number" placeholder="Kilométrage" value={maintForm.kilometrage} onChange={(e) => setMaintForm(p => ({ ...p, kilometrage: e.target.value }))} className="rounded border border-slate-300 px-2 py-1.5 text-sm" />
                   </div>
                   <div className="flex gap-2">
-                    <button type="submit" className="flex-1 rounded bg-emerald-600 py-1.5 text-xs font-semibold text-white">Enregistrer</button>
+                    <button type="submit" className="flex-1 rounded bg-brand-600 py-1.5 text-xs font-semibold text-white">Enregistrer</button>
                     <button type="button" onClick={() => { setShowMaintForm(false); clearMaintDraft(); }} className="flex-1 rounded border border-slate-300 py-1.5 text-xs text-slate-500">Annuler</button>
                   </div>
                 </form>
@@ -289,7 +289,7 @@ export default function VehicleDetail() {
                   </span>
                   <button
                     onClick={() => navigate('/depenses')}
-                    className="text-xs font-semibold text-emerald-600 hover:text-emerald-700"
+                    className="text-xs font-semibold text-brand-600 hover:text-brand-700"
                   >
                     Gérer
                   </button>

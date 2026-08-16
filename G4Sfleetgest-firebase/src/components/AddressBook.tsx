@@ -15,7 +15,7 @@ const TYPE_OPTIONS: Contact['type_contact'][] = [
 const TYPE_COLORS: Record<Contact['type_contact'], string> = {
   Fournisseur: 'bg-indigo-100 text-indigo-700',
   Garage: 'bg-amber-100 text-amber-700',
-  Assureur: 'bg-emerald-100 text-emerald-700',
+  Assureur: 'bg-brand-100 text-brand-700',
   Client: 'bg-sky-100 text-sky-700',
   Partenaire: 'bg-violet-100 text-violet-700',
   Administration: 'bg-slate-200 text-slate-700',
@@ -85,14 +85,14 @@ export default function AddressBook() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-xl bg-white p-6 shadow-sm print:hidden">
         <div>
           <h2 className="flex items-center gap-2 text-2xl font-bold text-slate-900">
-            <BookUser className="h-6 w-6 text-emerald-600" /> Carnet d'adresses
+            <BookUser className="h-6 w-6 text-brand-600" /> Carnet d'adresses
           </h2>
           <p className="mt-1 text-sm text-slate-500">Fournisseurs, garages, assureurs, clients et tous vos contacts professionnels</p>
         </div>
         <div className="flex gap-2">
           <button
             onClick={() => { setEditContactId(''); setShowForm(true); }}
-            className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"
+            className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700"
           >
             <Plus className="h-4 w-4" /> Nouveau contact
           </button>
@@ -113,7 +113,7 @@ export default function AddressBook() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Rechercher un nom, une société, un téléphone, un email..."
-            className="w-full rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            className="w-full rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
           />
         </div>
         <div className="flex flex-wrap gap-1.5">
@@ -144,7 +144,7 @@ export default function AddressBook() {
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((c) => (
-            <div key={c.id} onClick={() => { setEditContactId(c.id); setShowForm(true); }} className="cursor-pointer rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:border-emerald-300 print:break-inside-avoid">
+            <div key={c.id} onClick={() => { setEditContactId(c.id); setShowForm(true); }} className="cursor-pointer rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:border-brand-300 print:break-inside-avoid">
               <div className="flex items-start justify-between">
                 <div>
                   <span className={`inline-block rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase ${TYPE_COLORS[c.type_contact] || 'bg-gray-100 text-gray-600'}`}>
@@ -161,7 +161,7 @@ export default function AddressBook() {
                   )}
                 </div>
                 <div className="flex gap-1 print:hidden" onClick={(e) => e.stopPropagation()}>
-                  <button onClick={() => { setEditContactId(c.id); setShowForm(true); }} className="p-1.5 text-slate-400 hover:text-emerald-600"><Pencil className="h-3.5 w-3.5" /></button>
+                  <button onClick={() => { setEditContactId(c.id); setShowForm(true); }} className="p-1.5 text-slate-400 hover:text-brand-600"><Pencil className="h-3.5 w-3.5" /></button>
                   <button onClick={() => deleteContact(c.id)} className="p-1.5 text-slate-400 hover:text-red-600"><Trash2 className="h-3.5 w-3.5" /></button>
                 </div>
               </div>
@@ -224,7 +224,7 @@ function ContactFormModal({ contact, onSave, onClose }: ContactFormProps) {
   const up = (k: keyof Omit<Contact, 'id'>, v: string) => setF((p) => ({ ...p, [k]: v }));
   const handleCancel = () => { clearDraft(); onClose(); };
 
-  const inputCls = "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500";
+  const inputCls = "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500";
   const labelCls = "block text-xs font-medium text-slate-600";
 
   return (
@@ -232,13 +232,13 @@ function ContactFormModal({ contact, onSave, onClose }: ContactFormProps) {
       <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl">
         <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-6 py-4">
           <h3 className="flex items-center gap-2 text-lg font-bold">
-            <User className="h-5 w-5 text-emerald-600" /> {contact ? 'Modifier le contact' : 'Ajouter un contact'}
+            <User className="h-5 w-5 text-brand-600" /> {contact ? 'Modifier le contact' : 'Ajouter un contact'}
           </h3>
           <button onClick={handleCancel} className="p-1.5 text-slate-400 hover:text-slate-700"><X className="h-5 w-5" /></button>
         </div>
         <form onSubmit={(e) => { e.preventDefault(); clearDraft(); onSave(f, contact?.id); }} className="grid grid-cols-2 gap-4 p-6">
-          <div className="col-span-2 rounded-lg bg-emerald-50 p-3 -mb-1">
-            <p className="text-xs font-semibold text-emerald-700 uppercase">Identité</p>
+          <div className="col-span-2 rounded-lg bg-brand-50 p-3 -mb-1">
+            <p className="text-xs font-semibold text-brand-700 uppercase">Identité</p>
           </div>
 
           <label className={labelCls}>Type de contact
@@ -306,7 +306,7 @@ function ContactFormModal({ contact, onSave, onClose }: ContactFormProps) {
 
           <div className="col-span-2 flex justify-end gap-3 border-t pt-4">
             <button type="button" onClick={handleCancel} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
-            <button type="submit" className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700">{contact ? 'Mettre à jour' : 'Enregistrer'}</button>
+            <button type="submit" className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700">{contact ? 'Mettre à jour' : 'Enregistrer'}</button>
           </div>
         </form>
       </div>

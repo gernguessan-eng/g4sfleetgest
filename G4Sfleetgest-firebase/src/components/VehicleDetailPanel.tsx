@@ -177,7 +177,7 @@ export default function VehicleDetailPanel({ vehicle, printMode = false }: Props
             ) : (
               <button
                 onClick={() => photoInputRef.current?.click()}
-                className="flex h-24 w-32 flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 text-slate-400 hover:border-emerald-400 hover:bg-emerald-50 hover:text-emerald-600 transition-colors"
+                className="flex h-24 w-32 flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 text-slate-400 hover:border-brand-400 hover:bg-brand-50 hover:text-brand-600 transition-colors"
               >
                 <Camera className="h-7 w-7 mb-1" />
                 <span className="text-[10px] font-medium">Ajouter une photo</span>
@@ -197,7 +197,7 @@ export default function VehicleDetailPanel({ vehicle, printMode = false }: Props
             {!printMode && !vehicle.photo_url && (
               <button
                 onClick={() => photoInputRef.current?.click()}
-                className="mt-1.5 inline-flex items-center gap-1 text-xs text-emerald-600 hover:underline"
+                className="mt-1.5 inline-flex items-center gap-1 text-xs text-brand-600 hover:underline"
               >
                 <Upload className="h-3 w-3" />
                 Téléverser une photo
@@ -303,40 +303,40 @@ export default function VehicleDetailPanel({ vehicle, printMode = false }: Props
                 {vehicleMaintenance.length} intervention(s) — {formatMoney(totalMaintenance)}
               </span>
               {!printMode && (
-                <button onClick={() => setShowMaintForm(!showMaintForm)} className="text-xs font-semibold text-emerald-600 hover:text-emerald-700">
+                <button onClick={() => setShowMaintForm(!showMaintForm)} className="text-xs font-semibold text-brand-600 hover:text-brand-700">
                   + Ajouter
                 </button>
               )}
             </div>
 
             {showMaintForm && (
-              <form onSubmit={handleAddMaintenance} className="mb-4 space-y-2.5 rounded-lg border border-emerald-200 bg-emerald-50 p-3">
+              <form onSubmit={handleAddMaintenance} className="mb-4 space-y-2.5 rounded-lg border border-brand-200 bg-brand-50 p-3">
                 <label className="block text-xs font-medium text-slate-600">Date de l'intervention
-                  <input type="date" required value={maintForm.date} onChange={(e) => setMaintForm((p) => ({ ...p, date: e.target.value }))} className="mt-1 w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+                  <input type="date" required value={maintForm.date} onChange={(e) => setMaintForm((p) => ({ ...p, date: e.target.value }))} className="mt-1 w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
                 </label>
                 <label className="block text-xs font-medium text-slate-600">Type d'intervention
                   <SelectWithOther
                     value={maintForm.type}
                     onChange={(v) => setMaintForm((p) => ({ ...p, type: v }))}
                     options={MAINTENANCE_TYPES.filter((t) => t !== 'Autre')}
-                    className="mt-1 w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    className="mt-1 w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
                     otherPlaceholder="Préciser le type d'intervention…"
                     required
                   />
                 </label>
                 <label className="block text-xs font-medium text-slate-600">Description
-                  <input type="text" placeholder="Ex: Vidange + filtres" value={maintForm.description} onChange={(e) => setMaintForm((p) => ({ ...p, description: e.target.value }))} className="mt-1 w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+                  <input type="text" placeholder="Ex: Vidange + filtres" value={maintForm.description} onChange={(e) => setMaintForm((p) => ({ ...p, description: e.target.value }))} className="mt-1 w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <label className="block text-xs font-medium text-slate-600">Coût (FCFA)
-                    <input type="number" required placeholder="0" value={maintForm.cout} onChange={(e) => setMaintForm((p) => ({ ...p, cout: e.target.value }))} className="mt-1 w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+                    <input type="number" required placeholder="0" value={maintForm.cout} onChange={(e) => setMaintForm((p) => ({ ...p, cout: e.target.value }))} className="mt-1 w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
                   </label>
                   <label className="block text-xs font-medium text-slate-600">Kilométrage
-                    <input type="number" placeholder="0" value={maintForm.kilometrage} onChange={(e) => setMaintForm((p) => ({ ...p, kilometrage: e.target.value }))} className="mt-1 w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+                    <input type="number" placeholder="0" value={maintForm.kilometrage} onChange={(e) => setMaintForm((p) => ({ ...p, kilometrage: e.target.value }))} className="mt-1 w-full rounded border border-slate-300 px-2 py-1.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
                   </label>
                 </div>
                 <div className="flex gap-2 pt-1">
-                  <button type="submit" className="flex-1 rounded bg-emerald-600 py-1.5 text-xs font-semibold text-white">Enregistrer</button>
+                  <button type="submit" className="flex-1 rounded bg-brand-600 py-1.5 text-xs font-semibold text-white">Enregistrer</button>
                   <button type="button" onClick={() => setShowMaintForm(false)} className="flex-1 rounded border border-slate-300 py-1.5 text-xs text-slate-500">Annuler</button>
                 </div>
               </form>

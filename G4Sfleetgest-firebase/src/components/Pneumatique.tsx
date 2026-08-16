@@ -167,7 +167,7 @@ export default function Pneumatique() {
           <p className="mt-1 text-sm text-slate-500">Suivi de l'usure, des coûts et des remplacements de pneus</p>
         </div>
         <div className="flex gap-2">
-          <button onClick={() => { setEditPneuId(''); setShowForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"><Plus className="h-4 w-4" /> Ajouter</button>
+          <button onClick={() => { setEditPneuId(''); setShowForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700"><Plus className="h-4 w-4" /> Ajouter</button>
           <label className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white p-2 text-slate-600 hover:bg-slate-50 cursor-pointer" title="Importer"><Upload className="h-4 w-4" /><input type="file" accept=".csv,.xls,.xlsx" className="hidden" onChange={() => {}} /></label>
           <button onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"><Printer className="h-4 w-4" /> Imprimer</button>
         </div>
@@ -209,7 +209,7 @@ export default function Pneumatique() {
       {/* KPI */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
         {[
-          { label: 'Total pneus de la flotte', value: stats.totalFlotte, icon: Gauge, color: 'emerald' },
+          { label: 'Total pneus de la flotte', value: stats.totalFlotte, icon: Gauge, color: 'brand' },
           { label: 'À remplacer', value: stats.aRemplacer, icon: AlertTriangle, color: 'red' },
           { label: 'Usure modérée', value: stats.usureModeree, icon: AlertCircle, color: 'amber' },
           { label: 'Coût total', value: formatMoney(stats.coutTotal), icon: DollarSign, color: 'blue' },
@@ -242,7 +242,7 @@ export default function Pneumatique() {
             <tbody className="divide-y divide-slate-100">
               {fleetTireDetail.map(({ vehicle, tires, missing }) => (
                 <tr key={vehicle.id} className="hover:bg-slate-50">
-                  <td className="px-4 py-2 font-semibold text-emerald-600">{vehicle.numero_immatriculation}</td>
+                  <td className="px-4 py-2 font-semibold text-brand-600">{vehicle.numero_immatriculation}</td>
                   <td className="px-4 py-2 text-xs text-slate-600">{vehicle.marque} {vehicle.type_commercial}</td>
                   <td className="px-4 py-2">
                     <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold ${tires.length >= 5 ? 'bg-green-100 text-green-700' : tires.length === 0 ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
@@ -312,7 +312,7 @@ export default function Pneumatique() {
       <div className="flex flex-wrap items-end gap-3">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher pneu, véhicule…" className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher pneu, véhicule…" className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
         </div>
         <label className="block text-xs font-medium text-slate-600">Du<input type="date" value={periodFrom} onChange={e => setPeriodFrom(e.target.value)} className="mt-1 block rounded-lg border border-slate-300 px-3 py-2 text-sm" /></label>
         <label className="block text-xs font-medium text-slate-600">Au<input type="date" value={periodTo} onChange={e => setPeriodTo(e.target.value)} className="mt-1 block rounded-lg border border-slate-300 px-3 py-2 text-sm" /></label>
@@ -338,7 +338,7 @@ export default function Pneumatique() {
                   const kmCritique = kmParcourus >= seuil.kmMaxParJeu;
                   return (
                     <tr key={p.id} onClick={() => { setEditPneuId(p.id); setShowForm(true); }} className="cursor-pointer hover:bg-slate-50">
-                      <td className="px-3 py-2 font-semibold text-emerald-600">{v?.numero_immatriculation || '—'}</td>
+                      <td className="px-3 py-2 font-semibold text-brand-600">{v?.numero_immatriculation || '—'}</td>
                       <td className="px-3 py-2 text-xs">{POSITION_LABEL[p.position] || p.position}</td>
                       <td className="px-3 py-2"><span className="font-medium">{p.marque}</span> <span className="text-slate-500">{p.modele}</span></td>
                       <td className="px-3 py-2 text-xs">{p.dimension}</td>
@@ -423,12 +423,12 @@ function PneuFormModal({ pneu, vehicles, latestKmByVehicle, onSave, onClose }: P
         </div>
         <form onSubmit={e => { e.preventDefault(); clearDraft(); onSave(f, pneu?.id); }} className="grid grid-cols-2 gap-4 p-6">
           <label className="block text-xs font-medium text-slate-600">Véhicule
-            <select value={f.vehicleId} onChange={e => handleVehicleChange(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+            <select value={f.vehicleId} onChange={e => handleVehicleChange(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
               {vehicles.map(v => <option key={v.id} value={v.id}>{v.numero_immatriculation}</option>)}
             </select>
           </label>
           <label className="block text-xs font-medium text-slate-600">Position
-            <select value={f.position} onChange={e => up('position', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+            <select value={f.position} onChange={e => up('position', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
               {Object.entries(POSITION_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
             </select>
           </label>
@@ -441,7 +441,7 @@ function PneuFormModal({ pneu, vehicles, latestKmByVehicle, onSave, onClose }: P
             />
           </label>
           <label className="block text-xs font-medium text-slate-600">Modèle
-            <input value={f.modele} onChange={e => up('modele', e.target.value)} placeholder="Ex: Primacy 4" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input value={f.modele} onChange={e => up('modele', e.target.value)} placeholder="Ex: Primacy 4" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </label>
           <label className="block text-xs font-medium text-slate-600">Dimension
             <SelectWithOther
@@ -452,28 +452,28 @@ function PneuFormModal({ pneu, vehicles, latestKmByVehicle, onSave, onClose }: P
             />
           </label>
           <label className="block text-xs font-medium text-slate-600">Date montage
-            <input type="date" value={f.date_montage} onChange={e => up('date_montage', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input type="date" value={f.date_montage} onChange={e => up('date_montage', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </label>
           <label className="block text-xs font-medium text-slate-600">Km au montage
-            <input type="number" value={f.km_montage} onChange={e => up('km_montage', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input type="number" value={f.km_montage} onChange={e => up('km_montage', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </label>
           <label className="block text-xs font-medium text-slate-600">Km actuel
             <div className="mt-1 flex gap-1.5">
-              <input type="number" value={f.km_actuel} onChange={e => up('km_actuel', Number(e.target.value))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+              <input type="number" value={f.km_actuel} onChange={e => up('km_actuel', Number(e.target.value))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
               {autoKm != null && (
-                <button type="button" onClick={() => up('km_actuel', autoKm)} title={`Reprendre le dernier kilométrage connu (${autoKm.toLocaleString()} km)`} className="flex-shrink-0 rounded-lg border border-emerald-200 bg-emerald-50 p-2 text-emerald-600 hover:bg-emerald-100"><RefreshCw className="h-3.5 w-3.5" /></button>
+                <button type="button" onClick={() => up('km_actuel', autoKm)} title={`Reprendre le dernier kilométrage connu (${autoKm.toLocaleString()} km)`} className="flex-shrink-0 rounded-lg border border-brand-200 bg-brand-50 p-2 text-brand-600 hover:bg-brand-100"><RefreshCw className="h-3.5 w-3.5" /></button>
               )}
             </div>
             {autoKm != null && <p className="mt-1 text-[10px] text-slate-400">Pré-rempli automatiquement d'après la dernière saisie connue pour ce véhicule ({autoKm.toLocaleString()} km).</p>}
           </label>
           <label className="block text-xs font-medium text-slate-600">Usure (mm)
-            <input type="number" step="0.1" value={f.usure_mm} onChange={e => up('usure_mm', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input type="number" step="0.1" value={f.usure_mm} onChange={e => up('usure_mm', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </label>
           <label className="block text-xs font-medium text-slate-600">Coût unitaire (FCFA)
-            <input type="number" value={f.cout_unitaire} onChange={e => up('cout_unitaire', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input type="number" value={f.cout_unitaire} onChange={e => up('cout_unitaire', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </label>
           <label className="block text-xs font-medium text-slate-600">Main d'œuvre (FCFA)
-            <input type="number" value={f.main_oeuvre} onChange={e => up('main_oeuvre', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input type="number" value={f.main_oeuvre} onChange={e => up('main_oeuvre', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </label>
           <label className="block text-xs font-medium text-slate-600">État
             <div className="mt-1 flex h-[38px] items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3">
@@ -482,21 +482,21 @@ function PneuFormModal({ pneu, vehicles, latestKmByVehicle, onSave, onClose }: P
                 id="etat-remplace"
                 checked={f.etat === 'Remplacé'}
                 onChange={e => up('etat', e.target.checked ? 'Remplacé' : 'Bon')}
-                className="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
               />
               <label htmlFor="etat-remplace" className="text-xs text-slate-600">Marquer comme remplacé</label>
             </div>
             <p className="mt-1 text-[10px] text-slate-400">Sinon, l'état (Bon / Usure modérée / À remplacer) est calculé automatiquement selon les seuils d'alerte.</p>
           </label>
           <label className="block text-xs font-medium text-slate-600">Fournisseur
-            <input value={f.fournisseur} onChange={e => up('fournisseur', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input value={f.fournisseur} onChange={e => up('fournisseur', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </label>
           <label className="col-span-2 block text-xs font-medium text-slate-600">Observations
-            <textarea value={f.observations} onChange={e => up('observations', e.target.value)} rows={2} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <textarea value={f.observations} onChange={e => up('observations', e.target.value)} rows={2} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </label>
           <div className="col-span-2 flex justify-end gap-3 border-t pt-4">
             <button type="button" onClick={onClose} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
-            <button type="submit" className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700">{pneu ? 'Mettre à jour' : 'Enregistrer'}</button>
+            <button type="submit" className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700">{pneu ? 'Mettre à jour' : 'Enregistrer'}</button>
           </div>
         </form>
       </div>

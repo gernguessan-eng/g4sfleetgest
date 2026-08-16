@@ -126,7 +126,7 @@ export default function VehicleList() {
           <h2 className="text-2xl font-bold text-slate-900">Parc Automobile</h2>
           <p className="mt-1 text-sm text-slate-500">
             {vehicles.length} véhicule(s) — {filtered.length} affiché(s)
-            {selectedIds.size > 0 && <span className="ml-2 text-emerald-600 font-semibold">({selectedIds.size} sélectionné(s))</span>}
+            {selectedIds.size > 0 && <span className="ml-2 text-brand-600 font-semibold">({selectedIds.size} sélectionné(s))</span>}
           </p>
         </div>
         <div className="flex gap-2">
@@ -141,7 +141,7 @@ export default function VehicleList() {
           )}
           <button
             onClick={handleAdd}
-            className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"
+            className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700"
           >
             <Plus className="h-4 w-4" /> Ajouter
           </button>
@@ -167,13 +167,13 @@ export default function VehicleList() {
             placeholder="Immatriculation, marque, modèle, conducteur, VIN…"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
-            className="w-full rounded-lg border border-slate-300 pl-10 pr-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            className="w-full rounded-lg border border-slate-300 pl-10 pr-4 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
           />
         </div>
         <select
           value={filterStatus}
           onChange={(e) => { setFilterStatus(e.target.value); setCurrentPage(1); }}
-          className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+          className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
         >
           {statusOptions.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
@@ -200,15 +200,15 @@ export default function VehicleList() {
           <div className="flex items-center gap-3 px-4 py-2">
             <button
               onClick={toggleSelectAll}
-              className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-emerald-600"
+              className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-brand-600"
             >
               {allSelected ? (
-                <CheckSquare className="h-5 w-5 text-emerald-600" />
+                <CheckSquare className="h-5 w-5 text-brand-600" />
               ) : someSelected ? (
                 <div className="relative h-5 w-5">
-                  <Square className="h-5 w-5 text-emerald-600" />
+                  <Square className="h-5 w-5 text-brand-600" />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="h-2.5 w-2.5 rounded-sm bg-emerald-600" />
+                    <div className="h-2.5 w-2.5 rounded-sm bg-brand-600" />
                   </div>
                 </div>
               ) : (
@@ -239,12 +239,12 @@ export default function VehicleList() {
           return (
             <div
               key={v.id}
-              className={`rounded-xl border bg-white shadow-sm overflow-hidden ${isSelected ? 'border-emerald-400 ring-1 ring-emerald-200' : 'border-slate-200'} ${isPrintHidden ? 'print:hidden' : ''}`}
+              className={`rounded-xl border bg-white shadow-sm overflow-hidden ${isSelected ? 'border-brand-400 ring-1 ring-brand-200' : 'border-slate-200'} ${isPrintHidden ? 'print:hidden' : ''}`}
             >
               {/* ── Node header ── */}
               <div
                 className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors ${
-                  isExpanded ? 'bg-emerald-50 border-b border-emerald-100' : 'hover:bg-slate-50'
+                  isExpanded ? 'bg-brand-50 border-b border-brand-100' : 'hover:bg-slate-50'
                 }`}
                 onClick={() => toggleExpand(v.id)}
               >
@@ -254,13 +254,13 @@ export default function VehicleList() {
                   className="flex-shrink-0"
                 >
                   {isSelected ? (
-                    <CheckSquare className="h-5 w-5 text-emerald-600" />
+                    <CheckSquare className="h-5 w-5 text-brand-600" />
                   ) : (
                     <Square className="h-5 w-5 text-slate-400" />
                   )}
                 </button>
 
-                <button className="flex-shrink-0 rounded-md p-1 text-slate-400 hover:text-emerald-600">
+                <button className="flex-shrink-0 rounded-md p-1 text-slate-400 hover:text-brand-600">
                   {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                 </button>
 
@@ -277,7 +277,7 @@ export default function VehicleList() {
 
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm font-bold text-emerald-600">{v.numero_immatriculation}</span>
+                    <span className="text-sm font-bold text-brand-600">{v.numero_immatriculation}</span>
                     <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${
                       v.statut === 'Actif' ? 'bg-green-100 text-green-700' :
                       v.statut === 'En maintenance' ? 'bg-amber-100 text-amber-700' :
@@ -328,7 +328,7 @@ export default function VehicleList() {
                   ><Trash2 className="h-4 w-4" /></button>
                   <button
                     onClick={() => handlePrintVehicle(v.id)}
-                    className="rounded-lg p-1.5 text-slate-400 hover:bg-emerald-50 hover:text-emerald-700"
+                    className="rounded-lg p-1.5 text-slate-400 hover:bg-brand-50 hover:text-brand-700"
                     title="Imprimer la fiche"
                   ><Printer className="h-4 w-4" /></button>
                 </div>

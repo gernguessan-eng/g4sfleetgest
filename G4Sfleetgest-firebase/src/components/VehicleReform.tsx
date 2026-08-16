@@ -112,7 +112,7 @@ export default function VehicleReform() {
           )}
           <button
             onClick={() => window.print()}
-            className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"
+            className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700"
           >
             <Printer className="h-4 w-4" /> Imprimer
           </button>
@@ -286,7 +286,7 @@ export default function VehicleReform() {
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
                             <Car className="h-4 w-4 text-slate-400 flex-shrink-0" />
-                            <span className="font-bold text-emerald-600">{v.numero_immatriculation}</span>
+                            <span className="font-bold text-brand-600">{v.numero_immatriculation}</span>
                           </div>
                         </td>
                         <td className="px-4 py-3">

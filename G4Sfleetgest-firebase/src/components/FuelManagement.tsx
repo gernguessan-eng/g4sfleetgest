@@ -141,8 +141,12 @@ export default function FuelManagement() {
       }))
       .sort((a, b) => b.Total - a.Total);
 
+    // ── Consommation moyenne réelle du parc (L/100km), véhicules ayant des pleins chiffrés ──
+    const consosWithData = vehicles.filter(v => (v.consommation_100km || 0) > 0).map(v => v.consommation_100km || 0);
+    const avgConsumption = consosWithData.length > 0 ? consosWithData.reduce((s, c) => s + c, 0) / consosWithData.length : 0;
+
     return { 
-      total, count, avg, 
+      total, count, avg, avgConsumption, vehiclesWithConsumption: consosWithData.length,
       paymentData, vehicleData, comparisonData,
       monthlyData, brandData, typeData
     };
@@ -155,6 +159,7 @@ export default function FuelManagement() {
         'Date': e.date,
         'Véhicule': v ? v.numero_immatriculation : 'Inconnu',
         'Libellé': e.libelle,
+        'Litres': e.litres || '',
         'Montant': e.montant,
         'Fournisseur': e.fournisseur,
         'Mode Paiement': e.mode_paiement,
@@ -182,12 +187,12 @@ export default function FuelManagement() {
         <div className="flex gap-2">
           <label className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white p-2 text-slate-600 hover:bg-slate-50 cursor-pointer" title="Importer"><Upload className="h-4 w-4" /><input type="file" accept=".csv,.xls,.xlsx" className="hidden" onChange={() => {}} /></label>
           <button onClick={exportToExcel} className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"><Download className="h-4 w-4" /> Exporter</button>
-          <button onClick={handlePrint} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"><Printer className="h-4 w-4" /> Imprimer</button>
+          <button onClick={handlePrint} className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700"><Printer className="h-4 w-4" /> Imprimer</button>
         </div>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-100 text-orange-600">
@@ -212,7 +217,7 @@ export default function FuelManagement() {
         </div>
         <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-100 text-brand-600">
               <DollarSign className="h-6 w-6" />
             </div>
             <div>
@@ -221,12 +226,24 @@ export default function FuelManagement() {
             </div>
           </div>
         </div>
+        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
+              <Layers className="h-6 w-6" />
+            </div>
+            <div>
+              <p className="text-xs font-medium text-slate-500">Consommation Moyenne Réelle</p>
+              <p className="text-xl font-bold text-slate-900">{stats.avgConsumption > 0 ? `${stats.avgConsumption.toFixed(1)} L/100km` : '—'}</p>
+              <p className="text-[10px] text-slate-400">{stats.vehiclesWithConsumption} véhicule(s) avec pleins chiffrés</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Period filter */}
       <div className="flex flex-wrap items-end gap-3 rounded-lg bg-slate-50 p-3 border border-slate-200 print:hidden">
-        <label className="block text-xs font-medium text-slate-600">Période du<input type="date" value={periodFrom} onChange={e => setPeriodFrom(e.target.value)} className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none" /></label>
-        <label className="block text-xs font-medium text-slate-600">au<input type="date" value={periodTo} onChange={e => setPeriodTo(e.target.value)} className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none" /></label>
+        <label className="block text-xs font-medium text-slate-600">Période du<input type="date" value={periodFrom} onChange={e => setPeriodFrom(e.target.value)} className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none" /></label>
+        <label className="block text-xs font-medium text-slate-600">au<input type="date" value={periodTo} onChange={e => setPeriodTo(e.target.value)} className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none" /></label>
         {(periodFrom || periodTo) && <button onClick={() => { setPeriodFrom(''); setPeriodTo(''); }} className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100">Réinitialiser</button>}
       </div>
 
@@ -265,7 +282,7 @@ export default function FuelManagement() {
         {/* By Vehicle */}
         <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
           <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-800">
-            <BarChartIcon className="h-5 w-5 text-emerald-500" />
+            <BarChartIcon className="h-5 w-5 text-brand-500" />
             Dépenses Carburant par Véhicule
           </h3>
           <div className="h-80 w-full">
@@ -303,7 +320,7 @@ export default function FuelManagement() {
             </ResponsiveContainer>
           </div>
           <p className="mt-4 text-xs text-slate-500 italic text-center">
-            Note: Le coût théorique est calculé à partir du kilométrage total du véhicule et de sa consommation constructeur, avec les prix de référence carburant : Essence {fuelPrices.Essence.toLocaleString('fr-FR')} FCFA/L, Diesel {fuelPrices.Diesel.toLocaleString('fr-FR')} FCFA/L. <Link to="/parametres" className="font-medium text-emerald-600 hover:underline print:hidden">Modifier ces prix</Link>
+            Note: Le coût théorique est calculé à partir du kilométrage total du véhicule et de sa consommation moyenne réelle (L/100km, calculée automatiquement à partir des pleins saisis dans Dépenses → Carburant — voir la fiche du véhicule), avec les prix de référence carburant : Essence {fuelPrices.Essence.toLocaleString('fr-FR')} FCFA/L, Diesel {fuelPrices.Diesel.toLocaleString('fr-FR')} FCFA/L. <Link to="/parametres" className="font-medium text-brand-600 hover:underline print:hidden">Modifier ces prix</Link>
           </p>
         </div>
       </div>
@@ -311,7 +328,7 @@ export default function FuelManagement() {
       {/* ── Répartition par énergie ── */}
       <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-800">
-          <Fuel className="h-5 w-5 text-emerald-500" />
+          <Fuel className="h-5 w-5 text-brand-500" />
           Répartition par énergie
         </h3>
         {(() => {

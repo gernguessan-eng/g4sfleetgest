@@ -47,11 +47,11 @@ export default function PointageVoiture() {
           <h2 className="text-lg font-bold text-slate-800">Pointage Voiture</h2>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <div className="relative"><Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" /><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="N°, pilote, matricule, plaque, contrôle…" className="w-72 rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm focus:border-emerald-500 focus:outline-none" /></div>
+          <div className="relative"><Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" /><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="N°, pilote, matricule, plaque, contrôle…" className="w-72 rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm focus:border-brand-500 focus:outline-none" /></div>
           <input type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} className="rounded-lg border border-slate-300 px-2 py-2 text-xs" />
           <span className="text-xs text-slate-400">→</span>
           <input type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} className="rounded-lg border border-slate-300 px-2 py-2 text-xs" />
-          <button onClick={() => { setEditId(''); setShowForm(true); }} className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-emerald-700"><Plus className="h-4 w-4" /> Nouvelle fiche</button>
+          <button onClick={() => { setEditId(''); setShowForm(true); }} className="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-brand-700"><Plus className="h-4 w-4" /> Nouvelle fiche</button>
         </div>
       </div>
 
@@ -74,7 +74,7 @@ export default function PointageVoiture() {
                     <td className="px-3 py-2 font-mono text-xs font-semibold text-slate-700">EQUIPAGE-{f.numero}</td>
                     <td className="px-3 py-2 text-xs">{fmtDate(f.date)}</td>
                     <td className="px-3 py-2 text-xs">{f.periode}</td>
-                    <td className="px-3 py-2 text-xs font-medium text-emerald-600">{v?.numero_immatriculation || '—'}</td>
+                    <td className="px-3 py-2 text-xs font-medium text-brand-600">{v?.numero_immatriculation || '—'}</td>
                     <td className="px-3 py-2 text-xs">{f.pilote.nom || '—'}</td>
                     <td className="px-3 py-2">
                       {f.etat_roulage ? <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${f.etat_roulage === 'Oui' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{f.etat_roulage === 'Oui' ? 'Roulant' : 'Hors service'}</span> : <span className="text-xs text-slate-300">—</span>}
@@ -202,7 +202,7 @@ function VoitureFicheFormModal({ fiche, voitures, onSave, onClose }: {
 
           <div className="flex justify-end gap-3 border-t pt-4">
             <button type="button" onClick={handleCancel} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
-            <button type="submit" className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700">{fiche ? 'Mettre à jour' : 'Enregistrer la fiche'}</button>
+            <button type="submit" className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700">{fiche ? 'Mettre à jour' : 'Enregistrer la fiche'}</button>
           </div>
         </form>
       </div>

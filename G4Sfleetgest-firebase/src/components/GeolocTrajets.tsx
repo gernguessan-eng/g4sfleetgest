@@ -237,7 +237,7 @@ export default function GeolocTrajets() {
           <h2 className="text-2xl font-bold text-slate-900">Géolocalisation & Trajets</h2>
           <p className="mt-1 text-sm text-slate-500">Calcul d'itinéraires CI, estimation carburant et suivi de position.</p>
         </div>
-        <button onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700">
+        <button onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700">
           <Printer className="h-4 w-4" /> Imprimer
         </button>
       </div>
@@ -252,7 +252,7 @@ export default function GeolocTrajets() {
           return (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
               className={`flex flex-1 items-center justify-center gap-2 rounded-md py-2.5 text-sm font-medium transition-all ${
-                activeTab === tab.id ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+                activeTab === tab.id ? 'bg-white text-brand-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
               <Icon className="h-4 w-4" />{tab.label}
             </button>
           );
@@ -265,7 +265,7 @@ export default function GeolocTrajets() {
           {/* Formulaire */}
           <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-1 space-y-4">
             <h3 className="flex items-center gap-2 text-lg font-semibold text-slate-800">
-              <Navigation className="h-5 w-5 text-emerald-600" />Calcul d'itinéraire
+              <Navigation className="h-5 w-5 text-brand-600" />Calcul d'itinéraire
             </h3>
 
             {/* Villes suggérées */}
@@ -277,7 +277,7 @@ export default function GeolocTrajets() {
             <label className="block text-xs font-medium text-slate-600">
               Véhicule
               <select value={selectedVehicleId} onChange={e => setSelectedVehicleId(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
                 <option value="">Sélectionner…</option>
                 {vehicles.map(v => <option key={v.id} value={v.id}>{v.numero_immatriculation} — {v.marque}</option>)}
               </select>
@@ -294,10 +294,10 @@ export default function GeolocTrajets() {
               Point de départ
               <input value={origin} onChange={e => setOrigin(e.target.value)}
                 placeholder="Ex: Abidjan, Cocody"
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
             </label>
             {originZone && (
-              <div className="rounded-lg bg-emerald-50 px-3 py-2 text-xs text-emerald-800 border border-emerald-100">
+              <div className="rounded-lg bg-brand-50 px-3 py-2 text-xs text-brand-800 border border-brand-100">
                 <strong>Zone :</strong> {originZone}{getZoneMeta(originZone) ? ` — ${getZoneMeta(originZone)?.villes_cles.join(', ')}` : ''}
               </div>
             )}
@@ -306,7 +306,7 @@ export default function GeolocTrajets() {
               Destination
               <input value={destination} onChange={e => setDestination(e.target.value)}
                 placeholder="Ex: Yamoussoukro"
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
             </label>
             {destinationZone && (
               <div className="rounded-lg bg-blue-50 px-3 py-2 text-xs text-blue-800 border border-blue-100">
@@ -322,7 +322,7 @@ export default function GeolocTrajets() {
 
             <button onClick={handleCalculateRoute}
               disabled={!origin || !destination || !selectedVehicleId}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed">
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed">
               <Navigation className="h-4 w-4" />Calculer l'itinéraire
             </button>
           </div>
@@ -337,7 +337,7 @@ export default function GeolocTrajets() {
                     { label: 'Distance',       value: formatDistance(routeResult.distKm),        icon: TrendingUp,  color: 'text-slate-900' },
                     { label: 'Durée estimée',  value: formatDuration(routeResult.durationMin),   icon: Clock,       color: 'text-slate-900' },
                     { label: 'Carburant',      value: fuelConsumption ? `${fuelConsumption.liters} L` : '—', icon: Fuel, color: 'text-amber-600' },
-                    { label: 'Coût estimé',    value: fuelConsumption ? formatMoney(fuelConsumption.cost) : '—', icon: Activity, color: 'text-emerald-600' },
+                    { label: 'Coût estimé',    value: fuelConsumption ? formatMoney(fuelConsumption.cost) : '—', icon: Activity, color: 'text-brand-600' },
                   ].map(k => {
                     const Icon = k.icon;
                     return (
@@ -367,7 +367,7 @@ export default function GeolocTrajets() {
                   <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
                     {routeResult.steps.map((step, i) => (
                       <div key={i} className="flex items-start gap-3 rounded-lg bg-slate-50 border border-slate-100 p-3">
-                        <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-700">{i + 1}</div>
+                        <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-brand-100 text-xs font-bold text-brand-700">{i + 1}</div>
                         <div>
                           <p className="text-sm font-medium text-slate-800">{step.instruction}</p>
                           <p className="text-xs text-slate-500">{Math.round(step.distance)} km</p>
@@ -397,13 +397,13 @@ export default function GeolocTrajets() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-1 space-y-4">
             <h3 className="flex items-center gap-2 text-lg font-semibold text-slate-800">
-              <MapPin className="h-5 w-5 text-emerald-600" />Suivi GPS
+              <MapPin className="h-5 w-5 text-brand-600" />Suivi GPS
             </h3>
 
             <label className="block text-xs font-medium text-slate-600">
               Véhicule à suivre
               <select value={trackVehicleId} onChange={e => { setTrackVehicleId(e.target.value); setTracking(false); setTrackHistory([]); }}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
                 <option value="">Sélectionner…</option>
                 {vehicles.map(v => <option key={v.id} value={v.id}>{v.numero_immatriculation} — {v.marque}</option>)}
               </select>
@@ -412,7 +412,7 @@ export default function GeolocTrajets() {
             {trackVehicle && (
               <div className="space-y-3 rounded-lg bg-slate-50 p-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100"><Car className="h-5 w-5 text-emerald-600" /></div>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-100"><Car className="h-5 w-5 text-brand-600" /></div>
                   <div>
                     <p className="text-sm font-bold text-slate-800">{trackVehicle.numero_immatriculation}</p>
                     <p className="text-xs text-slate-500">{trackVehicle.marque} {trackVehicle.type_commercial}</p>
@@ -431,7 +431,7 @@ export default function GeolocTrajets() {
                   </p>
                 </div>
                 <button onClick={handleTrack} disabled={tracking}
-                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60">
+                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60">
                   {tracking ? <CheckCircle2 className="h-4 w-4" /> : <Search className="h-4 w-4" />}
                   {tracking ? 'Suivi actif' : 'Lancer le suivi'}
                 </button>
@@ -459,9 +459,9 @@ export default function GeolocTrajets() {
                     </MapContainer>
                   </div>
                   <div className="grid grid-cols-3 gap-3">
-                    <div className="rounded-lg bg-emerald-50 p-3"><p className="text-xs text-emerald-600">Latitude</p><p className="font-bold text-emerald-800">{trackMapCenter[0].toFixed(4)}° N</p></div>
-                    <div className="rounded-lg bg-emerald-50 p-3"><p className="text-xs text-emerald-600">Longitude</p><p className="font-bold text-emerald-800">{Math.abs(trackMapCenter[1]).toFixed(4)}° W</p></div>
-                    <div className="rounded-lg bg-emerald-50 p-3"><p className="text-xs text-emerald-600">Mise à jour</p><p className="font-bold text-emerald-800">À l'instant</p></div>
+                    <div className="rounded-lg bg-brand-50 p-3"><p className="text-xs text-brand-600">Latitude</p><p className="font-bold text-brand-800">{trackMapCenter[0].toFixed(4)}° N</p></div>
+                    <div className="rounded-lg bg-brand-50 p-3"><p className="text-xs text-brand-600">Longitude</p><p className="font-bold text-brand-800">{Math.abs(trackMapCenter[1]).toFixed(4)}° W</p></div>
+                    <div className="rounded-lg bg-brand-50 p-3"><p className="text-xs text-brand-600">Mise à jour</p><p className="font-bold text-brand-800">À l'instant</p></div>
                   </div>
                   <div className="mt-3 rounded-lg bg-slate-50 p-3 text-sm text-slate-600">
                     <MapPin className="mr-1 inline h-4 w-4 text-red-500" />

@@ -111,6 +111,9 @@ export interface ExpenseRecord {
   notes: string;
   date_entretien?: string;
   kilometrage_entretien?: number;
+  /** Quantité de carburant achetée (litres), pour les dépenses de catégorie "Carburant" —
+   *  sert de base au calcul automatique de la consommation moyenne (L/100km) du véhicule. */
+  litres?: number;
   /** Photo du reçu/pompe carburant (prise depuis l'appareil photo ou importée), en base64. */
   photo_carburant_url?: string;
 }

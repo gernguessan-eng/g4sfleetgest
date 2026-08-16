@@ -62,15 +62,15 @@ export default function AtelierStocks() {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <button onClick={() => window.print()} className="rounded-lg border border-slate-300 bg-white p-2 text-slate-500 hover:bg-slate-50" title="Imprimer"><Printer className="h-4 w-4" /></button>
-            <button onClick={() => { setEditId(''); setShowForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"><Plus className="h-4 w-4" /> Nouvelle pièce</button>
+            <button onClick={() => { setEditId(''); setShowForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700"><Plus className="h-4 w-4" /> Nouvelle pièce</button>
           </div>
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-[240px]">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher par SKU, désignation, fournisseur…" className="w-full rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher par SKU, désignation, fournisseur…" className="w-full rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </div>
-          <span className="rounded-lg bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600">VALEUR DES PIÈCES EN STOCK <span className="text-emerald-600">{fmtMoney(totalValue)}</span></span>
+          <span className="rounded-lg bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600">VALEUR DES PIÈCES EN STOCK <span className="text-brand-600">{fmtMoney(totalValue)}</span></span>
           <label className="flex items-center gap-1.5 text-xs text-slate-500">
             <input type="checkbox" checked={alertsOnly} onChange={e => setAlertsOnly(e.target.checked)} /> Afficher uniquement les alertes
           </label>
@@ -170,16 +170,16 @@ function StockItemFormModal({ item, onSave, onDelete, onClose }: {
           <button onClick={handleCancel} className="p-1.5 text-slate-400 hover:text-slate-700"><X className="h-5 w-5" /></button>
         </div>
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 p-6">
-          <label className="col-span-2 block text-xs font-medium text-slate-600">Désignation<input required value={f.name} onChange={e => up('name', e.target.value)} placeholder="Ex. Filtre à huile" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
-          <label className="block text-xs font-medium text-slate-600">Référence (SKU)<input required value={f.ref} onChange={e => up('ref', e.target.value)} placeholder="Ex. FH-204" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
+          <label className="col-span-2 block text-xs font-medium text-slate-600">Désignation<input required value={f.name} onChange={e => up('name', e.target.value)} placeholder="Ex. Filtre à huile" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Référence (SKU)<input required value={f.ref} onChange={e => up('ref', e.target.value)} placeholder="Ex. FH-204" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
           <label className="block text-xs font-medium text-slate-600">Catégorie
             <SelectWithOther value={f.category} onChange={(v) => up('category', v)} options={['Filtration', 'Freinage', 'Lubrifiants', 'Pneumatiques', 'Électricité', 'Carrosserie', 'Moteur']} otherPlaceholder="Préciser la catégorie…" />
           </label>
-          <label className="block text-xs font-medium text-slate-600">Quantité en stock<input type="number" min="0" required value={f.quantity} onChange={e => up('quantity', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
-          <label className="block text-xs font-medium text-slate-600">Seuil minimum<input type="number" min="0" required value={f.minLevel} onChange={e => up('minLevel', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
-          <label className="block text-xs font-medium text-slate-600">Prix unitaire (FCFA)<input type="number" min="0" required value={f.unitPrice} onChange={e => up('unitPrice', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
-          <label className="block text-xs font-medium text-slate-600">Fournisseur<input value={f.supplier} onChange={e => up('supplier', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
-          <label className="block text-xs font-medium text-slate-600">Emplacement<input value={f.location} onChange={e => up('location', e.target.value)} placeholder="Ex. Étagère A-12" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Quantité en stock<input type="number" min="0" required value={f.quantity} onChange={e => up('quantity', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Seuil minimum<input type="number" min="0" required value={f.minLevel} onChange={e => up('minLevel', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Prix unitaire (FCFA)<input type="number" min="0" required value={f.unitPrice} onChange={e => up('unitPrice', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Fournisseur<input value={f.supplier} onChange={e => up('supplier', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Emplacement<input value={f.location} onChange={e => up('location', e.target.value)} placeholder="Ex. Étagère A-12" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
           <div className="col-span-2 flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-500">
             <AlertTriangle className={`h-4 w-4 ${level === 'critique' ? 'text-red-500' : level === 'bas' ? 'text-amber-500' : 'text-green-500'}`} />
             Niveau calculé automatiquement : <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${LEVEL_COLORS[level]}`}>{level}</span>
@@ -189,7 +189,7 @@ function StockItemFormModal({ item, onSave, onDelete, onClose }: {
             {onDelete ? <button type="button" onClick={onDelete} className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"><Trash2 className="h-4 w-4" /> Supprimer</button> : <span />}
             <div className="flex gap-3">
               <button type="button" onClick={handleCancel} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
-              <button type="submit" className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700">{item ? 'Mettre à jour' : 'Enregistrer'}</button>
+              <button type="submit" className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700">{item ? 'Mettre à jour' : 'Enregistrer'}</button>
             </div>
           </div>
         </form>
@@ -230,29 +230,29 @@ function StockExitFormModal({ item, vehicles, orders, onSave, onClose }: {
         </div>
         <form onSubmit={handleSubmit} className="space-y-3 p-6">
           <p className="text-xs text-slate-400">Disponible : <strong className="text-slate-600">{item.quantity}</strong></p>
-          <label className="block text-xs font-medium text-slate-600">Quantité<input type="number" min="1" max={item.quantity} required value={f.quantity} onChange={e => up('quantity', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
-          <label className="block text-xs font-medium text-slate-600">Date<input type="date" required value={f.date} onChange={e => up('date', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Quantité<input type="number" min="1" max={item.quantity} required value={f.quantity} onChange={e => up('quantity', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Date<input type="date" required value={f.date} onChange={e => up('date', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
           <label className="block text-xs font-medium text-slate-600">Motif
-            <select value={f.reason} onChange={e => up('reason', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+            <select value={f.reason} onChange={e => up('reason', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
               {EXIT_REASONS.map(r => <option key={r} value={r}>{r}</option>)}
             </select>
           </label>
           <label className="block text-xs font-medium text-slate-600">Véhicule concerné (optionnel)
-            <select value={f.targetVehiclePlate} onChange={e => up('targetVehiclePlate', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+            <select value={f.targetVehiclePlate} onChange={e => up('targetVehiclePlate', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
               <option value="">Aucun</option>
               {vehicles.map(v => <option key={v.id} value={v.numero_immatriculation}>{v.numero_immatriculation}</option>)}
             </select>
           </label>
           <label className="block text-xs font-medium text-slate-600">Ordre de réparation lié (optionnel)
-            <select value={f.targetOrderId} onChange={e => up('targetOrderId', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+            <select value={f.targetOrderId} onChange={e => up('targetOrderId', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
               <option value="">Aucun</option>
               {orders.filter(o => o.status !== 'Terminé').map(o => <option key={o.id} value={o.id}>{o.id}</option>)}
             </select>
           </label>
-          <label className="block text-xs font-medium text-slate-600">Notes<textarea value={f.notes} onChange={e => up('notes', e.target.value)} rows={2} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Notes<textarea value={f.notes} onChange={e => up('notes', e.target.value)} rows={2} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
           <div className="flex justify-end gap-3 border-t pt-4">
             <button type="button" onClick={handleCancel} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
-            <button type="submit" className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700">Confirmer la sortie</button>
+            <button type="submit" className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700">Confirmer la sortie</button>
           </div>
         </form>
       </div>

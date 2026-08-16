@@ -33,7 +33,7 @@ export default function Settings() {
 
       <form onSubmit={handleSubmit} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="mb-4 flex items-center gap-2">
-          <div className="rounded-lg bg-emerald-50 p-2"><Fuel className="h-5 w-5 text-emerald-600" /></div>
+          <div className="rounded-lg bg-brand-50 p-2"><Fuel className="h-5 w-5 text-brand-600" /></div>
           <div>
             <h3 className="text-sm font-bold text-slate-800">Prix du carburant</h3>
             <p className="text-xs text-slate-500">Prix de référence (FCFA / litre), utilisés pour tous les calculs théoriques de consommation et de coût.</p>
@@ -46,7 +46,7 @@ export default function Settings() {
               type="number" min="0" step="1" required
               value={f.fuelPriceEssence}
               onChange={(e) => setF((p) => ({ ...p, fuelPriceEssence: Number(e.target.value) }))}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
             />
           </label>
           <label className="block text-xs font-medium text-slate-600">Diesel (FCFA / litre)
@@ -54,7 +54,7 @@ export default function Settings() {
               type="number" min="0" step="1" required
               value={f.fuelPriceDiesel}
               onChange={(e) => setF((p) => ({ ...p, fuelPriceDiesel: Number(e.target.value) }))}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
             />
           </label>
         </div>
@@ -65,11 +65,11 @@ export default function Settings() {
         </div>
 
         <div className="mt-5 flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
-          {saved && <span className="mr-auto inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600"><CheckCircle2 className="h-4 w-4" /> Paramètres enregistrés</span>}
+          {saved && <span className="mr-auto inline-flex items-center gap-1.5 text-xs font-medium text-green-600"><CheckCircle2 className="h-4 w-4" /> Paramètres enregistrés</span>}
           <button type="button" onClick={handleReset} disabled={!dirty} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40">
             <RotateCcw className="h-3.5 w-3.5" /> Annuler
           </button>
-          <button type="submit" disabled={!dirty} className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-40">
+          <button type="submit" disabled={!dirty} className="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-40">
             <Save className="h-3.5 w-3.5" /> Enregistrer
           </button>
         </div>

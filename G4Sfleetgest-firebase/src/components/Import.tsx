@@ -224,8 +224,8 @@ export default function Import() {
           onDrop={handleDrop}
           className={`relative rounded-xl border-2 border-dashed p-12 text-center transition-colors ${
             dragActive
-              ? 'border-emerald-500 bg-emerald-50'
-              : 'border-slate-300 hover:border-emerald-400 hover:bg-slate-50'
+              ? 'border-brand-500 bg-brand-50'
+              : 'border-slate-300 hover:border-brand-400 hover:bg-slate-50'
           }`}
         >
           <input
@@ -234,7 +234,7 @@ export default function Import() {
             onChange={handleChange}
             className="absolute inset-0 cursor-pointer opacity-0"
           />
-          <Upload className={`mx-auto h-12 w-12 ${dragActive ? 'text-emerald-500' : 'text-slate-400'}`} />
+          <Upload className={`mx-auto h-12 w-12 ${dragActive ? 'text-brand-500' : 'text-slate-400'}`} />
           <p className="mt-4 text-lg font-semibold text-slate-700">
             {dragActive ? 'Déposez le fichier ici' : 'Glissez-déposez un fichier ici'}
           </p>
@@ -257,7 +257,7 @@ export default function Import() {
           <p className="text-sm text-slate-600">Pas sûr du format ? Téléchargez le modèle.</p>
           <button
             onClick={downloadTemplate}
-            className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700"
+            className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700"
           >
             <DownloadIcon className="h-3.5 w-3.5" />
             Télécharger le modèle CSV
@@ -292,7 +292,7 @@ export default function Import() {
             <div className="mt-3 flex items-center gap-3">
               <button
                 onClick={handleImport}
-                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
+                className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
               >
                 Importer {importCount} véhicule(s)
               </button>
@@ -329,7 +329,7 @@ export default function Import() {
               <tbody className="divide-y divide-slate-100">
                 {preview.map((row, i) => (
                   <tr key={i} className="hover:bg-slate-50">
-                    <td className="px-4 py-2 text-sm font-medium text-emerald-600">{row.numero_immatriculation || '—'}</td>
+                    <td className="px-4 py-2 text-sm font-medium text-brand-600">{row.numero_immatriculation || '—'}</td>
                     <td className="px-4 py-2 text-sm text-slate-600">{row.marque || '—'}</td>
                     <td className="px-4 py-2 text-sm text-slate-600">{row.type_commercial || '—'}</td>
                     <td className="px-4 py-2 text-sm text-slate-600">{row.couleur || '—'}</td>

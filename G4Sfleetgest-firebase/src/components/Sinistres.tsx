@@ -118,7 +118,7 @@ export default function Sinistres() {
           <p className="mt-1 text-sm text-slate-500">Suivi des accidents, déclarations et indemnisations</p>
         </div>
         <div className="flex gap-2">
-          <button onClick={() => { setEditSinistreId(''); setShowForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"><Plus className="h-4 w-4" /> Déclarer</button>
+          <button onClick={() => { setEditSinistreId(''); setShowForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700"><Plus className="h-4 w-4" /> Déclarer</button>
           <label className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white p-2 text-slate-600 hover:bg-slate-50 cursor-pointer" title="Importer"><Upload className="h-4 w-4" /><input type="file" accept=".csv,.xls,.xlsx" className="hidden" onChange={() => {}} /></label>
           <button onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"><Printer className="h-4 w-4" /> Imprimer</button>
         </div>
@@ -197,7 +197,7 @@ export default function Sinistres() {
       <div className="flex flex-wrap items-end gap-3">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher sinistre, véhicule…" className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher sinistre, véhicule…" className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
         </div>
         <label className="block text-xs font-medium text-slate-600">Du<input type="date" value={periodFrom} onChange={e => setPeriodFrom(e.target.value)} className="mt-1 block rounded-lg border border-slate-300 px-3 py-2 text-sm" /></label>
         <label className="block text-xs font-medium text-slate-600">Au<input type="date" value={periodTo} onChange={e => setPeriodTo(e.target.value)} className="mt-1 block rounded-lg border border-slate-300 px-3 py-2 text-sm" /></label>
@@ -223,7 +223,7 @@ export default function Sinistres() {
                   return (
                     <tr key={s.id} className="hover:bg-slate-50">
                       <td className="px-3 py-2 text-xs">{formatDate(s.date_sinistre)}</td>
-                      <td className="px-3 py-2 font-semibold text-emerald-600">{v?.numero_immatriculation || '—'}</td>
+                      <td className="px-3 py-2 font-semibold text-brand-600">{v?.numero_immatriculation || '—'}</td>
                       <td className="px-3 py-2 text-xs font-medium">{s.type}</td>
                       <td className="px-3 py-2 text-xs text-slate-500 max-w-[150px] truncate">{s.lieu}</td>
                       <td className="px-3 py-2 text-xs text-slate-500">{s.commune || '—'}</td>
@@ -269,7 +269,7 @@ function SinistreDetail({ sinistre, vehicle, onClose }: { sinistre: SinistreReco
         </div>
         <div className="p-6 space-y-3 text-sm">
           <div className="flex justify-between"><span className="text-slate-500">Date</span><span className="font-medium">{formatDate(sinistre.date_sinistre)}</span></div>
-          <div className="flex justify-between"><span className="text-slate-500">Véhicule</span><span className="font-medium text-emerald-600">{vehicle?.numero_immatriculation}</span></div>
+          <div className="flex justify-between"><span className="text-slate-500">Véhicule</span><span className="font-medium text-brand-600">{vehicle?.numero_immatriculation}</span></div>
           <div className="flex justify-between"><span className="text-slate-500">Type</span><span className="font-medium">{sinistre.type}</span></div>
           <div className="flex justify-between"><span className="text-slate-500">Lieu</span><span className="font-medium">{sinistre.lieu}</span></div>
           <div className="flex justify-between"><span className="text-slate-500">Commune</span><span className="font-medium">{sinistre.commune || '—'}</span></div>
@@ -278,7 +278,7 @@ function SinistreDetail({ sinistre, vehicle, onClose }: { sinistre: SinistreReco
           <div className="flex justify-between"><span className="text-slate-500">Assureur</span><span className="font-medium">{sinistre.assureur}</span></div>
           <div className="flex justify-between"><span className="text-slate-500">N° dossier</span><span className="font-medium">{sinistre.numero_dossier}</span></div>
           <div className="flex justify-between"><span className="text-slate-500">Coût estimé</span><span className="font-medium">{formatMoney(sinistre.cout_estime)}</span></div>
-          {sinistre.cout_final != null && <div className="flex justify-between"><span className="text-slate-500">Coût final</span><span className="font-bold text-emerald-600">{formatMoney(sinistre.cout_final)}</span></div>}
+          {sinistre.cout_final != null && <div className="flex justify-between"><span className="text-slate-500">Coût final</span><span className="font-bold text-brand-600">{formatMoney(sinistre.cout_final)}</span></div>}
           <div className="flex justify-between"><span className="text-slate-500">Statut</span><span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${STATUT_COLORS[sinistre.statut]}`}>{sinistre.statut}</span></div>
           <div className="border-t pt-3"><span className="text-slate-500">Description</span><p className="mt-1 text-slate-700">{sinistre.description}</p></div>
           {sinistre.observations && <div><span className="text-slate-500">Observations</span><p className="mt-1 text-slate-600">{sinistre.observations}</p></div>}
@@ -326,18 +326,18 @@ function SinistreFormModal({ sinistre, vehicles, onSave, onClose }: SinistreForm
         </div>
         <form onSubmit={e => { e.preventDefault(); clearDraft(); onSave(f, sinistre?.id); }} className="grid grid-cols-2 gap-4 p-6">
           <label className="block text-xs font-medium text-slate-600">Véhicule
-            <select value={f.vehicleId} onChange={e => up('vehicleId', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+            <select value={f.vehicleId} onChange={e => up('vehicleId', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
               {vehicles.map(v => <option key={v.id} value={v.id}>{v.numero_immatriculation}</option>)}
             </select>
           </label>
           <label className="block text-xs font-medium text-slate-600">Date du sinistre
-            <input type="date" value={f.date_sinistre} onChange={e => up('date_sinistre', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input type="date" value={f.date_sinistre} onChange={e => up('date_sinistre', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </label>
           <label className="block text-xs font-medium text-slate-600">Lieu
-            <input value={f.lieu} onChange={e => up('lieu', e.target.value)} placeholder="Ex: Boulevard Latrille, Abidjan" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input value={f.lieu} onChange={e => up('lieu', e.target.value)} placeholder="Ex: Boulevard Latrille, Abidjan" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </label>
           <label className="block text-xs font-medium text-slate-600">Commune
-            <input list="sinistre-communes" value={f.commune} onChange={e => up('commune', e.target.value)} placeholder="Ex: Cocody" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input list="sinistre-communes" value={f.commune} onChange={e => up('commune', e.target.value)} placeholder="Ex: Cocody" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
             <datalist id="sinistre-communes">{COMMUNES_SUGGESTIONS.map(c => <option key={c} value={c} />)}</datalist>
           </label>
           <label className="block text-xs font-medium text-slate-600">Type de sinistre
@@ -358,22 +358,22 @@ function SinistreFormModal({ sinistre, vehicles, onSave, onClose }: SinistreForm
             />
           </label>
           <label className="col-span-2 block text-xs font-medium text-slate-600">Description
-            <textarea value={f.description} onChange={e => up('description', e.target.value)} rows={2} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <textarea value={f.description} onChange={e => up('description', e.target.value)} rows={2} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </label>
           <label className="block text-xs font-medium text-slate-600">Coût estimé (FCFA)
-            <input type="number" value={f.cout_estime} onChange={e => up('cout_estime', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input type="number" value={f.cout_estime} onChange={e => up('cout_estime', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </label>
           <label className="block text-xs font-medium text-slate-600">Coût final (FCFA)
-            <input type="number" value={f.cout_final} onChange={e => up('cout_final', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input type="number" value={f.cout_final} onChange={e => up('cout_final', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </label>
           <label className="block text-xs font-medium text-slate-600">Assureur
-            <input value={f.assureur} onChange={e => up('assureur', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input value={f.assureur} onChange={e => up('assureur', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </label>
           <label className="block text-xs font-medium text-slate-600">N° dossier
-            <input value={f.numero_dossier} onChange={e => up('numero_dossier', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input value={f.numero_dossier} onChange={e => up('numero_dossier', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </label>
           <label className="block text-xs font-medium text-slate-600">Statut du dossier
-            <select value={f.statut} onChange={e => up('statut', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+            <select value={f.statut} onChange={e => up('statut', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
               <option value="Déclaré">Déclaré</option>
               <option value="Expertise">Expertise</option>
               <option value="En réparation">En réparation</option>
@@ -382,23 +382,23 @@ function SinistreFormModal({ sinistre, vehicles, onSave, onClose }: SinistreForm
             </select>
           </label>
           <label className="block text-xs font-medium text-slate-600">Responsabilité
-            <select value={f.responsabilite || ''} onChange={e => up('responsabilite', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+            <select value={f.responsabilite || ''} onChange={e => up('responsabilite', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
               <option value="">Non déterminée</option>
               {RESPONSABILITE_OPTIONS.map(r => <option key={r} value={r}>{r}</option>)}
             </select>
           </label>
           <label className="block text-xs font-medium text-slate-600">Responsable
-            <input value={f.responsable} onChange={e => up('responsable', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input value={f.responsable} onChange={e => up('responsable', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </label>
           <label className="block text-xs font-medium text-slate-600">Témoins
-            <input value={f.temoins} onChange={e => up('temoins', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input value={f.temoins} onChange={e => up('temoins', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </label>
           <label className="col-span-2 block text-xs font-medium text-slate-600">Observations
-            <textarea value={f.observations} onChange={e => up('observations', e.target.value)} rows={2} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <textarea value={f.observations} onChange={e => up('observations', e.target.value)} rows={2} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </label>
           <div className="col-span-2 flex justify-end gap-3 border-t pt-4">
             <button type="button" onClick={handleCancel} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
-            <button type="submit" className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700">{sinistre ? 'Mettre à jour' : 'Déclarer'}</button>
+            <button type="submit" className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700">{sinistre ? 'Mettre à jour' : 'Déclarer'}</button>
           </div>
         </form>
       </div>

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { loginWithEmail, registerWithEmail, type UserProfile } from "../authService";
 
 const inputCls =
-  "mt-1 h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500";
+  "mt-1 h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500";
 
 export default function Login({ onLogin }: { onLogin: (profile: UserProfile) => void }) {
   const [email, setEmail] = useState("");
@@ -37,7 +37,7 @@ export default function Login({ onLogin }: { onLogin: (profile: UserProfile) => 
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-900 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-black p-4">
       <div className="w-full max-w-md overflow-hidden rounded-2xl border border-white/10 bg-white p-8 shadow-2xl">
         <div className="mb-6 text-center">
           <h1 className="text-2xl font-black tracking-wide text-slate-900">FleetGest</h1>
@@ -67,7 +67,7 @@ export default function Login({ onLogin }: { onLogin: (profile: UserProfile) => 
 
           {err && <p className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-600">{err}</p>}
 
-          <button disabled={loading} type="submit" className="h-11 w-full rounded-lg bg-emerald-600 text-sm font-black text-white shadow-sm transition-colors hover:bg-emerald-700 disabled:opacity-60">
+          <button disabled={loading} type="submit" className="h-11 w-full rounded-lg bg-brand-600 text-sm font-black text-white shadow-sm transition-colors hover:bg-brand-700 disabled:opacity-60">
             {loading ? "Connexion..." : mode === "create" ? "Créer le compte" : "Se connecter"}
           </button>
           <p className="text-center text-xs leading-5 text-slate-400">

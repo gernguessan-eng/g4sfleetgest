@@ -55,7 +55,7 @@ export default function Maintenance() {
             key={key}
             onClick={() => setTab(key)}
             className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
-              tab === key ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'
+              tab === key ? 'bg-brand-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'
             }`}
           >
             <TabIcon className="h-4 w-4" /> {label}
@@ -155,7 +155,7 @@ function VueEnsembleAtelier() {
           <p className="mt-1 text-sm text-slate-500">Suivi des véhicules en atelier et historique des interventions</p>
         </div>
         <div className="flex gap-2">
-          <button onClick={() => { setEditRecordId(''); setShowForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"><Plus className="h-4 w-4" /> Nouvelle intervention</button>
+          <button onClick={() => { setEditRecordId(''); setShowForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700"><Plus className="h-4 w-4" /> Nouvelle intervention</button>
           <button onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"><Printer className="h-4 w-4" /> Imprimer</button>
         </div>
       </div>
@@ -190,7 +190,7 @@ function VueEnsembleAtelier() {
               return (
                 <div key={m.id} className="flex flex-wrap items-center gap-4 px-5 py-3">
                   <div className="min-w-[110px]">
-                    {v ? <Link to={`/vehicule/${v.id}`} className="font-semibold text-emerald-600 hover:text-emerald-700">{v.numero_immatriculation}</Link> : <span className="text-slate-400">Supprimé</span>}
+                    {v ? <Link to={`/vehicule/${v.id}`} className="font-semibold text-brand-600 hover:text-brand-700">{v.numero_immatriculation}</Link> : <span className="text-slate-400">Supprimé</span>}
                     <p className="text-[10px] text-slate-500">{v?.marque} {v?.type_commercial}</p>
                   </div>
                   <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">{m.type}</span>
@@ -200,7 +200,7 @@ function VueEnsembleAtelier() {
                     {jours} j en atelier {depassement && <AlertTriangle className="h-3.5 w-3.5" />}
                   </div>
                   {m.date_sortie_prevue && <p className="text-xs text-slate-400">Sortie prévue : {fmtDate(m.date_sortie_prevue)}</p>}
-                  <button onClick={() => { setEditRecordId(m.id); setShowForm(true); }} className="ml-auto inline-flex items-center gap-1 rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 hover:bg-emerald-100">
+                  <button onClick={() => { setEditRecordId(m.id); setShowForm(true); }} className="ml-auto inline-flex items-center gap-1 rounded-lg border border-brand-300 bg-brand-50 px-3 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-100">
                     <Pencil className="h-3.5 w-3.5" /> Mettre à jour
                   </button>
                 </div>
@@ -246,7 +246,7 @@ function VueEnsembleAtelier() {
       <div className="flex flex-wrap items-end gap-3 print:hidden">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher véhicule, type, description…" className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher véhicule, type, description…" className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
         </div>
         <label className="block text-xs font-medium text-slate-600">Véhicule
           <select value={filterVehicle} onChange={e => setFilterVehicle(e.target.value)} className="mt-1 block rounded-lg border border-slate-300 px-3 py-2 text-sm">
@@ -288,7 +288,7 @@ function VueEnsembleAtelier() {
                   const statut = m.statut ?? 'Terminé';
                   return (
                     <tr key={m.id} className="hover:bg-slate-50">
-                      <td className="px-3 py-2 font-semibold text-emerald-600">{v ? <Link to={`/vehicule/${v.id}`} className="hover:text-emerald-700">{v.numero_immatriculation}</Link> : '—'}</td>
+                      <td className="px-3 py-2 font-semibold text-brand-600">{v ? <Link to={`/vehicule/${v.id}`} className="hover:text-brand-700">{v.numero_immatriculation}</Link> : '—'}</td>
                       <td className="px-3 py-2 text-xs font-medium">{m.type}</td>
                       <td className="px-3 py-2 text-xs max-w-[220px] truncate" title={m.description}>{m.description || '—'}</td>
                       <td className="px-3 py-2 text-xs">{fmtDate(m.date)}</td>
@@ -345,12 +345,12 @@ function MaintenanceFormModal({ record, vehicles, onSave, onClose }: {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl">
         <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-6 py-4">
-          <h3 className="flex items-center gap-2 text-lg font-bold"><Wrench className="h-5 w-5 text-emerald-600" /> {record ? "Modifier l'intervention" : 'Nouvelle intervention'}</h3>
+          <h3 className="flex items-center gap-2 text-lg font-bold"><Wrench className="h-5 w-5 text-brand-600" /> {record ? "Modifier l'intervention" : 'Nouvelle intervention'}</h3>
           <button onClick={handleCancel} className="p-1.5 text-slate-400 hover:text-slate-700"><X className="h-5 w-5" /></button>
         </div>
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 p-6">
           <label className="block text-xs font-medium text-slate-600">Véhicule
-            <select value={f.vehicleId} onChange={e => up('vehicleId', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+            <select value={f.vehicleId} onChange={e => up('vehicleId', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
               {vehicles.map(v => <option key={v.id} value={v.id}>{v.numero_immatriculation}</option>)}
             </select>
           </label>
@@ -362,20 +362,20 @@ function MaintenanceFormModal({ record, vehicles, onSave, onClose }: {
               otherPlaceholder="Préciser le type d'intervention…"
             />
           </label>
-          <label className="block text-xs font-medium text-slate-600">Date d'entrée en atelier<input type="date" required value={f.date} onChange={e => up('date', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
-          <label className="block text-xs font-medium text-slate-600">Kilométrage<input type="number" min="0" value={f.kilometrage} onChange={e => up('kilometrage', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
-          <label className="col-span-2 block text-xs font-medium text-slate-600">Description<textarea value={f.description} onChange={e => up('description', e.target.value)} rows={2} placeholder="Détail des travaux…" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Date d'entrée en atelier<input type="date" required value={f.date} onChange={e => up('date', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Kilométrage<input type="number" min="0" value={f.kilometrage} onChange={e => up('kilometrage', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
+          <label className="col-span-2 block text-xs font-medium text-slate-600">Description<textarea value={f.description} onChange={e => up('description', e.target.value)} rows={2} placeholder="Détail des travaux…" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
           <label className="block text-xs font-medium text-slate-600">Statut
-            <select value={f.statut} onChange={e => up('statut', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+            <select value={f.statut} onChange={e => up('statut', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
               {MAINTENANCE_STATUTS.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
           </label>
-          <label className="block text-xs font-medium text-slate-600">Coût (FCFA)<input type="number" min="0" value={f.cout} onChange={e => up('cout', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
-          <label className="block text-xs font-medium text-slate-600">Date de sortie prévue<input type="date" value={f.date_sortie_prevue} onChange={e => up('date_sortie_prevue', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
-          <label className="block text-xs font-medium text-slate-600">Date de sortie réelle<input type="date" value={f.date_sortie_reelle} onChange={e => up('date_sortie_reelle', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Coût (FCFA)<input type="number" min="0" value={f.cout} onChange={e => up('cout', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Date de sortie prévue<input type="date" value={f.date_sortie_prevue} onChange={e => up('date_sortie_prevue', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Date de sortie réelle<input type="date" value={f.date_sortie_reelle} onChange={e => up('date_sortie_reelle', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
           <div className="col-span-2 flex justify-end gap-3 border-t pt-4">
             <button type="button" onClick={handleCancel} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
-            <button type="submit" className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700">{record ? 'Mettre à jour' : 'Enregistrer'}</button>
+            <button type="submit" className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700">{record ? 'Mettre à jour' : 'Enregistrer'}</button>
           </div>
         </form>
       </div>

@@ -22,8 +22,8 @@ export default function SortToggleButton({ direction, onToggle, className = '' }
       aria-label="Inverser l'ordre de tri par date"
       className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] font-semibold transition-colors ${
         isAsc
-          ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
-          : 'border-slate-200 bg-white text-slate-400 hover:border-emerald-300 hover:text-emerald-600'
+          ? 'border-brand-300 bg-brand-50 text-brand-700'
+          : 'border-slate-200 bg-white text-slate-400 hover:border-brand-300 hover:text-brand-600'
       } ${className}`}
     >
       <ArrowUpDown className="h-3 w-3" />

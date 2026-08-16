@@ -119,14 +119,14 @@ export default function VehicleForm({ vehicle, onSave, onClose }: VehicleFormPro
               value={(formData as any)[field] || ''}
               onChange={(v) => handleChange(field, v)}
               options={options.filter((o) => o.value !== 'Autre').map((o) => o.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none"
               otherPlaceholder={`Préciser ${label.toLowerCase()}…`}
             />
           ) : (
             <select
               value={(formData as any)[field] || ''}
               onChange={(e) => handleChange(field, e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none"
             >
               <option value="" disabled>Sélectionner...</option>
               {options.map((opt) => (
@@ -140,7 +140,7 @@ export default function VehicleForm({ vehicle, onSave, onClose }: VehicleFormPro
             value={(formData as any)[field] || ''}
             onChange={(e) => handleChange(field, type === 'number' ? Number(e.target.value) : e.target.value)}
             placeholder={placeholder || `Saisir ${label.toLowerCase()}...`}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none"
           />
         )}
       </div>
@@ -158,7 +158,7 @@ export default function VehicleForm({ vehicle, onSave, onClose }: VehicleFormPro
           type="date"
           value={(formData as any)[effetField] || ''}
           onChange={(e) => handleChange(effetField, e.target.value)}
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none"
         />
       </div>
       <div>
@@ -167,7 +167,7 @@ export default function VehicleForm({ vehicle, onSave, onClose }: VehicleFormPro
           type="date"
           value={(formData as any)[echeanceField] || ''}
           onChange={(e) => handleChange(echeanceField, e.target.value)}
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none"
         />
       </div>
     </div>
@@ -196,7 +196,7 @@ export default function VehicleForm({ vehicle, onSave, onClose }: VehicleFormPro
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex-1 rounded-md py-2 text-sm font-medium transition-all ${
                   activeTab === tab.id
-                    ? 'bg-white text-emerald-700 shadow-sm'
+                    ? 'bg-white text-brand-700 shadow-sm'
                     : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
@@ -208,8 +208,8 @@ export default function VehicleForm({ vehicle, onSave, onClose }: VehicleFormPro
           {/* Tab Content */}
           {activeTab === 'carte' && (
             <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2 rounded-lg bg-emerald-50 p-3 mb-2">
-                <p className="text-xs font-semibold text-emerald-700 uppercase">Informations Carte Grise (Recto)</p>
+              <div className="col-span-2 rounded-lg bg-brand-50 p-3 mb-2">
+                <p className="text-xs font-semibold text-brand-700 uppercase">Informations Carte Grise (Recto)</p>
               </div>
               {renderInput("N° Immatriculation", "numero_immatriculation")}
               {renderInput("N° Carte Grise", "numero_carte_grise")}
@@ -307,7 +307,14 @@ export default function VehicleForm({ vehicle, onSave, onClose }: VehicleFormPro
                 { value: 'Ouest', label: 'Ouest' },
               ])}
               {renderInput("Conducteur", "conducteur")}
-              {renderInput("Consommation aux 100km (L)", "consommation_100km", "number")}
+              <div>
+                <label className="mb-1 block text-xs font-medium text-slate-600">Consommation aux 100km (L)</label>
+                <div className="flex w-full items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+                  <span>{formData.consommation_100km ? `${formData.consommation_100km} L/100km` : '—'}</span>
+                  <span className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Calculé</span>
+                </div>
+                <p className="mt-1 text-[10px] text-slate-400">Moyenne réelle, calculée automatiquement à partir des pleins (litres) saisis dans Dépenses → Carburant.</p>
+              </div>
               {renderInput("Téléphone balise GPS", "telephone_gps")}
               <div className="col-span-2">
                 <label className="mb-1 block text-xs font-medium text-slate-600">Observations</label>
@@ -316,7 +323,7 @@ export default function VehicleForm({ vehicle, onSave, onClose }: VehicleFormPro
                   onChange={(e) => handleChange('observations', e.target.value)}
                   rows={3}
                   placeholder="Notes, remarques particulières, historique..."
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none"
                 />
               </div>
             </div>
@@ -333,7 +340,7 @@ export default function VehicleForm({ vehicle, onSave, onClose }: VehicleFormPro
             </button>
             <button
               type="submit"
-              className="rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-emerald-700"
+              className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-brand-700"
             >
               {vehicle ? 'Mettre à jour' : 'Enregistrer'}
             </button>

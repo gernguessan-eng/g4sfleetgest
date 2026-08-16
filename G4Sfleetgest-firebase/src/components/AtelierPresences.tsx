@@ -106,7 +106,7 @@ export default function AtelierPresences() {
                   key={i}
                   onClick={() => setPresenceDate(iso)}
                   className={`aspect-square rounded-lg text-xs font-medium transition-colors ${
-                    isSelected ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:bg-slate-100'
+                    isSelected ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-slate-100'
                   }`}
                 >
                   {day}

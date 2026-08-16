@@ -178,7 +178,7 @@ export default function Analytics() {
   }
 
   recommendations.push({
-    icon: <Award className="h-5 w-5 text-emerald-500" />,
+    icon: <Award className="h-5 w-5 text-brand-500" />,
     title: 'Optimisation du parc',
     description: `Total d'investissement: ${formatFCFA(stats.totalAcquisitionCost)}. Dépenses enregistrées: ${formatFCFA(stats.totalExpenseCost)}. Coût opérationnel total: ${formatFCFA(stats.totalOperatingCost)}.`,
     priority: 'low',
@@ -194,7 +194,7 @@ export default function Analytics() {
         </div>
         <button
           onClick={() => window.print()}
-          className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"
+          className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700"
         >
           <Printer className="h-4 w-4" /> Imprimer Analyses
         </button>
@@ -204,7 +204,7 @@ export default function Analytics() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100"><TrendingUp className="h-5 w-5 text-emerald-600" /></div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-100"><TrendingUp className="h-5 w-5 text-brand-600" /></div>
             <div>
               <p className="text-xs text-slate-500">Coût moyen acquisition</p>
               <p className="text-lg font-bold text-slate-900">{formatFCFA(avgAcquisitionCost)}</p>
@@ -484,7 +484,7 @@ export default function Analytics() {
       {/* Recommendations */}
       <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-800">
-          <Award className="h-5 w-5 text-emerald-500" />
+          <Award className="h-5 w-5 text-brand-500" />
           Recommandations pour la Prise de Décision
         </h3>
         <div className="space-y-3">

@@ -51,7 +51,7 @@ function DriverFormModal({ driver, vehicles, onSave, onClose }: {
         value={(f as any)[key] || ''}
         onChange={e => up(key, e.target.value)}
         placeholder={placeholder || `Saisir ${label.toLowerCase()}...`}
-        className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+        className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
       />
     </label>
   );
@@ -76,13 +76,13 @@ function DriverFormModal({ driver, vehicles, onSave, onClose }: {
           </label>
           {inp('Expiration permis', 'date_expiration_permis', 'date')}{inp("Date d'embauche", 'date_embauche', 'date')}
           <label className="block text-xs font-medium text-slate-600">Véhicule affecté
-            <select value={f.vehicule_affecte_id} onChange={e => up('vehicule_affecte_id', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+            <select value={f.vehicule_affecte_id} onChange={e => up('vehicule_affecte_id', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
               <option value="">Sélectionner un véhicule ou laisser vide...</option>
               {vehicles.map(v => <option key={v.id} value={v.id}>{v.label}</option>)}
             </select>
           </label>
           <label className="block text-xs font-medium text-slate-600">Statut
-            <select value={f.statut} onChange={e => up('statut', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+            <select value={f.statut} onChange={e => up('statut', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
               <option value="" disabled>Sélectionner un statut...</option>
               {['Disponible', 'En mission', 'En congé', 'Indisponible'].map(s => <option key={s} value={s}>{s}</option>)}
             </select>
@@ -90,7 +90,7 @@ function DriverFormModal({ driver, vehicles, onSave, onClose }: {
           <div className="col-span-2">{inp('Notes', 'notes', 'text', 'Ajouter une remarque sur le chauffeur, ses disponibilités ou contraintes...')}</div>
           <div className="col-span-2 flex justify-end gap-3 border-t pt-4">
             <button type="button" onClick={handleCancel} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
-            <button type="submit" className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700">{driver ? 'Mettre à jour' : 'Enregistrer'}</button>
+            <button type="submit" className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700">{driver ? 'Mettre à jour' : 'Enregistrer'}</button>
           </div>
         </form>
       </div>
@@ -116,7 +116,7 @@ function MissionFormModal({ mission, drivers, vehicles, existingMissions, onSave
         value={(f as any)[key] || ''}
         onChange={e => up(key, type === 'number' ? Number(e.target.value) : e.target.value)}
         placeholder={placeholder || `Saisir ${label.toLowerCase()}...`}
-        className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+        className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
       />
     </label>
   );
@@ -163,7 +163,7 @@ function MissionFormModal({ mission, drivers, vehicles, existingMissions, onSave
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 p-6">
           {error && <div className="col-span-2 rounded-lg bg-red-50 border border-red-200 p-3 text-xs text-red-700"><AlertTriangle className="inline h-4 w-4 mr-1" />{error}</div>}
           <label className="block text-xs font-medium text-slate-600">Chauffeur
-            <select required value={f.driverId} onChange={e => up('driverId', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+            <select required value={f.driverId} onChange={e => up('driverId', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
               <option value="">Sélectionner le chauffeur concerné...</option>
               {availableDrivers.map(d => <option key={d.id} value={d.id}>{d.prenom} {d.nom} ({d.statut})</option>)}
               {availableDrivers.length === 0 && <option value="" disabled>Aucun chauffeur disponible</option>}
@@ -173,7 +173,7 @@ function MissionFormModal({ mission, drivers, vehicles, existingMissions, onSave
             )}
           </label>
           <label className="block text-xs font-medium text-slate-600">Véhicule
-            <select required value={f.vehicleId} onChange={e => up('vehicleId', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+            <select required value={f.vehicleId} onChange={e => up('vehicleId', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
               <option value="">Sélectionner le véhicule utilisé...</option>
               {vehicles.map(v => <option key={v.id} value={v.id}>{v.label}</option>)}
             </select>
@@ -185,7 +185,7 @@ function MissionFormModal({ mission, drivers, vehicles, existingMissions, onSave
           {inp('Km départ', 'km_depart', 'number', 'Ex: 45200')}{inp('Km retour', 'km_retour', 'number', 'Ex: 45680')}
           {inp('Coût mission (FCFA)', 'cout_mission', 'number', 'Ex: 35000')}
           <label className="block text-xs font-medium text-slate-600">Statut
-            <select value={f.statut} onChange={e => up('statut', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+            <select value={f.statut} onChange={e => up('statut', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
               <option value="" disabled>Sélectionner le statut de la mission...</option>
               {['Planifiée', 'En cours', 'Terminée', 'Annulée'].map(s => <option key={s} value={s}>{s}</option>)}
             </select>
@@ -193,7 +193,7 @@ function MissionFormModal({ mission, drivers, vehicles, existingMissions, onSave
           <div className="col-span-2">{inp('Observations', 'observations', 'text', 'Ajouter des consignes, contraintes ou remarques sur la mission...')}</div>
           <div className="col-span-2 flex justify-end gap-3 border-t pt-4">
             <button type="button" onClick={handleCancel} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
-            <button type="submit" className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700">{mission ? 'Mettre à jour' : 'Créer la mission'}</button>
+            <button type="submit" className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700">{mission ? 'Mettre à jour' : 'Créer la mission'}</button>
           </div>
         </form>
       </div>
@@ -253,7 +253,7 @@ function PlanningFormModal({ event, drivers, vehicles, existingPlanning, onSave,
         <form onSubmit={handleSubmit} className="space-y-3 p-6">
           {error && <div className="rounded-lg bg-red-50 border border-red-200 p-3 text-xs text-red-700"><AlertTriangle className="inline h-4 w-4 mr-1" />{error}</div>}
           <label className="block text-xs font-medium text-slate-600">Chauffeur
-            <select required value={f.driverId} onChange={e => up('driverId', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+            <select required value={f.driverId} onChange={e => up('driverId', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
               <option value="">Sélectionner le chauffeur à planifier...</option>
               {availableDrivers.map(d => <option key={d.id} value={d.id}>{d.prenom} {d.nom}{isMissionType ? ` (${d.statut})` : ''}</option>)}
             </select>
@@ -262,7 +262,7 @@ function PlanningFormModal({ event, drivers, vehicles, existingPlanning, onSave,
             )}
           </label>
           <label className="block text-xs font-medium text-slate-600">Titre
-            <input required value={f.titre} onChange={e => up('titre', e.target.value)} placeholder="Ex: Mission Bouaké, Congé annuel, Formation sécurité..." className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input required value={f.titre} onChange={e => up('titre', e.target.value)} placeholder="Ex: Mission Bouaké, Congé annuel, Formation sécurité..." className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </label>
           <div className="grid grid-cols-2 gap-3">
             <label className="block text-xs font-medium text-slate-600">Type
@@ -275,7 +275,7 @@ function PlanningFormModal({ event, drivers, vehicles, existingPlanning, onSave,
               />
             </label>
             <label className="block text-xs font-medium text-slate-600">Véhicule
-              <select value={f.vehicleId} onChange={e => up('vehicleId', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+              <select value={f.vehicleId} onChange={e => up('vehicleId', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
                 <option value="">Sélectionner un véhicule ou laisser vide...</option>
                 {vehicles.map(v => <option key={v.id} value={v.id}>{v.label}</option>)}
               </select>
@@ -288,7 +288,7 @@ function PlanningFormModal({ event, drivers, vehicles, existingPlanning, onSave,
           <label className="block text-xs font-medium text-slate-600">Notes <input value={f.notes} onChange={e => up('notes', e.target.value)} placeholder="Ajouter un commentaire ou une précision sur la planification..." className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" /></label>
           <div className="flex justify-end gap-3 border-t pt-4">
             <button type="button" onClick={handleCancel} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
-            <button type="submit" className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700">{event ? 'Mettre à jour' : 'Créer'}</button>
+            <button type="submit" className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700">{event ? 'Mettre à jour' : 'Créer'}</button>
           </div>
         </form>
       </div>
@@ -365,14 +365,14 @@ export default function DriverManagement() {
         </div>
         <div className="flex gap-2">
           <label className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white p-2 text-slate-600 hover:bg-slate-50 cursor-pointer" title="Importer"><Upload className="h-4 w-4" /><input type="file" accept=".csv,.xls,.xlsx" className="hidden" onChange={() => {}} /></label>
-          <button onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"><Printer className="h-4 w-4" /> Imprimer</button>
+          <button onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"><Printer className="h-4 w-4" /> Imprimer</button>
         </div>
       </div>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
         {[
-          { label: 'Total', value: driverStats.total, color: 'emerald' },
+          { label: 'Total', value: driverStats.total, color: 'brand' },
           { label: 'Disponibles', value: driverStats.disponibles, color: 'green' },
           { label: 'En mission', value: driverStats.enMission, color: 'blue' },
           { label: 'En congé', value: driverStats.enConge, color: 'amber' },
@@ -390,7 +390,7 @@ export default function DriverManagement() {
         {tabs.map(t => {
           const Icon = t.icon;
           return (
-            <button key={t.id} onClick={() => setTab(t.id)} className={`flex flex-1 items-center justify-center gap-2 rounded-md py-2.5 text-sm font-medium transition-all ${tab === t.id ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+            <button key={t.id} onClick={() => setTab(t.id)} className={`flex flex-1 items-center justify-center gap-2 rounded-md py-2.5 text-sm font-medium transition-all ${tab === t.id ? 'bg-white text-brand-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
               <Icon className="h-4 w-4" /> {t.label} <span className="rounded-full bg-slate-200 px-1.5 py-0.5 text-[10px] font-bold text-slate-600">{t.count}</span>
             </button>
           );
@@ -403,9 +403,9 @@ export default function DriverManagement() {
           <div className="flex flex-col gap-3 sm:flex-row print:hidden">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher un chauffeur…" className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher un chauffeur…" className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
             </div>
-            <button onClick={() => { setEditDriverId(''); setShowDriverForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"><Plus className="h-4 w-4" /> Ajouter</button>
+            <button onClick={() => { setEditDriverId(''); setShowDriverForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"><Plus className="h-4 w-4" /> Ajouter</button>
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -416,7 +416,7 @@ export default function DriverManagement() {
                 <div key={d.id} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-white font-bold text-sm">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-brand-600 text-white font-bold text-sm">
                         {d.prenom[0]}{d.nom[0]}
                       </div>
                       <div>
@@ -461,7 +461,7 @@ export default function DriverManagement() {
       {tab === 'missions' && (
         <div className="space-y-4">
           <div className="flex justify-end print:hidden">
-            <button onClick={() => { setEditMissionId(''); setShowMissionForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"><Plus className="h-4 w-4" /> Nouvelle mission</button>
+            <button onClick={() => { setEditMissionId(''); setShowMissionForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"><Plus className="h-4 w-4" /> Nouvelle mission</button>
           </div>
           <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
             <div className="overflow-x-auto">
@@ -486,7 +486,7 @@ export default function DriverManagement() {
                         <td className="px-4 py-3"><p className="font-semibold text-slate-800">{m.titre}</p><p className="text-xs text-slate-500">{m.description}</p></td>
                         <td className="px-4 py-3">{dr ? `${dr.prenom} ${dr.nom}` : '—'}</td>
                         <td className="px-4 py-3 text-xs">{ve ? ve.numero_immatriculation : '—'}</td>
-                        <td className="px-4 py-3 text-xs"><div className="flex items-center gap-1"><MapPin className="h-3 w-3 text-emerald-500" />{m.lieu_depart}</div><div className="flex items-center gap-1"><ChevronRight className="h-3 w-3 text-slate-300" />{m.lieu_arrivee}</div></td>
+                        <td className="px-4 py-3 text-xs"><div className="flex items-center gap-1"><MapPin className="h-3 w-3 text-brand-500" />{m.lieu_depart}</div><div className="flex items-center gap-1"><ChevronRight className="h-3 w-3 text-slate-300" />{m.lieu_arrivee}</div></td>
                         <td className="px-4 py-3 text-xs">{fmtDate(m.date_debut)}{m.date_fin !== m.date_debut ? ` → ${fmtDate(m.date_fin)}` : ''}</td>
                         <td className="px-4 py-3 text-xs">{m.km_retour > 0 ? `${(m.km_retour - m.km_depart).toLocaleString()} km` : '—'}</td>
                         <td className="px-4 py-3 text-xs font-semibold">{m.cout_mission ? fmtMoney(m.cout_mission) : '—'}</td>
@@ -538,7 +538,7 @@ export default function DriverManagement() {
       {tab === 'planning' && (
         <div className="space-y-4">
           <div className="flex justify-end print:hidden">
-            <button onClick={() => { setEditEventId(''); setShowPlanningForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"><Plus className="h-4 w-4" /> Nouvelle planification</button>
+            <button onClick={() => { setEditEventId(''); setShowPlanningForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"><Plus className="h-4 w-4" /> Nouvelle planification</button>
           </div>
 
           {/* Calendar Grid — 4 weeks */}
@@ -553,8 +553,8 @@ export default function DriverManagement() {
                 const isToday = day.toDateString() === new Date().toDateString();
                 const events = getEventsForDay(day);
                 return (
-                  <div key={i} className={`min-h-[90px] p-1.5 ${isToday ? 'bg-emerald-50' : 'bg-white'}`}>
-                    <p className={`text-xs font-medium mb-1 ${isToday ? 'text-emerald-700 font-bold' : 'text-slate-500'}`}>
+                  <div key={i} className={`min-h-[90px] p-1.5 ${isToday ? 'bg-brand-50' : 'bg-white'}`}>
+                    <p className={`text-xs font-medium mb-1 ${isToday ? 'text-brand-700 font-bold' : 'text-slate-500'}`}>
                       {day.getDate()}{day.getDate() === 1 ? '/' + (day.getMonth() + 1) : ''}
                     </p>
                     <div className="space-y-0.5">

@@ -143,7 +143,7 @@ export default function Dashboard() {
   const tauxDisponibilite = fv.length > 0 ? ((activeVehiclesCount / fv.length) * 100).toFixed(1) : '0.0';
 
   const kpiCards = [
-    { title: 'Total Véhicules', value: fv.length.toString(), sub: 'dans le parc', icon: Car, color: 'from-emerald-500 to-emerald-600', textColor: 'text-emerald-700', bgLight: 'bg-emerald-50' },
+    { title: 'Total Véhicules', value: fv.length.toString(), sub: 'dans le parc', icon: Car, color: 'from-brand-500 to-brand-600', textColor: 'text-brand-700', bgLight: 'bg-brand-50' },
     { title: 'Véhicules Actifs', value: fv.filter(v => v.statut === 'Actif').length.toString(), sub: 'en service', icon: CheckCircle2, color: 'from-green-500 to-green-600', textColor: 'text-green-700', bgLight: 'bg-green-50' },
     { title: 'En Maintenance', value: fv.filter(v => v.statut === 'En maintenance').length.toString(), sub: 'en atelier', icon: Wrench, color: 'from-amber-500 to-amber-600', textColor: 'text-amber-700', bgLight: 'bg-amber-50' },
     { title: 'Hors Service', value: fv.filter(v => v.statut === 'Hors service').length.toString(), sub: 'indisponibles', icon: AlertTriangle, color: 'from-red-500 to-red-600', textColor: 'text-red-700', bgLight: 'bg-red-50' },
@@ -224,7 +224,7 @@ export default function Dashboard() {
                   <div className="max-h-64 space-y-1 overflow-y-auto">
                     {ALL_KPI_TITLES.map(title => (
                       <label key={title} className="flex items-center gap-2 rounded-md px-1.5 py-1.5 text-sm text-slate-700 hover:bg-slate-50">
-                        <input type="checkbox" checked={!hiddenKpis.has(title)} onChange={() => toggleKpiPrint(title)} className="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" />
+                        <input type="checkbox" checked={!hiddenKpis.has(title)} onChange={() => toggleKpiPrint(title)} className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500" />
                         {title}
                       </label>
                     ))}
@@ -234,29 +234,29 @@ export default function Dashboard() {
                 </>
               )}
             </div>
-            <button onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"><Printer className="h-4 w-4" /> Imprimer</button>
+            <button onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700"><Printer className="h-4 w-4" /> Imprimer</button>
           </div>
         </div>
         <div className="mt-4 flex flex-wrap items-end gap-3 rounded-lg bg-slate-50 p-4 border border-slate-200">
           <Filter className="h-4 w-4 text-slate-500 flex-shrink-0 mt-5" />
-          <label className="block text-xs font-medium text-slate-600">Département<select value={filterDept} onChange={e => setFilterDept(e.target.value)} className="mt-1 block w-full min-w-[200px] rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"><option value="">Tous</option>{departments.map(d => <option key={d} value={d}>{d}</option>)}</select></label>
-          <label className="block text-xs font-medium text-slate-600">Période du<input type="date" value={filterPeriodFrom} onChange={e => setFilterPeriodFrom(e.target.value)} className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
-          <label className="block text-xs font-medium text-slate-600">au<input type="date" value={filterPeriodTo} onChange={e => setFilterPeriodTo(e.target.value)} className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Département<select value={filterDept} onChange={e => setFilterDept(e.target.value)} className="mt-1 block w-full min-w-[200px] rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"><option value="">Tous</option>{departments.map(d => <option key={d} value={d}>{d}</option>)}</select></label>
+          <label className="block text-xs font-medium text-slate-600">Période du<input type="date" value={filterPeriodFrom} onChange={e => setFilterPeriodFrom(e.target.value)} className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">au<input type="date" value={filterPeriodTo} onChange={e => setFilterPeriodTo(e.target.value)} className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
           {isFiltered && <button onClick={() => { setFilterDept(''); setFilterPeriodFrom(''); setFilterPeriodTo(''); }} className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 mt-5">Réinitialiser</button>}
         </div>
       </div>
 
       {/* TCO */}
-      <div className={`rounded-xl border-2 border-emerald-200 bg-gradient-to-r from-emerald-50 to-teal-50 p-6 shadow-sm ${hiddenKpis.has('TCO Global') ? 'print:hidden' : ''}`}>
-        <h3 className="mb-4 text-lg font-bold text-emerald-800">TCO Global</h3>
+      <div className={`rounded-xl border-2 border-brand-200 bg-gradient-to-r from-brand-50 to-teal-50 p-6 shadow-sm ${hiddenKpis.has('TCO Global') ? 'print:hidden' : ''}`}>
+        <h3 className="mb-4 text-lg font-bold text-brand-800">TCO Global</h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <div className="rounded-lg bg-white p-4 shadow-sm"><p className="text-xs text-slate-500">Acquisition</p><p className="mt-1 text-lg font-bold text-slate-900">{fmtKPI(totalAcq)}</p></div>
           <div className="rounded-lg bg-white p-4 shadow-sm"><p className="text-xs text-slate-500">Exploitation</p><p className="mt-1 text-lg font-bold text-slate-900">{fmtKPI(totalOp)}</p></div>
           <div className="rounded-lg bg-white p-4 shadow-sm"><p className="text-xs text-slate-500">Indirects</p><p className="mt-1 text-lg font-bold text-slate-900">{fmtKPI(totalIndirect)}</p></div>
-          <div className="rounded-lg bg-white p-4 shadow-sm"><p className="text-xs text-slate-500">Résiduelle</p><p className="mt-1 text-lg font-bold text-emerald-600">− {fmtKPI(totalResidual)}</p></div>
-          <div className="rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 p-4 shadow-md"><p className="text-xs text-emerald-100">TCO Global</p><p className="mt-1 text-2xl font-bold text-white">{fmtKPI(tcoGlobal)}</p></div>
+          <div className="rounded-lg bg-white p-4 shadow-sm"><p className="text-xs text-slate-500">Résiduelle</p><p className="mt-1 text-lg font-bold text-brand-600">− {fmtKPI(totalResidual)}</p></div>
+          <div className="rounded-lg bg-gradient-to-br from-brand-500 to-teal-600 p-4 shadow-md"><p className="text-xs text-brand-100">TCO Global</p><p className="mt-1 text-2xl font-bold text-white">{fmtKPI(tcoGlobal)}</p></div>
         </div>
-        <div className="mt-4 flex items-center justify-between rounded-lg bg-white px-4 py-3"><p className="text-sm font-semibold text-slate-700">TCO / véhicule</p><p className="text-xl font-bold text-emerald-700">{fmtKPI(tcoPerVeh)}</p></div>
+        <div className="mt-4 flex items-center justify-between rounded-lg bg-white px-4 py-3"><p className="text-sm font-semibold text-slate-700">TCO / véhicule</p><p className="text-xl font-bold text-brand-700">{fmtKPI(tcoPerVeh)}</p></div>
       </div>
 
       {/* KPI Cards — grille 3 colonnes (2 rangées propres pour 6 cartes) */}
@@ -286,14 +286,14 @@ export default function Dashboard() {
         <div className={`rounded-xl border border-slate-200 bg-white p-5 shadow-sm ${hiddenKpis.has('Taux de Disponibilité') ? 'print:hidden' : ''}`}>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Activity className="h-5 w-5 text-emerald-500" />
+              <Activity className="h-5 w-5 text-brand-500" />
               <h4 className="text-sm font-bold text-slate-800">Taux de Disponibilité</h4>
             </div>
-            <span className={`text-2xl font-extrabold ${parseFloat(tauxDisponibilite) >= 80 ? 'text-emerald-600' : parseFloat(tauxDisponibilite) >= 60 ? 'text-yellow-600' : 'text-red-600'}`}>{tauxDisponibilite} %</span>
+            <span className={`text-2xl font-extrabold ${parseFloat(tauxDisponibilite) >= 80 ? 'text-brand-600' : parseFloat(tauxDisponibilite) >= 60 ? 'text-yellow-600' : 'text-red-600'}`}>{tauxDisponibilite} %</span>
           </div>
           <div className="relative h-4 w-full rounded-full bg-slate-100 overflow-hidden">
             <div
-              className={`h-full rounded-full transition-all duration-700 ${parseFloat(tauxDisponibilite) >= 80 ? 'bg-gradient-to-r from-emerald-400 to-green-500' : parseFloat(tauxDisponibilite) >= 60 ? 'bg-gradient-to-r from-yellow-400 to-amber-500' : 'bg-gradient-to-r from-red-400 to-rose-500'}`}
+              className={`h-full rounded-full transition-all duration-700 ${parseFloat(tauxDisponibilite) >= 80 ? 'bg-gradient-to-r from-brand-400 to-green-500' : parseFloat(tauxDisponibilite) >= 60 ? 'bg-gradient-to-r from-yellow-400 to-amber-500' : 'bg-gradient-to-r from-red-400 to-rose-500'}`}
               style={{ width: `${Math.min(100, parseFloat(tauxDisponibilite))}%` }}
             />
           </div>
@@ -302,7 +302,7 @@ export default function Dashboard() {
             <span>sur {fv.length} total</span>
           </div>
           <div className="mt-3 flex gap-2 text-xs">
-            <span className={`rounded-full px-2 py-0.5 font-medium ${parseFloat(tauxDisponibilite) >= 80 ? 'bg-emerald-100 text-emerald-700' : parseFloat(tauxDisponibilite) >= 60 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>
+            <span className={`rounded-full px-2 py-0.5 font-medium ${parseFloat(tauxDisponibilite) >= 80 ? 'bg-brand-100 text-brand-700' : parseFloat(tauxDisponibilite) >= 60 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>
               {parseFloat(tauxDisponibilite) >= 80 ? '✓ Bonne disponibilité' : parseFloat(tauxDisponibilite) >= 60 ? '⚠ Disponibilité moyenne' : '✗ Disponibilité faible'}
             </span>
           </div>
@@ -318,7 +318,7 @@ export default function Dashboard() {
           </div>
           <div className="relative h-4 w-full rounded-full bg-slate-100 overflow-hidden">
             <div
-              className={`h-full rounded-full transition-all duration-700 ${parseFloat(tauxImmobilisation) >= 30 ? 'bg-gradient-to-r from-red-400 to-rose-500' : parseFloat(tauxImmobilisation) >= 15 ? 'bg-gradient-to-r from-orange-400 to-amber-500' : 'bg-gradient-to-r from-teal-400 to-emerald-500'}`}
+              className={`h-full rounded-full transition-all duration-700 ${parseFloat(tauxImmobilisation) >= 30 ? 'bg-gradient-to-r from-red-400 to-rose-500' : parseFloat(tauxImmobilisation) >= 15 ? 'bg-gradient-to-r from-orange-400 to-amber-500' : 'bg-gradient-to-r from-teal-400 to-brand-500'}`}
               style={{ width: `${Math.min(100, parseFloat(tauxImmobilisation))}%` }}
             />
           </div>
@@ -464,7 +464,7 @@ export default function Dashboard() {
       </div>
 
       <div className={`rounded-xl border border-slate-200 bg-white p-6 shadow-sm ${hiddenKpis.has('Évolution mensuelle des dépenses') ? 'print:hidden' : ''}`}>
-        <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-800"><TrendingUp className="h-5 w-5 text-emerald-500" />Évolution mensuelle des dépenses</h3>
+        <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-800"><TrendingUp className="h-5 w-5 text-brand-500" />Évolution mensuelle des dépenses</h3>
         {monthlyExpenseEvolution.length > 1 ? (
           <ResponsiveContainer width="100%" height={280}>
             <LineChart data={monthlyExpenseEvolution} margin={{ top: 10, right: 20, left: 0, bottom: 5 }}>
@@ -482,7 +482,7 @@ export default function Dashboard() {
       {/* Alertes */}
       <div className={`rounded-xl border border-slate-200 bg-white p-6 shadow-sm ${hiddenKpis.has('Alertes entretiens') ? 'print:hidden' : ''}`}>
         <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-800"><Wrench className="h-5 w-5 text-amber-500" />Alertes entretiens</h3>
-        {maintenanceAlerts.length > 0 ? <div className="overflow-x-auto"><table className="min-w-full divide-y divide-slate-200"><thead className="bg-slate-50"><tr>{['Véhicule', 'Dernier', 'Prochain', 'Échéance', 'Statut'].map(h => <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">{h}</th>)}</tr></thead><tbody className="divide-y divide-slate-100">{maintenanceAlerts.map(({ vehicle, forecast }) => <tr key={vehicle.id} className="hover:bg-slate-50"><td className="px-4 py-3"><Link to="/vehicules" className="text-sm font-semibold text-emerald-600">{vehicle.numero_immatriculation}</Link><p className="text-xs text-slate-500">{vehicle.marque}</p></td><td className="px-4 py-3 text-sm text-slate-600">{forecast.hasHistory ? `${forecast.lastMaintenanceKm.toLocaleString('fr-FR')} km` : '—'}</td><td className="px-4 py-3 text-sm text-slate-600">{forecast.hasHistory ? `${forecast.nextMaintenanceKm.toLocaleString('fr-FR')} km` : '—'}</td><td className="px-4 py-3 text-sm text-slate-600">{forecast.estimatedNextDate ? new Date(forecast.estimatedNextDate).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}</td><td className="px-4 py-3 text-center"><span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${forecast.alertLevel === 'critical' ? 'bg-red-100 text-red-700' : forecast.alertLevel === 'warning' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>{forecast.alertLevel === 'critical' ? 'Urgent' : forecast.alertLevel === 'warning' ? `${forecast.remainingKm.toLocaleString('fr-FR')} km` : '—'}</span></td></tr>)}</tbody></table></div> : <p className="text-sm text-slate-400">Aucune alerte</p>}
+        {maintenanceAlerts.length > 0 ? <div className="overflow-x-auto"><table className="min-w-full divide-y divide-slate-200"><thead className="bg-slate-50"><tr>{['Véhicule', 'Dernier', 'Prochain', 'Échéance', 'Statut'].map(h => <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">{h}</th>)}</tr></thead><tbody className="divide-y divide-slate-100">{maintenanceAlerts.map(({ vehicle, forecast }) => <tr key={vehicle.id} className="hover:bg-slate-50"><td className="px-4 py-3"><Link to="/vehicules" className="text-sm font-semibold text-brand-600">{vehicle.numero_immatriculation}</Link><p className="text-xs text-slate-500">{vehicle.marque}</p></td><td className="px-4 py-3 text-sm text-slate-600">{forecast.hasHistory ? `${forecast.lastMaintenanceKm.toLocaleString('fr-FR')} km` : '—'}</td><td className="px-4 py-3 text-sm text-slate-600">{forecast.hasHistory ? `${forecast.nextMaintenanceKm.toLocaleString('fr-FR')} km` : '—'}</td><td className="px-4 py-3 text-sm text-slate-600">{forecast.estimatedNextDate ? new Date(forecast.estimatedNextDate).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}</td><td className="px-4 py-3 text-center"><span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${forecast.alertLevel === 'critical' ? 'bg-red-100 text-red-700' : forecast.alertLevel === 'warning' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>{forecast.alertLevel === 'critical' ? 'Urgent' : forecast.alertLevel === 'warning' ? `${forecast.remainingKm.toLocaleString('fr-FR')} km` : '—'}</span></td></tr>)}</tbody></table></div> : <p className="text-sm text-slate-400">Aucune alerte</p>}
       </div>
 
       <div className={`rounded-xl border border-slate-200 bg-white p-6 shadow-sm ${hiddenKpis.has('Alertes échéances') ? 'print:hidden' : ''}`}>

@@ -122,13 +122,13 @@ export default function Expenses() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-xl bg-white p-6 shadow-sm print:hidden">
         <div><h2 className="text-2xl font-bold text-slate-900">Dépenses véhicules</h2><p className="mt-1 text-sm text-slate-500">Saisissez et suivez toutes les dépenses par véhicule.</p></div>
         <div className="flex flex-wrap items-center gap-2">
-          <button onClick={handleAddNew} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"><Plus className="h-4 w-4" /> Ajouter une dépense</button>
+          <button onClick={handleAddNew} className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700"><Plus className="h-4 w-4" /> Ajouter une dépense</button>
           <label className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 cursor-pointer" title="Importer">
             <Upload className="h-4 w-4" /> Importer
             <input type="file" accept=".csv,.xls,.xlsx" className="hidden" onChange={(event) => event.target.files?.[0] && processImportFile(event.target.files[0])} />
           </label>
           <button onClick={exportExcel} className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50" title="Exporter"><Download className="h-4 w-4" /> Exporter</button>
-          <button onClick={handlePrint} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"><Printer className="h-4 w-4" /> Imprimer</button>
+          <button onClick={handlePrint} className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700"><Printer className="h-4 w-4" /> Imprimer</button>
         </div>
       </div>
 
@@ -143,7 +143,7 @@ export default function Expenses() {
       <p className="-mt-2 text-xs text-slate-400 print:hidden">Inclut les interventions de "Historique Maintenance" (catégorie Entretien).</p>
 
       {importMessage && <p className="rounded-lg bg-slate-50 px-4 py-3 text-sm text-slate-600 print:hidden">{importMessage}</p>}
-      {preview.length > 0 && <div className="rounded-lg bg-emerald-50 px-4 py-3 flex items-center justify-between print:hidden"><span className="text-sm text-emerald-800">{preview.length} dépense(s) prête(s)</span><button onClick={importPreview} className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">Importer</button></div>}
+      {preview.length > 0 && <div className="rounded-lg bg-brand-50 px-4 py-3 flex items-center justify-between print:hidden"><span className="text-sm text-brand-800">{preview.length} dépense(s) prête(s)</span><button onClick={importPreview} className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">Importer</button></div>}
 
       <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
         <div className="border-b border-slate-200 p-4 print:hidden">
@@ -152,16 +152,16 @@ export default function Expenses() {
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
               <div className="relative flex-1 min-w-[220px]">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Rechercher..." className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+                <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Rechercher..." className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
               </div>
-              <select value={filterVehicle} onChange={(e) => setFilterVehicle(e.target.value)} className="rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+              <select value={filterVehicle} onChange={(e) => setFilterVehicle(e.target.value)} className="rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
                 <option value="">Tous les véhicules</option>{vehicles.map(v => <option key={v.id} value={v.id}>{v.numero_immatriculation}</option>)}
               </select>
-              <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} className="rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+              <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} className="rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
                 <option value="">Toutes catégories</option>{categoryOptions.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
-              <input type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} title="Période du" className="rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-emerald-500 focus:outline-none" />
-              <input type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} title="Période au" className="rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-emerald-500 focus:outline-none" />
+              <input type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} title="Période du" className="rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none" />
+              <input type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} title="Période au" className="rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none" />
             </div>
           </div>
         </div>
@@ -182,15 +182,16 @@ export default function Expenses() {
                   return (
                     <tr key={expense.id} className={`hover:bg-slate-50 ${fromMaintenance ? 'bg-sky-50/40' : ''}`}>
                       <td className="px-4 py-3 text-sm text-slate-600">{formatDate(expense.date)}</td>
-                      <td className="px-4 py-3">{vehicle ? <Link to={`/vehicule/${vehicle.id}`} className="text-sm font-semibold text-emerald-600 hover:text-emerald-700">{vehicle.numero_immatriculation}</Link> : <span className="text-sm text-slate-400">Supprimé</span>}</td>
+                      <td className="px-4 py-3">{vehicle ? <Link to={`/vehicule/${vehicle.id}`} className="text-sm font-semibold text-brand-600 hover:text-brand-700">{vehicle.numero_immatriculation}</Link> : <span className="text-sm text-slate-400">Supprimé</span>}</td>
                       <td className="px-4 py-3"><p className="text-sm font-semibold text-slate-800">{expense.libelle}</p>
                         <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
                           <span className="rounded-full bg-slate-100 px-2 py-0.5">{expense.categorie}</span>
                           {fromMaintenance && <span className="inline-flex items-center gap-1 rounded-full bg-sky-100 px-2 py-0.5 text-sky-700" title="Provient de la fiche véhicule → Historique Maintenance"><Wrench className="h-3 w-3" />Historique Maintenance</span>}
                           {expense.montant < 0 && <span className="rounded-full bg-red-100 px-2 py-0.5 font-medium text-red-700">Annulation</span>}
                           {expense.categorie === 'Entretien' && expense.kilometrage_entretien ? <span className="rounded-full bg-amber-100 px-2 py-0.5 text-amber-700">{expense.kilometrage_entretien.toLocaleString('fr-FR')} km</span> : null}
+                          {expense.categorie === 'Carburant' && expense.litres ? <span className="rounded-full bg-brand-100 px-2 py-0.5 text-brand-700">{expense.litres.toLocaleString('fr-FR')} L</span> : null}
                           {expense.justificatif_nom && <span className="inline-flex items-center gap-1"><Paperclip className="h-3 w-3" />{expense.justificatif_nom}</span>}
-                          {expense.photo_carburant_url && <span className="inline-flex items-center gap-1 text-emerald-600"><Camera className="h-3 w-3" />Photo jointe</span>}
+                          {expense.photo_carburant_url && <span className="inline-flex items-center gap-1 text-brand-600"><Camera className="h-3 w-3" />Photo jointe</span>}
                         </div>
                       </td>
                       <td className="px-4 py-3 text-sm text-slate-600">{expense.fournisseur || '-'}</td>
@@ -213,7 +214,7 @@ export default function Expenses() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-800"><TrendingUp className="h-5 w-5 text-emerald-500" />Évolution mensuelle des dépenses</h3>
+          <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-800"><TrendingUp className="h-5 w-5 text-brand-500" />Évolution mensuelle des dépenses</h3>
           {monthlyExpenseEvolution.length > 0 ? (
             <div className="h-80 w-full"><ResponsiveContainer width="100%" height="100%"><LineChart data={monthlyExpenseEvolution} margin={{ top: 20, right: 24, left: 0, bottom: 8 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" /><XAxis dataKey="mois" tick={{ fontSize: 12 }} /><YAxis tick={{ fontSize: 12 }} tickFormatter={(v) => `${Math.round(Number(v) / 1000)}k`} />
@@ -260,6 +261,7 @@ function ExpenseFormModal({ expense, vehicles, knownSuppliers, onSave, onClose }
     notes: expense?.notes || '',
     date_entretien: expense?.date_entretien || expense?.date || new Date().toISOString().slice(0, 10),
     kilometrage_entretien: expense?.kilometrage_entretien ? String(expense.kilometrage_entretien) : '',
+    litres: expense?.litres ? String(expense.litres) : '',
   });
   // La photo (base64) est volontairement tenue hors du brouillon persisté : elle peut peser
   // plusieurs Mo et ferait échouer l'enregistrement de tout le brouillon dans le quota
@@ -286,6 +288,7 @@ function ExpenseFormModal({ expense, vehicles, knownSuppliers, onSave, onClose }
       fournisseur: f.fournisseur, mode_paiement: f.mode_paiement, numero_piece: f.numero_piece, justificatif_nom: f.justificatif_nom,
       notes: f.notes, date_entretien: f.categorie === 'Entretien' ? f.date_entretien || f.date : '',
       kilometrage_entretien: f.categorie === 'Entretien' ? Number(f.kilometrage_entretien) || 0 : 0,
+      litres: f.categorie === 'Carburant' ? Number(f.litres) || 0 : 0,
       photo_carburant_url: f.categorie === 'Carburant' ? photoUrl : '',
     };
     clearDraft();
@@ -303,12 +306,12 @@ function ExpenseFormModal({ expense, vehicles, knownSuppliers, onSave, onClose }
         </div>
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 p-6">
           <label className="col-span-2 block text-xs font-medium text-slate-600">Véhicule
-            <select required value={f.vehicleId} onChange={(e) => up('vehicleId', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+            <select required value={f.vehicleId} onChange={(e) => up('vehicleId', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
               <option value="">Sélectionner un véhicule</option>
               {vehicles.map(v => <option key={v.id} value={v.id}>{v.numero_immatriculation} - {v.marque} {v.type_commercial}</option>)}
             </select>
           </label>
-          <label className="block text-xs font-medium text-slate-600">Date<input type="date" required value={f.date} onChange={(e) => setF(p => ({ ...p, date: e.target.value, date_entretien: p.categorie === 'Entretien' ? e.target.value : p.date_entretien }))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Date<input type="date" required value={f.date} onChange={(e) => setF(p => ({ ...p, date: e.target.value, date_entretien: p.categorie === 'Entretien' ? e.target.value : p.date_entretien }))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
           <label className="block text-xs font-medium text-slate-600">Catégorie
             <SelectWithOther
               value={f.categorie}
@@ -324,18 +327,22 @@ function ExpenseFormModal({ expense, vehicles, knownSuppliers, onSave, onClose }
             </div>
           )}
           {f.categorie === 'Carburant' && (
-            <div className="col-span-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3">
+            <div className="col-span-2 rounded-xl border border-brand-200 bg-brand-50 p-3">
+              <label className="mb-1 block text-xs font-medium text-slate-600">Quantité (litres)
+                <input type="number" min="0" step="0.1" placeholder="Ex: 45.5" value={f.litres} onChange={(e) => up('litres', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
+              </label>
+              <p className="mb-3 mt-1 text-[10px] text-slate-400">Sert à calculer automatiquement la consommation moyenne (L/100km) du véhicule, visible dans sa fiche.</p>
               <label className="mb-1 block text-xs font-medium text-slate-600">Photo (reçu, pompe, ticket carburant)</label>
               {photoUrl ? (
                 <div className="flex items-center gap-3">
-                  <img src={photoUrl} alt="Photo carburant" className="h-16 w-16 rounded-lg border border-emerald-200 object-cover" />
+                  <img src={photoUrl} alt="Photo carburant" className="h-16 w-16 rounded-lg border border-brand-200 object-cover" />
                   <div className="flex flex-col gap-1.5">
-                    <button type="button" onClick={() => photoInputRef.current?.click()} className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-300 bg-white px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100"><Camera className="h-3.5 w-3.5" /> Remplacer</button>
+                    <button type="button" onClick={() => photoInputRef.current?.click()} className="inline-flex items-center gap-1.5 rounded-lg border border-brand-300 bg-white px-3 py-1.5 text-xs font-medium text-brand-700 hover:bg-brand-100"><Camera className="h-3.5 w-3.5" /> Remplacer</button>
                     <button type="button" onClick={() => setPhotoUrl('')} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-500 hover:bg-slate-50"><ImageOff className="h-3.5 w-3.5" /> Retirer</button>
                   </div>
                 </div>
               ) : (
-                <button type="button" onClick={() => photoInputRef.current?.click()} className="inline-flex items-center gap-2 rounded-lg border border-dashed border-emerald-300 bg-white px-4 py-3 text-xs font-medium text-emerald-700 hover:bg-emerald-100">
+                <button type="button" onClick={() => photoInputRef.current?.click()} className="inline-flex items-center gap-2 rounded-lg border border-dashed border-brand-300 bg-white px-4 py-3 text-xs font-medium text-brand-700 hover:bg-brand-100">
                   <Camera className="h-4 w-4" /> Prendre une photo / ajouter une image
                 </button>
               )}
@@ -343,13 +350,13 @@ function ExpenseFormModal({ expense, vehicles, knownSuppliers, onSave, onClose }
               <p className="mt-1.5 text-[10px] text-slate-400">Utilisez l'appareil photo du téléphone pour prendre le ticket en photo, ou choisissez une image existante.</p>
             </div>
           )}
-          <label className="col-span-2 block text-xs font-medium text-slate-600">Libellé<input required value={f.libelle} onChange={(e) => up('libelle', e.target.value)} placeholder="Ex: Vidange, carburant..." className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
+          <label className="col-span-2 block text-xs font-medium text-slate-600">Libellé<input required value={f.libelle} onChange={(e) => up('libelle', e.target.value)} placeholder="Ex: Vidange, carburant..." className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
           <label className="block text-xs font-medium text-slate-600">Montant (FCFA)
-            <input type="number" required value={f.montant} onChange={(e) => up('montant', e.target.value)} placeholder="0" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input type="number" required value={f.montant} onChange={(e) => up('montant', e.target.value)} placeholder="0" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
             <span className="mt-1 block text-[10px] text-slate-400">Saisissez un montant négatif pour justifier une annulation.</span>
           </label>
           <label className="block text-xs font-medium text-slate-600">Fournisseur
-            <input list="expense-suppliers" value={f.fournisseur} onChange={(e) => up('fournisseur', e.target.value)} placeholder="Ex: Station TotalEnergies" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input list="expense-suppliers" value={f.fournisseur} onChange={(e) => up('fournisseur', e.target.value)} placeholder="Ex: Station TotalEnergies" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
             <datalist id="expense-suppliers">{knownSuppliers.map(s => <option key={s} value={s} />)}</datalist>
           </label>
           <label className="block text-xs font-medium text-slate-600">Paiement
@@ -360,12 +367,12 @@ function ExpenseFormModal({ expense, vehicles, knownSuppliers, onSave, onClose }
               otherPlaceholder="Ex: Chèque différé, Traite…"
             />
           </label>
-          <label className="block text-xs font-medium text-slate-600">N° pièce<input value={f.numero_piece} onChange={(e) => up('numero_piece', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">N° pièce<input value={f.numero_piece} onChange={(e) => up('numero_piece', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
           <label className="block text-xs font-medium text-slate-600">Justificatif<input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => up('justificatif_nom', e.target.files?.[0]?.name ?? '')} className="mt-1 w-full text-xs text-slate-500 file:mr-2 file:rounded-md file:border-0 file:bg-slate-100 file:px-2 file:py-1.5 file:text-xs file:font-medium file:text-slate-600" /></label>
-          <label className="col-span-2 block text-xs font-medium text-slate-600">Notes<textarea rows={2} value={f.notes} onChange={(e) => up('notes', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
+          <label className="col-span-2 block text-xs font-medium text-slate-600">Notes<textarea rows={2} value={f.notes} onChange={(e) => up('notes', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
           <div className="col-span-2 flex justify-end gap-3 border-t pt-4">
             <button type="button" onClick={handleCancel} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
-            <button type="submit" className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700">{expense ? 'Mettre à jour' : 'Enregistrer la dépense'}</button>
+            <button type="submit" className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700">{expense ? 'Mettre à jour' : 'Enregistrer la dépense'}</button>
           </div>
         </form>
       </div>

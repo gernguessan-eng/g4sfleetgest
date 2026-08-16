@@ -60,7 +60,7 @@ export default function AccessGate({ children }: Props) {
 
   // ── Écran de verrouillage ──
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 p-4">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-brand-900 p-4">
       <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl">
         {/* Header */}
         <div className="bg-gradient-to-r from-red-500 to-rose-600 p-6 text-white">
@@ -95,7 +95,7 @@ export default function AccessGate({ children }: Props) {
           <form onSubmit={handleUnlock} className="space-y-3">
             <label className="block">
               <span className="flex items-center gap-1.5 text-sm font-semibold text-slate-700">
-                <KeyRound className="h-4 w-4 text-emerald-600" />
+                <KeyRound className="h-4 w-4 text-brand-600" />
                 Adresse email administrateur
               </span>
               <div className="mt-1.5 relative">
@@ -106,7 +106,7 @@ export default function AccessGate({ children }: Props) {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="exemple@domaine.com"
                   autoComplete="email"
-                  className="w-full rounded-lg border border-slate-300 pl-9 pr-3 py-2.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="w-full rounded-lg border border-slate-300 pl-9 pr-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
                 />
               </div>
             </label>
@@ -120,7 +120,7 @@ export default function AccessGate({ children }: Props) {
 
             <button
               type="submit"
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 active:scale-95"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700 active:scale-95"
             >
               <ShieldCheck className="h-4 w-4" />
               Confirmer et prolonger l'accès
@@ -146,7 +146,7 @@ export default function AccessGate({ children }: Props) {
               onClick={handleRequestAccess}
               className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
             >
-              {requestSent ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <Send className="h-4 w-4" />}
+              {requestSent ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <Send className="h-4 w-4" />}
               {requestSent ? 'Demande envoyée' : `Contacter ${ADMIN_EMAIL}`}
             </button>
           </div>
@@ -185,7 +185,7 @@ export function DemoBanner() {
           ? 'bg-red-100 text-red-800 border-b border-red-200'
           : isWarning
             ? 'bg-amber-100 text-amber-800 border-b border-amber-200'
-            : 'bg-emerald-50 text-emerald-800 border-b border-emerald-200'
+            : 'bg-brand-50 text-brand-800 border-b border-brand-200'
       }`}
     >
       <div className="flex items-center gap-2">

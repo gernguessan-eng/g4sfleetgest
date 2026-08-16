@@ -39,8 +39,8 @@ function classifyVariation(pct: number | null): { label: string; badgeClass: str
     if (abs < 15) return { label: 'Hausse modérée', badgeClass: 'bg-amber-100 text-amber-700', icon: 'up' };
     return { label: 'Forte hausse', badgeClass: 'bg-red-100 text-red-700', icon: 'up' };
   }
-  if (abs < 5) return { label: 'Légère baisse', badgeClass: 'bg-emerald-50 text-emerald-600', icon: 'down' };
-  if (abs < 15) return { label: 'Baisse modérée', badgeClass: 'bg-emerald-100 text-emerald-700', icon: 'down' };
+  if (abs < 5) return { label: 'Légère baisse', badgeClass: 'bg-brand-50 text-brand-600', icon: 'down' };
+  if (abs < 15) return { label: 'Baisse modérée', badgeClass: 'bg-brand-100 text-brand-700', icon: 'down' };
   return { label: 'Forte baisse', badgeClass: 'bg-blue-100 text-blue-700', icon: 'down' };
 }
 
@@ -155,7 +155,7 @@ export default function Catalogue() {
           <p className="mt-1 text-sm text-slate-500">Suivi des prix d'achat et de leur fluctuation dans le temps</p>
         </div>
         <div className="flex gap-2">
-          <button onClick={() => { setEditPieceId(''); setPrefillNom(''); setShowForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"><Plus className="h-4 w-4" /> Ajouter un prix</button>
+          <button onClick={() => { setEditPieceId(''); setPrefillNom(''); setShowForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700"><Plus className="h-4 w-4" /> Ajouter un prix</button>
           <button onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"><Printer className="h-4 w-4" /> Imprimer</button>
         </div>
       </div>
@@ -169,15 +169,15 @@ export default function Catalogue() {
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
         <div className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-[10px] uppercase text-slate-500">Pièces suivies</p><p className="mt-1 text-2xl font-bold text-slate-900">{stats.total}</p></div>
         <div className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-[10px] uppercase text-red-500">Hausses de prix</p><p className="mt-1 text-2xl font-bold text-red-600">{stats.hausses}</p></div>
-        <div className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-[10px] uppercase text-emerald-500">Baisses de prix</p><p className="mt-1 text-2xl font-bold text-emerald-600">{stats.baisses}</p></div>
-        <div className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-[10px] uppercase text-slate-500">Variation moyenne</p><p className={`mt-1 text-2xl font-bold ${stats.variationMoyenne > 0 ? 'text-red-600' : stats.variationMoyenne < 0 ? 'text-emerald-600' : 'text-slate-900'}`}>{stats.variationMoyenne > 0 ? '+' : ''}{stats.variationMoyenne.toFixed(1)}%</p></div>
+        <div className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-[10px] uppercase text-brand-500">Baisses de prix</p><p className="mt-1 text-2xl font-bold text-brand-600">{stats.baisses}</p></div>
+        <div className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-[10px] uppercase text-slate-500">Variation moyenne</p><p className={`mt-1 text-2xl font-bold ${stats.variationMoyenne > 0 ? 'text-red-600' : stats.variationMoyenne < 0 ? 'text-brand-600' : 'text-slate-900'}`}>{stats.variationMoyenne > 0 ? '+' : ''}{stats.variationMoyenne.toFixed(1)}%</p></div>
         <div className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-[10px] uppercase text-amber-600">Fortes hausses (≥15%)</p><p className="mt-1 text-2xl font-bold text-amber-700">{stats.fortesHausses}</p></div>
       </div>
 
       {/* Recherche */}
       <div className="relative print:hidden">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher une pièce, référence, fournisseur…" className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher une pièce, référence, fournisseur…" className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
       </div>
 
       {/* Tableau */}
@@ -202,7 +202,7 @@ export default function Catalogue() {
                     <td className="px-3 py-2 text-xs text-slate-500">{actuelle?.fournisseur || '—'}</td>
                     <td className="px-3 py-2 text-xs">
                       {ecart !== null ? (
-                        <span className={`font-bold ${ecart > 0 ? 'text-red-600' : ecart < 0 ? 'text-emerald-600' : 'text-slate-500'}`}>
+                        <span className={`font-bold ${ecart > 0 ? 'text-red-600' : ecart < 0 ? 'text-brand-600' : 'text-slate-500'}`}>
                           {ecart > 0 ? '+' : ''}{fmtMoney(ecart)} <span className="font-normal">({pct !== null ? (pct > 0 ? '+' : '') + pct.toFixed(1) : 0}%)</span>
                         </span>
                       ) : <span className="text-slate-400">—</span>}
@@ -210,7 +210,7 @@ export default function Catalogue() {
                     <td className="px-3 py-2"><span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${variation.badgeClass}`}><VariationIcon icon={variation.icon} />{variation.label}</span></td>
                     <td className="px-3 py-2 print:hidden">
                       <div className="flex gap-1" onClick={e => e.stopPropagation()}>
-                        <button onClick={() => { setPrefillNom(piece.nom_piece); setEditPieceId(''); setShowForm(true); }} className="p-1 text-slate-400 hover:text-emerald-600" title="Ajouter un nouveau prix"><Plus className="h-3.5 w-3.5" /></button>
+                        <button onClick={() => { setPrefillNom(piece.nom_piece); setEditPieceId(''); setShowForm(true); }} className="p-1 text-slate-400 hover:text-brand-600" title="Ajouter un nouveau prix"><Plus className="h-3.5 w-3.5" /></button>
                         <button onClick={() => setFichePieceId(piece.id)} className="p-1 text-slate-400 hover:text-blue-600" title="Ouvrir la fiche"><Pencil className="h-3.5 w-3.5" /></button>
                         <button onClick={() => handleDelete(piece.id)} className="p-1 text-slate-400 hover:text-red-600" title="Supprimer"><Trash2 className="h-3.5 w-3.5" /></button>
                       </div>
@@ -226,9 +226,9 @@ export default function Catalogue() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between gap-2 flex-wrap">
-            <h3 className="flex items-center gap-2 text-sm font-bold text-slate-800"><Package className="h-4 w-4 text-emerald-500" />Évolution du prix d'une pièce</h3>
+            <h3 className="flex items-center gap-2 text-sm font-bold text-slate-800"><Package className="h-4 w-4 text-brand-500" />Évolution du prix d'une pièce</h3>
             {pieces.length > 0 && (
-              <select value={chartPiece?.id || ''} onChange={e => setSelectedChartPieceId(e.target.value)} className="rounded-lg border border-slate-300 px-2 py-1.5 text-xs focus:border-emerald-500 focus:outline-none">
+              <select value={chartPiece?.id || ''} onChange={e => setSelectedChartPieceId(e.target.value)} className="rounded-lg border border-slate-300 px-2 py-1.5 text-xs focus:border-brand-500 focus:outline-none">
                 {pieces.map(p => <option key={p.id} value={p.id}>{p.nom_piece}</option>)}
               </select>
             )}
@@ -354,45 +354,45 @@ function PriceFormModal({ editPiece, prefillNom, knownPieceNames, knownSuppliers
         <form onSubmit={handleSubmit} className="space-y-4 p-6">
           <label className="block text-xs font-medium text-slate-600">
             Nom de la pièce de rechange
-            <input required list="catalogue-piece-names" value={nomPiece} onChange={e => handleNomChange(e.target.value)} placeholder="Ex: Plaquettes de frein avant" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input required list="catalogue-piece-names" value={nomPiece} onChange={e => handleNomChange(e.target.value)} placeholder="Ex: Plaquettes de frein avant" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
             <datalist id="catalogue-piece-names">{knownPieceNames.map(n => <option key={n} value={n} />)}</datalist>
           </label>
 
           {!isEditMode && matched && (
-            <div className="flex items-start gap-2 rounded-lg bg-emerald-50 px-3 py-2 text-xs text-emerald-800 border border-emerald-100">
+            <div className="flex items-start gap-2 rounded-lg bg-brand-50 px-3 py-2 text-xs text-brand-800 border border-brand-100">
               <Info className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
               <p>Pièce déjà connue ({matched.historique.length} prix enregistré{matched.historique.length > 1 ? 's' : ''}) — ce nouveau prix viendra s'ajouter à son historique.</p>
             </div>
           )}
 
           <label className="block text-xs font-medium text-slate-600">Référence (optionnel)
-            <input value={reference} onChange={e => setReference(e.target.value)} placeholder="Ex: PF-2201" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input value={reference} onChange={e => setReference(e.target.value)} placeholder="Ex: PF-2201" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </label>
 
           {!isEditMode && (
             <>
               <div className="grid grid-cols-2 gap-3">
                 <label className="block text-xs font-medium text-slate-600">Date d'achat
-                  <input type="date" required value={date} onChange={e => setDate(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+                  <input type="date" required value={date} onChange={e => setDate(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
                 </label>
                 <label className="block text-xs font-medium text-slate-600">Valeur d'achat actuelle (FCFA)
-                  <input type="number" required min="0" value={valeur} onChange={e => setValeur(e.target.value)} placeholder="Ex: 42000" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+                  <input type="number" required min="0" value={valeur} onChange={e => setValeur(e.target.value)} placeholder="Ex: 42000" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
                 </label>
               </div>
               <label className="block text-xs font-medium text-slate-600">Fournisseur
-                <input required list="catalogue-suppliers" value={fournisseur} onChange={e => setFournisseur(e.target.value)} placeholder="Ex: Auto Service Abidjan" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+                <input required list="catalogue-suppliers" value={fournisseur} onChange={e => setFournisseur(e.target.value)} placeholder="Ex: Auto Service Abidjan" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
                 <datalist id="catalogue-suppliers">{knownSuppliers.map(s => <option key={s} value={s} />)}</datalist>
               </label>
             </>
           )}
 
           <label className="block text-xs font-medium text-slate-600">Observations
-            <textarea value={observations} onChange={e => setObservations(e.target.value)} rows={2} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <textarea value={observations} onChange={e => setObservations(e.target.value)} rows={2} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </label>
 
           <div className="flex justify-end gap-3 border-t pt-4">
             <button type="button" onClick={handleCancel} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
-            <button type="submit" className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700">{isEditMode ? 'Mettre à jour' : 'Enregistrer'}</button>
+            <button type="submit" className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700">{isEditMode ? 'Mettre à jour' : 'Enregistrer'}</button>
           </div>
         </form>
       </div>
@@ -476,25 +476,25 @@ function FicheModal({ piece, knownSuppliers, onUpdateHistorique, onEditInfo, onC
         <div className="space-y-3 border-b p-6">
           <div className="grid grid-cols-2 gap-3">
             <label className="block text-xs font-medium text-slate-600">Nom de la pièce
-              <input value={nomPiece} onChange={e => setNomPiece(e.target.value)} onBlur={saveInfo} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+              <input value={nomPiece} onChange={e => setNomPiece(e.target.value)} onBlur={saveInfo} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
             </label>
             <label className="block text-xs font-medium text-slate-600">Référence
-              <input value={reference} onChange={e => setReference(e.target.value)} onBlur={saveInfo} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+              <input value={reference} onChange={e => setReference(e.target.value)} onBlur={saveInfo} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
             </label>
           </div>
           <label className="block text-xs font-medium text-slate-600">Observations
-            <textarea value={observations} onChange={e => setObservations(e.target.value)} onBlur={saveInfo} rows={2} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <textarea value={observations} onChange={e => setObservations(e.target.value)} onBlur={saveInfo} rows={2} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </label>
         </div>
 
         <div className="p-6">
           <div className="mb-3 flex items-center justify-between">
             <h4 className="flex items-center gap-2 text-sm font-bold text-slate-800">Historique des prix ({rows.length})<SortToggleButton direction={sortDir} onToggle={() => setSortDir(d => d === 'desc' ? 'asc' : 'desc')} /></h4>
-            <button onClick={() => setShowAddRow(v => !v)} className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700"><Plus className="h-3.5 w-3.5" /> Ajouter un prix</button>
+            <button onClick={() => setShowAddRow(v => !v)} className="inline-flex items-center gap-1 rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700"><Plus className="h-3.5 w-3.5" /> Ajouter un prix</button>
           </div>
 
           {showAddRow && (
-            <div className="mb-3 grid grid-cols-[1fr_1fr_1.4fr_auto] items-end gap-2 rounded-lg border border-emerald-200 bg-emerald-50 p-3">
+            <div className="mb-3 grid grid-cols-[1fr_1fr_1.4fr_auto] items-end gap-2 rounded-lg border border-brand-200 bg-brand-50 p-3">
               <label className="block text-[10px] font-medium text-slate-600">Date
                 <input type="date" value={newEntry.date} onChange={e => setNewEntry(v => ({ ...v, date: e.target.value }))} className="mt-1 w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs" />
               </label>
@@ -505,7 +505,7 @@ function FicheModal({ piece, knownSuppliers, onUpdateHistorique, onEditInfo, onC
                 <input list="fiche-suppliers" value={newEntry.fournisseur} onChange={e => setNewEntry(v => ({ ...v, fournisseur: e.target.value }))} className="mt-1 w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs" />
                 <datalist id="fiche-suppliers">{knownSuppliers.map(s => <option key={s} value={s} />)}</datalist>
               </label>
-              <button onClick={addRow} className="h-[30px] rounded-lg bg-emerald-600 px-3 text-xs font-semibold text-white hover:bg-emerald-700">OK</button>
+              <button onClick={addRow} className="h-[30px] rounded-lg bg-brand-600 px-3 text-xs font-semibold text-white hover:bg-brand-700">OK</button>
             </div>
           )}
 
@@ -518,7 +518,7 @@ function FicheModal({ piece, knownSuppliers, onUpdateHistorique, onEditInfo, onC
                   <input type="number" min="0" value={h.valeur} onChange={e => updateRow(h.id, { valeur: Number(e.target.value) })} className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs font-semibold" />
                   <input list="fiche-suppliers" value={h.fournisseur} onChange={e => updateRow(h.id, { fournisseur: e.target.value })} placeholder="Fournisseur" className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs" />
                   {diff !== null ? (
-                    <span className={`text-[11px] font-bold ${diff > 0 ? 'text-red-600' : diff < 0 ? 'text-emerald-600' : 'text-slate-400'}`}>{diff > 0 ? '+' : ''}{fmtMoney(diff)}</span>
+                    <span className={`text-[11px] font-bold ${diff > 0 ? 'text-red-600' : diff < 0 ? 'text-brand-600' : 'text-slate-400'}`}>{diff > 0 ? '+' : ''}{fmtMoney(diff)}</span>
                   ) : <span />}
                   <button onClick={() => deleteRow(h.id)} className="p-1 text-slate-400 hover:text-red-600" title="Supprimer cette entrée"><Trash2 className="h-3.5 w-3.5" /></button>
                 </div>

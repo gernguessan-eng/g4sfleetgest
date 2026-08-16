@@ -21,7 +21,7 @@ export default function PointageVehicule() {
             key={key}
             onClick={() => setTab(key)}
             className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
-              tab === key ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'
+              tab === key ? 'bg-brand-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'
             }`}
           >
             <TabIcon className="h-4 w-4" /> {label}

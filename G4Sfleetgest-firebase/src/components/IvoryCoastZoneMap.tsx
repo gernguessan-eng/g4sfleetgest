@@ -77,7 +77,7 @@ export default function IvoryCoastZoneMap({ zoneDistribution, totalVehicles }: P
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
       <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-800">
-        <MapPin className="h-5 w-5 text-emerald-500" />
+        <MapPin className="h-5 w-5 text-brand-500" />
         Cartographie — Côte d'Ivoire · Répartition par zone d'affectation
       </h3>
 

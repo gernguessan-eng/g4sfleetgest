@@ -118,7 +118,7 @@ export default function AddressAutocomplete({ value, onChange, placeholder, labe
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           autoComplete="off"
-          className="w-full rounded-lg border border-slate-300 pl-9 pr-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+          className="w-full rounded-lg border border-slate-300 pl-9 pr-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
         />
       </div>
       {showDropdown && suggestions.length > 0 && (
@@ -128,9 +128,9 @@ export default function AddressAutocomplete({ value, onChange, placeholder, labe
               key={s.name}
               onMouseDown={e => { e.preventDefault(); selectSuggestion(s); }}
               onMouseEnter={() => setHighlightedIndex(i)}
-              className={`flex cursor-pointer items-center gap-2 border-b border-slate-100 px-3 py-2 last:border-0 ${i === highlightedIndex ? 'bg-emerald-50' : 'hover:bg-slate-50'}`}
+              className={`flex cursor-pointer items-center gap-2 border-b border-slate-100 px-3 py-2 last:border-0 ${i === highlightedIndex ? 'bg-brand-50' : 'hover:bg-slate-50'}`}
             >
-              <MapPin className="h-3.5 w-3.5 flex-shrink-0 text-emerald-500" />
+              <MapPin className="h-3.5 w-3.5 flex-shrink-0 text-brand-500" />
               <span className="text-xs text-slate-700">{s.name}</span>
             </li>
           ))}

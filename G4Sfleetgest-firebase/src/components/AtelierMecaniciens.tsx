@@ -61,10 +61,10 @@ export default function AtelierMecaniciens() {
         <div className="flex flex-wrap items-center gap-2">
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher un mécanicien, un rôle, une spécialité…" className="w-72 rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher un mécanicien, un rôle, une spécialité…" className="w-72 rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
           </div>
           <button onClick={() => window.print()} className="rounded-lg border border-slate-300 bg-white p-2 text-slate-500 hover:bg-slate-50" title="Imprimer"><Printer className="h-4 w-4" /></button>
-          <button onClick={() => { setEditId(''); setShowForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"><Plus className="h-4 w-4" /> Nouveau mécanicien</button>
+          <button onClick={() => { setEditId(''); setShowForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700"><Plus className="h-4 w-4" /> Nouveau mécanicien</button>
         </div>
       </div>
 
@@ -73,7 +73,7 @@ export default function AtelierMecaniciens() {
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {filtered.map(m => (
-            <div key={m.id} onClick={() => { setEditId(m.id); setShowForm(true); }} className="cursor-pointer rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:border-emerald-300">
+            <div key={m.id} onClick={() => { setEditId(m.id); setShowForm(true); }} className="cursor-pointer rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:border-brand-300">
               <div className="flex items-start justify-between">
                 <span className="flex h-11 w-11 items-center justify-center rounded-full text-sm font-bold text-slate-700" style={{ background: m.color }}>{m.initials}</span>
                 <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${STATE_COLORS[m.state]}`}>{m.state}</span>
@@ -142,17 +142,17 @@ function MechanicFormModal({ mechanic, onSave, onDelete, onClose }: {
           <button onClick={handleCancel} className="p-1.5 text-slate-400 hover:text-slate-700"><X className="h-5 w-5" /></button>
         </div>
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 p-6">
-          <label className="col-span-2 block text-xs font-medium text-slate-600">Nom complet<input required value={f.name} onChange={e => up('name', e.target.value)} placeholder="Ex. Alex Morel" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
-          <label className="block text-xs font-medium text-slate-600">Rôle / spécialité principale<input required value={f.role} onChange={e => up('role', e.target.value)} placeholder="Ex. Mécanicien expert" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
+          <label className="col-span-2 block text-xs font-medium text-slate-600">Nom complet<input required value={f.name} onChange={e => up('name', e.target.value)} placeholder="Ex. Alex Morel" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Rôle / spécialité principale<input required value={f.role} onChange={e => up('role', e.target.value)} placeholder="Ex. Mécanicien expert" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
           <label className="block text-xs font-medium text-slate-600">Statut
-            <select value={f.state} onChange={e => up('state', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+            <select value={f.state} onChange={e => up('state', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
               {MECHANIC_STATES.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
           </label>
-          <label className="block text-xs font-medium text-slate-600">E-mail<input type="email" value={f.email} onChange={e => up('email', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
-          <label className="block text-xs font-medium text-slate-600">Téléphone<input value={f.phone} onChange={e => up('phone', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
-          <label className="col-span-2 block text-xs font-medium text-slate-600">Spécialités (séparées par des virgules)<input value={f.specialtiesText} onChange={e => up('specialtiesText', e.target.value)} placeholder="Ex. Moteur diesel, Freinage" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
-          <label className="block text-xs font-medium text-slate-600">Date d'embauche<input type="date" value={f.startDate} onChange={e => up('startDate', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">E-mail<input type="email" value={f.email} onChange={e => up('email', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Téléphone<input value={f.phone} onChange={e => up('phone', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
+          <label className="col-span-2 block text-xs font-medium text-slate-600">Spécialités (séparées par des virgules)<input value={f.specialtiesText} onChange={e => up('specialtiesText', e.target.value)} placeholder="Ex. Moteur diesel, Freinage" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Date d'embauche<input type="date" value={f.startDate} onChange={e => up('startDate', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
           <label className="block text-xs font-medium text-slate-600">Couleur de l'avatar
             <SelectWithOther value={f.color} onChange={(v) => up('color', v)} options={PALETTE} otherPlaceholder="Code couleur (#rrggbb)…" />
           </label>
@@ -161,7 +161,7 @@ function MechanicFormModal({ mechanic, onSave, onDelete, onClose }: {
             {onDelete ? <button type="button" onClick={onDelete} className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"><Trash2 className="h-4 w-4" /> Supprimer</button> : <span />}
             <div className="flex gap-3">
               <button type="button" onClick={handleCancel} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
-              <button type="submit" className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700">{mechanic ? 'Mettre à jour' : 'Enregistrer'}</button>
+              <button type="submit" className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700">{mechanic ? 'Mettre à jour' : 'Enregistrer'}</button>
             </div>
           </div>
         </form>

@@ -32,7 +32,7 @@ export default function DefaillancesTable({ rows, onChange, readOnly }: Defailla
         </div>
       ))}
       {!readOnly && (
-        <button type="button" onClick={addRow} className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-emerald-600 hover:text-emerald-700 print:hidden">
+        <button type="button" onClick={addRow} className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-brand-600 hover:text-brand-700 print:hidden">
           <Plus className="h-3.5 w-3.5" /> Ajouter une ligne
         </button>
       )}

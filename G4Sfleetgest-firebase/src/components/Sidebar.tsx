@@ -116,14 +116,14 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="fixed left-0 top-0 z-30 flex h-full w-64 flex-col bg-gradient-to-b from-slate-900 to-slate-800 text-white shadow-xl">
-      <div className="flex items-center gap-3 border-b border-slate-700 px-6 py-5">
+    <aside className="fixed left-0 top-0 z-30 flex h-full w-64 flex-col bg-gradient-to-b from-black to-neutral-900 text-white shadow-xl">
+      <div className="flex items-center gap-3 border-b border-neutral-800 px-6 py-5">
         <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-white p-1">
           <img src={g4sLogo} alt="G4S" className="h-full w-full object-contain" />
         </div>
         <div>
           <h1 className="text-sm font-bold leading-tight">Parc Auto</h1>
-          <p className="text-[10px] text-slate-400">Gestion de flotte</p>
+          <p className="text-[10px] text-neutral-400">Gestion de flotte</p>
         </div>
       </div>
 
@@ -132,16 +132,16 @@ export default function Sidebar() {
           onClick={() => setEditMode(!editMode)}
           className={`w-full rounded-lg px-3 py-1.5 text-xs font-medium transition ${
             editMode ? 'bg-amber-500/20 text-amber-300 hover:bg-amber-500/30'
-                     : 'bg-slate-700/30 text-slate-400 hover:bg-slate-700/50 hover:text-white'}`}
+                     : 'bg-neutral-800/30 text-neutral-400 hover:bg-neutral-800/50 hover:text-white'}`}
         >
           {editMode ? '✓ Terminer le réagencement' : '↕ Réorganiser les onglets'}
         </button>
         {editMode && (
-          <button onClick={resetOrder} className="mt-1 w-full rounded-lg px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-700/50 transition">
+          <button onClick={resetOrder} className="mt-1 w-full rounded-lg px-3 py-1.5 text-xs font-medium text-neutral-400 hover:text-white hover:bg-neutral-800/50 transition">
             ↺ Réinitialiser l'ordre et l'affichage
           </button>
         )}
-        {editMode && <p className="mt-2 px-1 text-[10px] leading-relaxed text-slate-500">Glissez pour déplacer. Cliquez sur l'œil pour masquer ou afficher un onglet.</p>}
+        {editMode && <p className="mt-2 px-1 text-[10px] leading-relaxed text-neutral-500">Glissez pour déplacer. Cliquez sur l'œil pour masquer ou afficher un onglet.</p>}
       </div>
 
       <nav className={`flex-1 space-y-1 overflow-y-auto px-3 ${editMode ? 'py-2' : 'py-4'}`}>
@@ -159,22 +159,22 @@ export default function Sidebar() {
               onDragOver={(e) => handleDragOver(e, index)}
               onDrop={(e) => handleDrop(e, index)}
               onDragEnd={handleDragEnd}
-              className={`flex items-center gap-2 rounded-lg transition-all ${isDragOver ? 'border-2 border-dashed border-emerald-400 bg-emerald-500/10' : ''} ${editMode ? 'cursor-move' : ''} ${isHidden ? 'opacity-45' : ''}`}
+              className={`flex items-center gap-2 rounded-lg transition-all ${isDragOver ? 'border-2 border-dashed border-brand-400 bg-brand-500/10' : ''} ${editMode ? 'cursor-move' : ''} ${isHidden ? 'opacity-45' : ''}`}
             >
-              {editMode && <div className="flex-shrink-0 pl-1 text-slate-500"><GripVertical className="h-4 w-4" /></div>}
+              {editMode && <div className="flex-shrink-0 pl-1 text-neutral-500"><GripVertical className="h-4 w-4" /></div>}
               <NavLink
                 to={item.path}
-                className={`flex flex-1 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${isActive ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/30' : 'text-slate-300 hover:bg-slate-700/50 hover:text-white'}`}
+                className={`flex flex-1 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${isActive ? 'bg-brand-600 text-white shadow-lg shadow-brand-900/30' : 'text-neutral-300 hover:bg-neutral-800/50 hover:text-white'}`}
                 onClick={(e) => { if (editMode) e.preventDefault(); }}
               >
                 <Icon className="h-5 w-5 flex-shrink-0" />
                 <span className="flex-1 leading-tight">{item.label}</span>
-                {editMode && isHidden && <span className="rounded-full bg-slate-700 px-1.5 py-0.5 text-[9px] text-slate-300">masqué</span>}
+                {editMode && isHidden && <span className="rounded-full bg-neutral-800 px-1.5 py-0.5 text-[9px] text-neutral-300">masqué</span>}
               </NavLink>
               {editMode && (
                 <button
                   onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleHidden(item.path); }}
-                  className="mr-1 rounded-md p-1.5 text-slate-500 hover:bg-slate-700/60 hover:text-white"
+                  className="mr-1 rounded-md p-1.5 text-neutral-500 hover:bg-neutral-800/60 hover:text-white"
                   title={isHidden ? 'Afficher cet onglet' : 'Masquer cet onglet'}
                 >
                   {isHidden ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}

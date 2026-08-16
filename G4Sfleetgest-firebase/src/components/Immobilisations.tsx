@@ -77,7 +77,7 @@ export default function Immobilisations() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-xl bg-white p-6 shadow-sm print:hidden">
         <div><h2 className="text-2xl font-bold text-slate-900">Suivi des Immobilisations</h2><p className="mt-1 text-sm text-slate-500">Suivi des véhicules en garage : durée, travaux, coûts</p></div>
         <div className="flex gap-2">
-          <button onClick={() => { setEditRecordId(''); setShowForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"><Plus className="h-4 w-4" /> Nouvelle entrée</button>
+          <button onClick={() => { setEditRecordId(''); setShowForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700"><Plus className="h-4 w-4" /> Nouvelle entrée</button>
           <label className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white p-2 text-slate-600 hover:bg-slate-50 cursor-pointer" title="Importer"><Upload className="h-4 w-4" /><input type="file" accept=".csv,.xls,.xlsx" className="hidden" onChange={() => {}} /></label>
           <button onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"><Printer className="h-4 w-4" /> Imprimer</button>
         </div>
@@ -98,7 +98,7 @@ export default function Immobilisations() {
       <div className="flex flex-wrap items-end gap-3 print:hidden">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher garage, véhicule, travaux…" className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher garage, véhicule, travaux…" className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
         </div>
         <label className="block text-xs font-medium text-slate-600">Du<input type="date" value={periodFrom} onChange={e => setPeriodFrom(e.target.value)} className="mt-1 block rounded-lg border border-slate-300 px-3 py-2 text-sm" /></label>
         <label className="block text-xs font-medium text-slate-600">Au<input type="date" value={periodTo} onChange={e => setPeriodTo(e.target.value)} className="mt-1 block rounded-lg border border-slate-300 px-3 py-2 text-sm" /></label>
@@ -120,7 +120,7 @@ export default function Immobilisations() {
                   const depassement = r.date_sortie_prevue && !r.date_sortie_reelle && new Date() > new Date(r.date_sortie_prevue);
                   return (
                     <tr key={r.id} className="hover:bg-slate-50">
-                      <td className="px-3 py-2 font-semibold text-emerald-600">{v?.numero_immatriculation || '—'}<p className="text-[10px] text-slate-500">{v?.marque} {v?.type_commercial}</p></td>
+                      <td className="px-3 py-2 font-semibold text-brand-600">{v?.numero_immatriculation || '—'}<p className="text-[10px] text-slate-500">{v?.marque} {v?.type_commercial}</p></td>
                       <td className="px-3 py-2 text-xs font-medium">{r.garage}</td>
                       <td className="px-3 py-2 text-xs max-w-[200px] truncate" title={r.travaux}>{r.travaux}</td>
                       <td className="px-3 py-2 text-xs">{fmtDate(r.date_entree)}</td>
@@ -174,15 +174,15 @@ function ImmobilisationFormModal({ record, vehicles, onSave, onClose }: { record
       <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl">
         <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-6 py-4"><h3 className="text-lg font-bold">{record ? 'Modifier' : 'Nouvelle immobilisation'}</h3><button onClick={handleCancel} className="p-1.5 text-slate-400 hover:text-slate-700"><X className="h-5 w-5" /></button></div>
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 p-6">
-          <label className="block text-xs font-medium text-slate-600">Véhicule<select value={f.vehicleId} onChange={e => up('vehicleId', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">{vehicles.map(v => <option key={v.id} value={v.id}>{v.numero_immatriculation}</option>)}</select></label>
-          <label className="block text-xs font-medium text-slate-600">Garage<input value={f.garage} onChange={e => up('garage', e.target.value)} placeholder="Nom du garage…" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
-          <label className="block text-xs font-medium text-slate-600">Date d'entrée<input type="date" value={f.date_entree} onChange={e => up('date_entree', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
-          <label className="block text-xs font-medium text-slate-600">Date sortie prévue<input type="date" value={f.date_sortie_prevue} onChange={e => up('date_sortie_prevue', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
-          <label className="block text-xs font-medium text-slate-600">Date sortie réelle<input type="date" value={f.date_sortie_reelle} onChange={e => up('date_sortie_reelle', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
-          <label className="block text-xs font-medium text-slate-600">Statut<select value={f.statut} onChange={e => up('statut', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"><option value="En cours">En cours</option><option value="Terminé">Terminé</option><option value="En attente pièces">En attente pièces</option></select></label>
-          <label className="col-span-2 block text-xs font-medium text-slate-600">Travaux en cours / effectués<textarea value={f.travaux} onChange={e => up('travaux', e.target.value)} rows={2} placeholder="Décrivez les travaux…" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
-          <label className="block text-xs font-medium text-slate-600">Coût estimé (FCFA)<input type="number" value={f.cout_estime} onChange={e => up('cout_estime', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
-          <label className="block text-xs font-medium text-slate-600">Coût final (FCFA)<input type="number" value={f.cout_final} onChange={e => up('cout_final', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Véhicule<select value={f.vehicleId} onChange={e => up('vehicleId', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">{vehicles.map(v => <option key={v.id} value={v.id}>{v.numero_immatriculation}</option>)}</select></label>
+          <label className="block text-xs font-medium text-slate-600">Garage<input value={f.garage} onChange={e => up('garage', e.target.value)} placeholder="Nom du garage…" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Date d'entrée<input type="date" value={f.date_entree} onChange={e => up('date_entree', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Date sortie prévue<input type="date" value={f.date_sortie_prevue} onChange={e => up('date_sortie_prevue', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Date sortie réelle<input type="date" value={f.date_sortie_reelle} onChange={e => up('date_sortie_reelle', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Statut<select value={f.statut} onChange={e => up('statut', e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"><option value="En cours">En cours</option><option value="Terminé">Terminé</option><option value="En attente pièces">En attente pièces</option></select></label>
+          <label className="col-span-2 block text-xs font-medium text-slate-600">Travaux en cours / effectués<textarea value={f.travaux} onChange={e => up('travaux', e.target.value)} rows={2} placeholder="Décrivez les travaux…" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Coût estimé (FCFA)<input type="number" value={f.cout_estime} onChange={e => up('cout_estime', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
+          <label className="block text-xs font-medium text-slate-600">Coût final (FCFA)<input type="number" value={f.cout_final} onChange={e => up('cout_final', Number(e.target.value))} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" /></label>
           <label className="col-span-2 block text-xs font-medium text-slate-600">
             Observations <span className="text-red-500">*</span>
             <textarea
@@ -191,13 +191,13 @@ function ImmobilisationFormModal({ record, vehicles, onSave, onClose }: { record
               onChange={e => { up('observations', e.target.value); if (obsError && e.target.value.trim()) setObsError(false); }}
               rows={2}
               placeholder="Champ obligatoire — précisez le contexte, la cause, ou toute information utile…"
-              className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-1 ${obsError ? 'border-red-400 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-emerald-500 focus:ring-emerald-500'}`}
+              className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-1 ${obsError ? 'border-red-400 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-brand-500 focus:ring-brand-500'}`}
             />
             {obsError && <span className="mt-1 block text-[11px] font-normal text-red-600">Ce champ est obligatoire.</span>}
           </label>
           <div className="col-span-2 flex justify-end gap-3 border-t pt-4">
             <button type="button" onClick={handleCancel} className="rounded-lg border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50">Annuler</button>
-            <button type="submit" className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700">{record ? 'Mettre à jour' : 'Enregistrer'}</button>
+            <button type="submit" className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700">{record ? 'Mettre à jour' : 'Enregistrer'}</button>
           </div>
         </form>
       </div>

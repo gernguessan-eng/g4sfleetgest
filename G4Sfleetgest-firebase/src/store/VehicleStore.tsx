@@ -72,6 +72,34 @@ function syncVehiclesWithImmobilisationsAndSinistres(
   });
 }
 
+/**
+ * Consommation moyenne réelle (L/100km) d'un véhicule, calculée à partir des litres
+ * effectivement achetés (dépenses de catégorie "Carburant", champ `litres`) rapportés à son
+ * kilométrage total. Retourne `null` tant qu'aucun plein avec quantité n'a été saisi — dans
+ * ce cas la valeur existante du véhicule (ex : donnée de démonstration) est conservée.
+ */
+function computeAvgConsumption100km(vehicleId: string, kilometrage: number, expenseRecords: ExpenseRecord[]): number | null {
+  const totalLitres = expenseRecords
+    .filter((e) => e.vehicleId === vehicleId && e.categorie === 'Carburant' && (e.litres || 0) > 0)
+    .reduce((sum, e) => sum + (e.litres || 0), 0);
+  if (totalLitres <= 0 || !kilometrage || kilometrage <= 0) return null;
+  return Math.round((totalLitres / kilometrage) * 100 * 10) / 10;
+}
+
+/**
+ * Remplace la consommation aux 100km "constructeur" (saisie manuelle) par la consommation
+ * réelle moyenne, dès que des pleins avec quantité (litres) existent pour le véhicule — la
+ * case "Consommation aux 100km (L)" de la fiche véhicule devient ainsi une valeur calculée,
+ * qui alimente à son tour le menu Gestion des carburants.
+ */
+function syncVehicleFuelConsumption(vehicleList: Vehicle[], expenseRecords: ExpenseRecord[]): Vehicle[] {
+  return vehicleList.map((v) => {
+    const avg = computeAvgConsumption100km(v.id, v.kilometrage, expenseRecords);
+    if (avg === null || avg === v.consommation_100km) return v;
+    return { ...v, consommation_100km: avg };
+  });
+}
+
 const sampleVehicles: Vehicle[] = [
   {
     id: 'v1',
@@ -2161,6 +2189,15 @@ export function VehicleProvider({ children }: { children: React.ReactNode }) {
     setVehicles((prev) => syncVehiclesWithImmobilisationsAndSinistres(prev, immobilisations, sinistres, maintenanceRecords, orders));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [immobilisations, sinistres, maintenanceRecords, orders]);
+
+  // Dès qu'une dépense carburant (avec quantité en litres) est ajoutée, modifiée ou
+  // supprimée, la consommation moyenne (L/100km) du véhicule concerné est recalculée
+  // automatiquement — la case "Consommation aux 100km (L)" de sa fiche n'est plus une
+  // saisie manuelle, et le menu Gestion des carburants en hérite à son tour.
+  useEffect(() => {
+    setVehicles((prev) => syncVehicleFuelConsumption(prev, expenseRecords));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [expenseRecords]);
 
   const addVehicle = useCallback((vehicle: Vehicle) => {
     setVehicles((prev) => [...prev, vehicle]);

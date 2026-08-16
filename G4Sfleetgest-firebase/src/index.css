@@ -1,5 +1,22 @@
 @import "tailwindcss";
 
+@theme {
+  /* Rouge G4S (extrait du logo officiel #FC1B23), remplace l'accent "emerald" d'origine
+     comme couleur de marque (boutons, liens, menu actif, focus). Les couleurs de statut
+     (vert = bon, rouge/ambre = attention/problème) restent inchangées, sur la palette
+     standard Tailwind (green/red/amber), pour ne pas se confondre avec la marque. */
+  --color-brand-50: #FFF1F2;
+  --color-brand-100: #FFDFE0;
+  --color-brand-200: #FEBBBD;
+  --color-brand-300: #FE9295;
+  --color-brand-400: #FD5B61;
+  --color-brand-500: #FC1B23;
+  --color-brand-600: #DE181F;
+  --color-brand-700: #B51319;
+  --color-brand-800: #921014;
+  --color-brand-900: #710C10;
+}
+
 @media print {
   aside, .print\:hidden { 
     display: none !important; 
